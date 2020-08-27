@@ -5,12 +5,12 @@ Tiny Programmable Bootsector OS written in x86 Assembly
 ## Programming Language
 CrypticOS uses an extended version of BrainF*. The following  
 is an instruction list.  
->   
-<  
-+  
--  
-.  
-,  
+\>   
+\<  
+\+  
+\-  
+\.  
+\,  
 []  
 
 ! = Reset current value to 0  
