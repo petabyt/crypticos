@@ -39,7 +39,7 @@ runCommand:
 	je runCommand_pgrmA
 
 	; Else, invalid command (or done)
-	jmp runCommand_done
+	jmp runCommand_invalid
 
 	runCommand_help:
 		mov si, help
@@ -51,8 +51,13 @@ runCommand:
 		mov di, buffer
 		call input
 		mov di, buffer ; reset di
-		call pgrm
-		ret
+
+		mov al, [di]
+		cmp al, 'q'
+		je runCommand_done
+
+		call pgrm ; execute program
+		jmp runCommand_pgrm ; back to prompt
 
 	runCommand_pgrmA:
 		mov di, pgrm_a
@@ -66,8 +71,12 @@ runCommand:
 		cmp eax, 1
 	ret
 
-	runCommand_done:
+	runCommand_invalid:
 	mov si, invalid
+	call printStr
+	ret
+	runCommand_done:
+	mov si, done
 	call printStr
 ret
 
@@ -75,7 +84,8 @@ ret
 %include "kernel.asm"
 
 welcome db "[-] CrypticOS v0.3 [-]", 0
-help db "pgrm, help", 0
+help db "pgrm, help, a", 0
+done db "Done", 0
 invalid db "Invalid command", 0
 cmd_help db "help", 0
 cmd_pgrm db "pgrm", 0
