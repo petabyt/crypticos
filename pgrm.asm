@@ -93,6 +93,17 @@ pgrm:
 		pop di
 	jmp pgrm_donechar
 
+	pgrm_comma:
+		; get char
+		mov ah, 0x0
+		int 0x16
+		mov [si], al
+
+		; write char
+		mov ah, 0x0E
+		int 0x10
+	jmp pgrm_donechar
+
 	pgrm_done:
 	call nextLine
 ret
