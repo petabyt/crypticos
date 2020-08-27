@@ -79,7 +79,7 @@ help db "pgrm, help", 0
 invalid db "Invalid command", 0
 cmd_help db "help", 0
 cmd_pgrm db "pgrm", 0
-pgrm_a db "++++++++.!+++++.!++++++++++++..!+++++++++++++++.", 0
+pgrm_a db "++[>++++++++.!+++++.!++++++++++++..!+++++++++++++++.!<-]", 0
 
 times 510 - ($ - $$) db 0
 dw 0xAA55

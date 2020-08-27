@@ -12,8 +12,8 @@ pgrm:
 		jne pgrm_clearmem
 	sub si, MEM_SIZE
 
-	mov eax, 0 ; char number
-	mov ebx, 0 ; loop char
+	mov dl, 0 ; char number
+	mov dh, 0 ; loop char
 
 	mov ah, 0x0E ; print char bios signal
 	pgrm_top:
@@ -37,11 +37,15 @@ pgrm:
 		je pgrm_back
 		cmp al, '!'
 		je pgrm_reset
+		cmp al, '['
+		je pgrm_start
+		cmp al, ']'
+		je pgrm_end
 		pgrm_donechar:
-		add eax, 1
+		add dl, 1
 	jmp pgrm_top
 
-	; '.' : Print
+	; .
 	pgrm_dot:
 		mov al, [si]
 		add al, 64 ; 65 == 'A', makes it easier to print messages
@@ -49,24 +53,44 @@ pgrm:
 		int 0x10
 	jmp pgrm_donechar
 
+	; +
 	pgrm_plus:
 		add byte [si], 1
 	jmp pgrm_donechar
 
+	; -
 	pgrm_minus:
 		sub byte [si], 1
 	jmp pgrm_donechar
 
+	; >
 	pgrm_next:
-		add byte [si], 1
+		add si, 1
 	jmp pgrm_donechar
 
+	; <
 	pgrm_back:
-		sub byte [si], 1
+		sub si, 1
 	jmp pgrm_donechar
 
+	; !
 	pgrm_reset:
 		mov byte [si], 0
+	jmp pgrm_donechar
+
+	; [
+	pgrm_start:
+		push di ; push current char onto stack
+	jmp pgrm_donechar
+
+	; ]
+	pgrm_end:
+		cmp byte [si], 0 ; is value zero?
+		jne pgrm_loopquit ; if zero, then resume parsing. If not zero, loop back
+	jmp pgrm_donechar
+
+	pgrm_loopquit:
+		pop di
 	jmp pgrm_donechar
 
 	pgrm_done:
