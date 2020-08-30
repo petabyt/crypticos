@@ -1,6 +1,10 @@
+; CrypticOS Bootsector
+; Includes command line and extended BrainFlake interpreter
+
 bits 16
 org 0x7c00
 
+; Size of BrainF stack
 %define MEM_SIZE 100
 
 ; Start main os
@@ -15,13 +19,8 @@ init:
 		call runCommand
 	jmp terminal
 
-	cli
-hlt
-
 ; Execute command via the input buffer
 runCommand:
-	; Compare inputs
-
 	; Check "help"
 	mov di, cmd_help
 	call runCommand_compare
@@ -50,9 +49,9 @@ runCommand:
 		; Get input
 		mov di, buffer
 		call input
-		mov di, buffer ; reset di
+		mov ebx, buffer ; reset di
 
-		mov al, [di]
+		mov al, [ebx]
 		cmp al, 'q'
 		je runCommand_done
 
@@ -60,7 +59,7 @@ runCommand:
 		jmp runCommand_pgrm ; back to prompt
 
 	runCommand_pgrmA:
-		mov di, pgrm_a
+		mov ebx, pgrm_a
 		call pgrm
 		ret
 
@@ -83,13 +82,13 @@ ret
 %include "pgrm.asm"
 %include "kernel.asm"
 
-welcome db "[-] CrypticOS v0.3 [-]", 0
+welcome db ">CrypticOS v0.3", 0
 help db "pgrm, help, a", 0
 done db "Done", 0
-invalid db "Invalid command", 0
+invalid db "Invalid cmd", 0
 cmd_help db "help", 0
 cmd_pgrm db "pgrm", 0
-pgrm_a db "++[>++++++++.!+++++.!++++++++++++..!+++++++++++++++.!<-]", 0 ;  HELLOHELLO
+pgrm_a db "++++[>%****++.!%%+.!%%*+++..!%%**+.!.!<-]******+++.", 0 ;  "Hello Hello Hello !"
 
 times 510 - ($ - $$) db 0
 dw 0xAA55
@@ -97,3 +96,4 @@ dw 0xAA55
 section .bss
 	buffer resb 100 ; command line input buffer
 	mem resb MEM_SIZE ; pgrm stack
+	nest resb 3 ; pgrm nested loop
