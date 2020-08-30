@@ -9,15 +9,16 @@ functionality.
 ## Applications
 CrypticOS has an extended version of BrainF* called CrypticFrick.  
 The following is an instruction set:  
-\> = +1 pointer  
-\< = -1 pointer  
-\+ = +1 value  
-\- = -1 value  
-\. = print  
-\, = read  
-[] = while
-\! = Reset value to zero  
-\*Note: ASCII starts at `'A'`, so `+.++.` will produce: `AB`.  
+`\>` = +1 pointer  
+`\<` = -1 pointer  
+`\+` = +1 value  
+`\-` = -1 value  
+`\.` = print  
+`\,` = read  
+`[]` = while  
+`\!` = Reset value to zero    
+`\*` = Add 5 to value   
+`\%` = Add 50 to value  
 
 ## How to use
 On boot, the usable commands are:
