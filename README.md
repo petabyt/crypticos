@@ -1,29 +1,33 @@
 # CrypticOS
-Tiny Programmable Bootsector OS written in x86 Assembly
+Tiny Programmable Bootsector OS written in x86 Assembly.
 
 ## Design
-Design: It should not depend too much on CPU architecture. It also should be  
-smaller than 512 bytes, and not have to squeeze out bytes in order to implement  
-functionality.  
+Design: It should not depend too much on CPU architecture. It also must be 
+smaller 512 bytes, and not have to squeeze out bytes in order to implement   
+basic functionality.  
 
 ## Applications
-CrypticOS has an extended version of BrainF* called CrypticFrick.  
+CrypticOS has an Assembly-like version of BrainF* called CrypticASM.  
 The following is an instruction set:  
-`>` = +1 pointer  
-`<` = -1 pointer  
-`+` = +1 value  
-`-` = -1 value  
-`.` = print  
-`,` = read  
-`[]` = while  
-`!` = Reset value to zero    
-`*` = Add 5 to value   
-`%` = Add 50 to value  
+`>` = `pointer++`  
+`<` = `pointer--`  
+`+` = `mem[pointer]++`  
+`-` = `mem[pointer]--`  
+`.` = `print(mem[pointer])`  
+`,` = `mem[pointer] = read()`  
+`^` = `goto mem[pointer]`  
+`?` = `if (mem[pointer - 1] != 0) {goto mem[pointer]}`  
+`!` = `mem[pointer] = 0`  
+`*` = `mem[pointer] += 5`  
+`%` = `mem[pointer] += 50`  
+This mini programming language is small enough  
+to have a full interpreter on the OS. Programs and games
+will be written or compiled to it and imported into the OS.
 
 ## How to use
 On boot, the usable commands are:
 ```
 pgrm - Open programming interface  
 help - show possible commands  
-a - Run sample program (hello world in CrypticFrick)  
+a - Run sample program (hello world in CrypticASM)  
 ```
