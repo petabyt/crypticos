@@ -1,22 +1,11 @@
-%define CHAR_START 0
-
 ; The "pgrm" app
 ; This is a simple BrainFlake interpreter.
 ; ebx = read from
 pgrm:
-	; Clear out stack memory
-	mov si, mem
-	mov eax, 0
-	pgrm_clearmem:
-		mov byte [si], 0
-		cmp eax, MEM_SIZE
-		add si, 1
-		jne pgrm_clearmem
-	sub si, MEM_SIZE
+	; Store the memory
+	mov si, memtop
+	mov di, membottom
 
-	mov edx, 0 ; edx will store loop last char
-
-	mov ah, 0x0E ; print char bios signal
 	pgrm_top:
 		; Increment char
 		mov al, [ebx]
@@ -27,85 +16,108 @@ pgrm:
 		je pgrm_done
 
 		cmp al, '.'
-		je pgrm_dot
+			je pgrm_dot
 		cmp al, '+'
-		je pgrm_plus
+			je pgrm_plus
 		cmp al, '*'
-		je pgrm_plus5
+			je pgrm_plus5
 		cmp al, '%'
-		je pgrm_plus50
+			je pgrm_plus50
 		cmp al, '-'
-		je pgrm_minus
+			je pgrm_minus
 		cmp al, '>'
-		je pgrm_next
+			je pgrm_bottom_next
 		cmp al, '<'
-		je pgrm_back
+			je pgrm_bottom_back
+		cmp al, 'd'
+			je pgrm_top_next
+		cmp al, 'a'
+			je pgrm_top_back
 		cmp al, '!'
-		je pgrm_reset
-		cmp al, '['
-		je pgrm_start
-		cmp al, ']'
-		je pgrm_end
+			je pgrm_reset
+		cmp al, '^'
+			je pgrm_bottom_top
+		cmp al, 'v'
+			je pgrm_top_bottom
 		cmp al, ','
-		je pgrm_comma
-		pgrm_donechar:
-		add edx, 1
-	jmp pgrm_top
-
+			je pgrm_comma
+		cmp al, '?'
+			je pgrm_if
 	; .
 	pgrm_dot:
 		mov al, [si]
-		add al, CHAR_START ; 65 == 'A', makes it easier to print messages
 		mov ah, 0x0E
 		int 0x10
-	jmp pgrm_donechar
+	jmp pgrm_top
 
 	; +
 	pgrm_plus:
 		add byte [si], 1
-	jmp pgrm_donechar
+	jmp pgrm_top
 
-	; *
+	; * (Not really needed, but makes reading code easier)
 	pgrm_plus5:
 		add byte [si], 5
-	jmp pgrm_donechar
+	jmp pgrm_top
 
-	; %
+	; % (Same here)
 	pgrm_plus50:
 		add byte [si], 50
-	jmp pgrm_donechar
+	jmp pgrm_top
 
 	; -
 	pgrm_minus:
 		sub byte [si], 1
-	jmp pgrm_donechar
+	jmp pgrm_top
 
 	; >
-	pgrm_next:
+	pgrm_bottom_next:
 		add si, 1
-	jmp pgrm_donechar
+	jmp pgrm_top
 
 	; <
-	pgrm_back:
+	pgrm_bottom_back:
 		sub si, 1
-	jmp pgrm_donechar
+	jmp pgrm_top
+
+	; d
+	pgrm_top_next:
+		add di, 1
+	jmp pgrm_top
+
+	; a
+	pgrm_top_back:
+		sub di, 1
+	jmp pgrm_top
+
+	; ^
+	pgrm_bottom_top:
+		push ecx
+		mov ecx, [si]
+		mov [di], ecx
+		pop ecx
+	jmp pgrm_top
+
+	; v
+	pgrm_top_bottom:
+		push ecx
+		mov ecx, [di]
+		mov [si], ecx
+		pop ecx
+	jmp pgrm_top
 
 	; !
 	pgrm_reset:
 		mov byte [si], 0
-	jmp pgrm_donechar
+	jmp pgrm_top
 
-	; [
-	pgrm_start:
-	 	mov edx, 1 ; offset as
-	jmp pgrm_donechar
-
-	; ]
-	pgrm_end:
+	; ?
+	pgrm_if:
 		cmp byte [si], 0 ; is value zero?
-		je pgrm_donechar ; if zero, then resume parsing. If not zero, loop back
-		sub ebx, edx
-	jmp pgrm_donechar
+		je pgrm_top ; if zero, then resume parsing
+		sub ebx, [di] ; If not zero, loop back
+		sub ebx, 1
+	jmp pgrm_top
 
 	pgrm_comma:
 		; get char
@@ -115,19 +127,9 @@ pgrm:
 		; write char
 		mov ah, 0x0E
 		int 0x10
-		sub al, CHAR_START
 		mov [si], al
-	jmp pgrm_donechar
+	jmp pgrm_top
 
 	pgrm_done:
 	call nextLine
 ret
-
-; Spahgetti crap code to print a register
-; a:
-; 	mov al, 'A'
-; 	mov ah, 0x0E
-; 	int 0x10
-; dec edx
-; cmp edx, 0
-; jne a

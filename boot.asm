@@ -4,9 +4,6 @@
 bits 16
 org 0x7c00
 
-; Size of BrainF stack
-%define MEM_SIZE 100
-
 ; Start main os
 init:
 	mov si, welcome
@@ -38,7 +35,9 @@ runCommand:
 	je runCommand_pgrmA
 
 	; Else, invalid command (or done)
-	jmp runCommand_invalid
+	mov si, invalid
+	call printStr
+	ret
 
 	runCommand_help:
 		mov si, help
@@ -70,30 +69,28 @@ runCommand:
 		cmp eax, 1
 	ret
 
-	runCommand_invalid:
-	mov si, invalid
-	call printStr
-	ret
 	runCommand_done:
 	mov si, done
 	call printStr
 ret
 
 %include "pgrm.asm"
-%include "kernel.asm"
+%include "kernel/keyboard.asm"
+%include "kernel/print.asm"
+%include "kernel/strcmp.asm"
 
 welcome db ">CrypticOS v0.3", 0
-help db "pgrm, help, a", 0
+help db "pgrm,help,a", 0
 done db "Done", 0
 invalid db "Invalid cmd", 0
 cmd_help db "help", 0
 cmd_pgrm db "pgrm", 0
-pgrm_a db "++++[>%****++.!%%+.!%%*+++..!%%**+.!.!<-]******+++.", 0 ;  "Hello Hello Hello !"
+pgrm_a db "!*++^!!%*+++>!********>*<.<.>>-?", 0
 
 times 510 - ($ - $$) db 0
 dw 0xAA55
 
 section .bss
-	buffer resb 100 ; command line input buffer
-	mem resb MEM_SIZE ; pgrm stack
-	nest resb 3 ; pgrm nested loop
+	buffer resb 50 ; command line input buffer
+	memtop resb 100 ; pgrm memory
+	membottom resb 20 ; pgrm memory
