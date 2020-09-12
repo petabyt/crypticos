@@ -8,6 +8,10 @@ basic functionality.
 
 ## Applications
 CrypticOS has an Assembly-like version of BrainF* called CrypticASM.  
+The design is fairly simple. There are two pointers, and two memory arrays.  
+One is the top, and the other is the bottom.  
+The "top" acts like registers.
+
 The following is an instruction set:  
 
 Move the two different pointers. Yes, based on WASD and arrow keys.  
@@ -29,7 +33,9 @@ as the system memory.
 
 
 `^` = `goto mem[pointer]`  
-`?` = `if (mem[pointer - 1] != mem2[pointer]) {goto mem[pointer - 1]}`  
+`?` = `if (mem[pointer - 1] != mem2[pointer]) {goto mem[pointer]}`  
+`$` = `goto mem[pointer]`  
+`|` = Label character. It can be accessed by it's occurrence.
 
 These aren't neccessary, but definitely reduce code size.
 `!` = `mem[pointer] = 0`  
@@ -37,8 +43,10 @@ These aren't neccessary, but definitely reduce code size.
 `%` = `mem[pointer] += 50`  
 
 This mini programming language is small enough  
-to have a full interpreter on the OS. Programs and games
-will be written or compiled to it and imported into the OS.
+to have a full interpreter on the OS, and usable enough to compile a  
+higher level language to.
+
+Once it is completed, a higher level language will be developer
 
 ## How to use
 On boot, the usable commands are:

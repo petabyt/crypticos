@@ -1,20 +1,26 @@
-; The "pgrm" app
-; This is a simple BrainFlake interpreter.
+; Simple implementation of CrypticASM. Actual memory isn't used
+; that much, mostly just registers.
+
 ; ebx = read from
 pgrm:
 	; Store the memory
-	mov si, memtop
-	mov di, membottom
+	mov esi, memtop
+	mov edi, membottom
+
+	mov ecx, 0 ; ecx will store char num
 
 	pgrm_top:
 		; Increment char
+		add ebx, ecx ; move to char
 		mov al, [ebx]
-		add ebx, 1
+		sub ebx, ecx ; move back
+		add ecx, 1 ; increment char
 
 		; check for null terminator
 		cmp al, 0
 		je pgrm_done
 
+		; Instruction tester
 		cmp al, '.'
 			je pgrm_dot
 		cmp al, '+'
@@ -43,80 +49,106 @@ pgrm:
 			je pgrm_comma
 		cmp al, '?'
 			je pgrm_if
+		cmp al, '$'
+			je pgrm_doLoop
+	jmp pgrm_top
+
 	; .
 	pgrm_dot:
-		mov al, [si]
+		mov al, [esi]
 		mov ah, 0x0E
 		int 0x10
 	jmp pgrm_top
 
 	; +
 	pgrm_plus:
-		add byte [si], 1
+		add byte [esi], 1
 	jmp pgrm_top
 
-	; * (Not really needed, but makes reading code easier)
+	; *
 	pgrm_plus5:
-		add byte [si], 5
+		add byte [esi], 5
 	jmp pgrm_top
 
-	; % (Same here)
+	; %
 	pgrm_plus50:
-		add byte [si], 50
+		add byte [esi], 50
 	jmp pgrm_top
 
 	; -
 	pgrm_minus:
-		sub byte [si], 1
+		sub byte [esi], 1
 	jmp pgrm_top
 
 	; >
 	pgrm_bottom_next:
-		add si, 1
+		add esi, 1
 	jmp pgrm_top
 
 	; <
 	pgrm_bottom_back:
-		sub si, 1
+		sub esi, 1
 	jmp pgrm_top
 
 	; d
 	pgrm_top_next:
-		add di, 1
+		add edi, 1
 	jmp pgrm_top
 
 	; a
 	pgrm_top_back:
-		sub di, 1
+		sub edi, 1
 	jmp pgrm_top
 
 	; ^
 	pgrm_bottom_top:
 		push ecx
-		mov ecx, [si]
-		mov [di], ecx
+		mov ecx, [esi]
+		mov [edi], ecx
 		pop ecx
 	jmp pgrm_top
 
 	; v
 	pgrm_top_bottom:
 		push ecx
-		mov ecx, [di]
-		mov [si], ecx
+		mov ecx, [edi]
+		mov [esi], ecx
 		pop ecx
 	jmp pgrm_top
 
 	; !
 	pgrm_reset:
-		mov byte [si], 0
+		mov byte [esi], 0
 	jmp pgrm_top
 
 	; ?
 	pgrm_if:
-		cmp byte [si], 0 ; is value zero?
-		je pgrm_top ; if zero, then resume parsing
-		sub ebx, [di] ; If not zero, loop back
-		sub ebx, 1
+		sub edi, 1
+		mov edx, [edi]
+		cmp [esi], edx ; compare top and bottom
+		add edi, 1
+		jne pgrm_doLoop ; if equal, do loop
+	jmp pgrm_top
+
+	pgrm_doLoop:
+		mov ecx, 0 ; reset char reading pointer
+		mov dl, [edi] ; dl will hold desired goto label. Will decrease to 0
+		; as we go through the loop.
+		pgrm_doLoop_top:
+			; Set char (ebx), then go back
+			add ebx, ecx
+			mov al, [ebx]
+			sub ebx, ecx
+
+			; Increment char
+			add ecx, 1
+
+			cmp al, '|' ; reached a label?
+			jne pgrm_doLoop_top ; if not, keep searching
+			sub dl, 1 ; decrease labels found
+			cmp dl, 0 ; is dl to zero yet?
+			jne pgrm_doLoop_top ; if not, keep searching
+		; else loop is done
 	jmp pgrm_top
 
 	pgrm_comma:
@@ -127,7 +159,7 @@ pgrm:
 		; write char
 		mov ah, 0x0E
 		int 0x10
-		mov [si], al
+		mov [esi], al
 	jmp pgrm_top
 
 	pgrm_done:

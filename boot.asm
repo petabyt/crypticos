@@ -18,19 +18,14 @@ init:
 
 ; Execute command via the input buffer
 runCommand:
-	; Check "help"
-	mov di, cmd_help
-	call runCommand_compare
-	je runCommand_help
+	mov si, buffer
+	mov al, [si]
 
 	; Check "pgrm"
-	mov di, cmd_pgrm
-	call runCommand_compare
+	cmp al, 'p'
 	je runCommand_pgrm
 
 	; Check custom program
-	mov si, buffer
-	mov al, [si]
 	cmp al, 'a'
 	je runCommand_pgrmA
 
@@ -38,11 +33,6 @@ runCommand:
 	mov si, invalid
 	call printStr
 	ret
-
-	runCommand_help:
-		mov si, help
-		call printStr
-		ret ; exit runCommand
 
 	runCommand_pgrm:
 		; Get input
@@ -62,13 +52,6 @@ runCommand:
 		call pgrm
 		ret
 
-	; Prep for comparing strings (movs n stuff)
-	runCommand_compare:
-		mov si, buffer
-		call compareString
-		cmp eax, 1
-	ret
-
 	runCommand_done:
 	mov si, done
 	call printStr
@@ -77,20 +60,18 @@ ret
 %include "pgrm.asm"
 %include "kernel/keyboard.asm"
 %include "kernel/print.asm"
-%include "kernel/strcmp.asm"
 
 welcome db ">CrypticOS v0.3", 0
-help db "pgrm,help,a", 0
 done db "Done", 0
 invalid db "Invalid cmd", 0
 cmd_help db "help", 0
 cmd_pgrm db "pgrm", 0
-pgrm_a db "!*++^!!%*+++>!********>*<.<.>>-?", 0
+pgrm_a db "!%********+>!%********+++>|<<.>><.>d^a+^dva$", 0
 
 times 510 - ($ - $$) db 0
 dw 0xAA55
 
 section .bss
 	buffer resb 50 ; command line input buffer
-	memtop resb 100 ; pgrm memory
-	membottom resb 20 ; pgrm memory
+	memtop resb 10 ; pgrm memory
+	membottom resb 100 ; pgrm memory
