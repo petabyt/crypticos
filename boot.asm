@@ -1,72 +1,85 @@
-; CrypticOS Bootsector
-; Includes command line and extended BrainFlake interpreter
+; CrypticOS Bootable prompt
+; Includes demo program, somewhat
+; decent user interface, and an IDLE.
 
 bits 16
 org 0x7c00
 
 ; Start main os
 init:
+; 	mov ah, 0           ;Initialize opcode
+; 	mov al, 10100111b   ;Parameter data.
+; 	mov dx, 0           ;COM1: port.
+; 	int 14h
+; 	mov     dx, 0           ;Select COM1:
+; mov     ah, 2           ;Receive opcode
+; int     14h
+; mov ah, 0x0E
+; int 0x10
+
 	mov si, welcome
 	call printStr
 	terminal:
 		; Get input in buffer
-		mov di, buffer
+		mov edi, buffer
 		call input
 
-		call runCommand
+		; Store first char
+		mov esi, buffer
+		mov al, [esi]
+
+		; Check 'p' (pgrm)
+		cmp al, 'p'
+		je runCommand_pgrm
+
+		; Check custom program
+		cmp al, '>'
+		je runCommand_preloaded
+
+		; Else, invalid command
+		mov esi, invalid
+		call printStr
+		jmp terminal
+
+		runCommand_pgrm:
+			; Get input
+			mov edi, buffer
+			call input
+			mov ebx, buffer ; reset edi
+
+			mov al, [ebx]
+			cmp al, 'q'
+			je runCommand_done
+
+			call pgrm ; execute program
+			jmp runCommand_pgrm ; back to prompt
+
+		runCommand_preloaded:
+			add esi, 1
+			mov al, [esi]
+			cmp al, 'a'
+			je runCommand_preloaded_a
+			ret
+
+		runCommand_preloaded_a:
+			mov ebx, pgrm_a
+			call pgrm
+
+		runCommand_done:
+		mov esi, done
+		call printStr
 	jmp terminal
-
-; Execute command via the input buffer
-runCommand:
-	mov si, buffer
-	mov al, [si]
-
-	; Check "pgrm"
-	cmp al, 'p'
-	je runCommand_pgrm
-
-	; Check custom program
-	cmp al, 'a'
-	je runCommand_pgrmA
-
-	; Else, invalid command (or done)
-	mov si, invalid
-	call printStr
-	ret
-
-	runCommand_pgrm:
-		; Get input
-		mov di, buffer
-		call input
-		mov ebx, buffer ; reset di
-
-		mov al, [ebx]
-		cmp al, 'q'
-		je runCommand_done
-
-		call pgrm ; execute program
-		jmp runCommand_pgrm ; back to prompt
-
-	runCommand_pgrmA:
-		mov ebx, pgrm_a
-		call pgrm
-		ret
-
-	runCommand_done:
-	mov si, done
-	call printStr
-ret
+	cli
+	hlt
 
 %include "pgrm.asm"
 %include "kernel/keyboard.asm"
 %include "kernel/print.asm"
 
-welcome db ">CrypticOS v0.3", 0
-done db "Done", 0
-invalid db "Invalid cmd", 0
-cmd_help db "help", 0
-cmd_pgrm db "pgrm", 0
-pgrm_a db "!%********+>!%********+++>|<<.>><.>d^a+^dva$", 0
+welcome: db ">CrypticOS v0.3", 0
+done: db "Done", 0
+invalid: db "Invalid cmd", 0
+pgrm_a: db "!%%*-.+.", 0
 
 times 510 - ($ - $$) db 0
 dw 0xAA55

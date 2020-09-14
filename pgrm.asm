@@ -125,9 +125,9 @@ pgrm:
 	pgrm_if:
 		sub edi, 1
 		mov edx, [edi]
-		cmp [esi], edx ; compare top and bottom
 		add edi, 1
-		jne pgrm_doLoop ; if equal, do loop
+		cmp [esi], edx ; compare top and bottom
+		je pgrm_doLoop ; if equal, do loop
 	jmp pgrm_top
 
 	pgrm_doLoop:

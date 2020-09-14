@@ -3,7 +3,8 @@
 printStr:
 	mov ah, 0x0E ; print char bios
 	printStr_loop:
-		lodsb ; mov al, [si] inc si
+		mov al, [si]
+		inc si
 		int 0x10
 		cmp al, 0 ; check for null terminator
 		jne printStr_loop ; if not equal, then loop
