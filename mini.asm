@@ -12,9 +12,9 @@ init:
 %include "kernel/newline.asm"
 %include "pgrm.asm"
 
-load: db "!%***>|<.><+>ddd^a!<^>a!%********^a!++^!dddvaaa?d^a!+^dva$|", 0
+load: db "!++>!++++^>v>|ddda!<^>a!^a!++^!?<<<+>>->!+^$|<<<*********+++.>>>", 0
 
-;times 510 - ($ - $$) db 0
+times 510 - ($ - $$) db 0
 dw 0xAA55
 
 section .bss

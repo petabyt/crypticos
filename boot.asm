@@ -64,6 +64,7 @@ hlt
 
 %include "pgrm.asm"
 %include "kernel/keyboard.asm"
+%include "kernel/newline.asm"
 %include "kernel/print.asm"
 
 welcome: db ">CrypticOS v0.3", 0
