@@ -14,7 +14,7 @@ pgrm:
 		add ebx, ecx ; move to char
 		mov al, [ebx]
 		sub ebx, ecx ; move back
-		add ecx, 1 ; increment char
+		inc ecx ; increment char
 
 		; check for null terminator
 		cmp al, 0
@@ -142,11 +142,11 @@ pgrm:
 			sub ebx, ecx
 
 			; Increment char
-			add ecx, 1
+			inc ecx
 
 			cmp al, '|' ; reached a label?
 			jne pgrm_doLoop_top ; if not, keep searching
-			sub dl, 1 ; decrease labels found
+			dec dl ; decrease labels found
 			cmp dl, 0 ; is dl to zero yet?
 			jne pgrm_doLoop_top ; if not, keep searching
 		; else loop is done

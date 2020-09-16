@@ -20,12 +20,12 @@ input:
 
 		; Append read char to buffer
 		mov [edi], al
-		add edi, 1
+		inc edi
 
 		jmp input_loop ; else, repeat loop
 
 	input_backspace:
-		sub edi, 1 ; sub 1 char
+		dec edi ; sub 1 char
 		mov ah, 0x0E ; print backspace char
 		int 0x10
 	jmp input_loop

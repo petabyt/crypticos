@@ -59,8 +59,8 @@ init:
 		mov esi, done
 		call printStr
 	jmp terminal
-	cli
-	hlt
+cli
+hlt
 
 %include "pgrm.asm"
 %include "kernel/keyboard.asm"
