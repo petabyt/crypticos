@@ -4,8 +4,8 @@
 ; ebx = read from
 pgrm:
 	; Store the memory
-	mov esi, memtop
-	mov edi, membottom
+	mov edi, memtop
+	mov esi, membottom
 
 	mov ecx, 0 ; ecx will store char num
 
@@ -82,29 +82,29 @@ pgrm:
 
 	; >
 	pgrm_bottom_next:
-		add esi, 1
+		inc esi
 	jmp pgrm_top
 
 	; <
 	pgrm_bottom_back:
-		sub esi, 1
+		dec esi
 	jmp pgrm_top
 
 	; d
 	pgrm_top_next:
-		add edi, 1
+		inc edi
 	jmp pgrm_top
 
 	; a
 	pgrm_top_back:
-		sub edi, 1
+		dec edi
 	jmp pgrm_top
 
 	; ^
 	pgrm_bottom_top:
 		push ecx
-		mov ecx, [esi]
-		mov [edi], ecx
+		mov al, [esi]
+		mov [edi], al
 		pop ecx
 	jmp pgrm_top
 
@@ -123,17 +123,18 @@ pgrm:
 
 	; ?
 	pgrm_if:
-		sub edi, 1
-		mov edx, [edi]
-		add edi, 1
-		cmp [esi], edx ; compare top and bottom
+		inc edi ; move to first value
+		mov dl, [edi] ; store in dl (first of edx)
+		inc edi ; move to second value
+		mov dh, [edi] ; store in dh (second of edx)
+		sub edi, 2 ; go back to label
+		cmp dh, dl ; compare both values
 		je pgrm_doLoop ; if equal, do loop
 	jmp pgrm_top
 
 	pgrm_doLoop:
 		mov ecx, 0 ; reset char reading pointer
-		mov dl, [edi] ; dl will hold desired goto label. Will decrease to 0
-		; as we go through the loop.
+		mov dl, [edi] ; dl will hold desired goto label, will decrease to 0.
 		pgrm_doLoop_top:
 			; Set char (ebx), then go back
 			add ebx, ecx

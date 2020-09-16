@@ -1,3 +1,5 @@
+# What a mess.
+
 rm -rf build
 mkdir build
 
@@ -18,4 +20,6 @@ dd if=build/boot.bin of=build/floppy.img
 
 read
 
-qemu-system-x86_64 build/floppy.img
+qemu-system-x86_64 build/floppy.img -monitor stdio
+
+#qemu-system-x86_64 -monitor tcp:127.0.0.1:1234,server,nowait build/floppy.img &

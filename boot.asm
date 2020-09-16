@@ -7,16 +7,6 @@ org 0x7c00
 
 ; Start main os
 init:
-; 	mov ah, 0           ;Initialize opcode
-; 	mov al, 10100111b   ;Parameter data.
-; 	mov dx, 0           ;COM1: port.
-; 	int 14h
-; 	mov     dx, 0           ;Select COM1:
-; mov     ah, 2           ;Receive opcode
-; int     14h
-; mov ah, 0x0E
-; int 0x10
-
 	mov si, welcome
 	call printStr
 	terminal:
@@ -85,6 +75,6 @@ times 510 - ($ - $$) db 0
 dw 0xAA55
 
 section .bss
-	buffer resb 50 ; command line input buffer
+	buffer resb 1000 ; command line input buffer
 	memtop resb 10 ; pgrm memory
 	membottom resb 100 ; pgrm memory
