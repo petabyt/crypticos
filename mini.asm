@@ -12,11 +12,11 @@ init:
 %include "kernel/newline.asm"
 %include "pgrm.asm"
 
-load: db "!++>!++++^>v>|ddda!<^>a!^a!++^!?<<<+>>->!+^$|<<<*********+++.>>>", 0
+load: db ".", 0
 
 times 510 - ($ - $$) db 0
 dw 0xAA55
 
 section .bss
-	memtop resb 10 ; pgrm memory
-	membottom resb 100 ; pgrm memory
+	memtop resb 50 ; pgrm memory
+	membottom resb 500 ; pgrm memory

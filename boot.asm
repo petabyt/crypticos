@@ -77,5 +77,5 @@ dw 0xAA55
 
 section .bss
 	buffer resb 1000 ; command line input buffer
-	memtop resb 10 ; pgrm memory
-	membottom resb 100 ; pgrm memory
+	memtop resb 50 ; pgrm memory
+	membottom resb 500 ; pgrm memory
