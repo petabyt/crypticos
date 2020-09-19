@@ -9,14 +9,14 @@ squeeze bytes in order to implement basic functionality.
 Here is simple emulator in MIT Scratch: https://scratch.mit.edu/projects/424817216/
 
 ## Goals
-[-] Write interpreter OS in 512 bytes
-[-] Write simple programs in that interpreter
-[-] Write assembler that compiles to it (https://github.com/pufflegamerz/CrypticDK)
-[ ] Write OS in that language
-[ ] Rewrite assembler in the higher level language
+- [x] Write interpreter OS in 512 bytes  
+- [x] Write simple programs in that interpreter  
+- [x] Write assembler that compiles to it (https://github.com/pufflegamerz/CrypticDK)  
+- [ ] Write UI in that language  
+- [ ] Rewrite assembler in the assembler  
 
 ## Applications
-CrypticOS has an Assembly-like version of BrainF* as it's main runtime.  
+CrypticOS has a modified version of BrainF* as it's main runtime.  
 It resembles a "machine code" that can be easily interpreted.  
 
 The design is fairly simple. There are two pointers, and two memory arrays.  
@@ -34,7 +34,7 @@ Move the two different pointers. Yes, based on WASD and arrow keys.
 (Change ad to db?)
 
 Use these to move a value up the top or bottom.  
-Very useful for duplicating a register (^>v)
+Very useful for duplicating an integer (^>v)
 `^` = `top[pointer] = bottom[pointer]`
 `v` = `mem[pointer] = top[pointer]`
 
@@ -54,11 +54,11 @@ These aren't necessary, but definitely reduce code size.
 `*` = `bottom[pointer] += 5`  
 `%` = `bottom[pointer] += 50`  
 
-This programming language is small enough to have a full interpreter  
-on the OS, and usable enough to compile a higher level language to.
+The simple interpreter is currently 300 bytes, but the size will be  
+reduced over time.
 
 ## How to use
-On boot, the usable commands are:
+On boot.asm, the usable commands are:
 ```
 pgrm - Open programming interface  
 help - show possible commands  
