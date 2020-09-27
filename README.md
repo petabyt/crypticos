@@ -8,6 +8,8 @@ squeeze bytes in order to implement basic functionality.
 
 Here is simple emulator in MIT Scratch: https://scratch.mit.edu/projects/424817216/
 
+Also, you can see the self hosting process in https://github.com/pufflegamerz/crypticos/tree/master/casm  
+
 ## Goals
 - [x] Write interpreter OS in 512 bytes  
 - [x] Write simple programs in that interpreter  
