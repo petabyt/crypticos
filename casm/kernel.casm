@@ -1,0 +1,57 @@
+; CrypticASM Math Functions
+; Contains add, mult, div
+
+var std_first 0 ; initial integer
+var std_second 0 ; second integer (will be zero)
+
+var std_result 0 ; Output variable
+var std_i 0 ; General purpose incremental variable
+
+jmp std_end ; jmp program start
+
+std_add:
+	cmp std_second 0 std_add_stop ; is d zero? then stop
+	add std_first 1 ; increase first and
+	sub std_second 1 ; decrease second
+	jmp std_add
+std_add_stop:
+mov std_result std_first
+ret
+
+; divmod algorithm
+std_divide:
+	add std_result 1
+	mov std_i std_second
+	std_divide_sub:
+		cmp std_i 0 std_divide
+		sub std_i 1
+		cmp std_first 0 std_divide_exit
+		sub std_first 1
+	jmp std_divide_sub
+	std_divide_exit:
+	sub std_result 1
+ret
+
+std_mult:
+	cmp std_second 0 std_mult_end
+	mov std_i std_first
+	std_mult_add:
+		cmp std_i 0 std_mult_add_end
+		add std_result 1
+		sub std_i 1
+		jmp std_mult_add
+	std_mult_add_end:
+
+	sub std_second 1
+jmp std_mult
+std_mult_end:
+ret
+
+std_end:
+
+mov std_first 22
+mov std_second 7
+call std_divide
+
+add std_result '0'
+out std_result

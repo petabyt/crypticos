@@ -1,0 +1,27 @@
+; CrypticOS Prompt
+
+var input 0
+var new 10
+
+out "# CrypticOS"
+call newline
+
+top:
+	out ": "
+	mov input getchar
+	call newline
+
+	cmp input '?' help
+	out "UNKNOWN COMMAND"
+
+	call newline
+jmp top
+
+help:
+	out "YEP"
+	call newline
+jmp top
+
+newline:
+	inl "!**.+++."
+ret

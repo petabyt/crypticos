@@ -67,12 +67,12 @@ hlt
 %include "kernel/newline.asm"
 %include "kernel/print.asm"
 
-welcome: db ">CrypticOS v0.3", 0
+welcome: db ">CrypticOS", 0
 done: db "Done", 0
 invalid: db "Invalid cmd", 0
 pgrm_a: db "!%%*-.+.", 0
 
-times 510 - ($ - $$) db 0
+;times 510 - ($ - $$) db 0
 dw 0xAA55
 
 section .bss

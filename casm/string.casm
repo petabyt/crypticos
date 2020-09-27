@@ -1,0 +1,61 @@
+
+char:
+	inl "!++++^d" ; reserve for location
+	inl "d" ; Reserve for setting value
+	inl "d" ; reserve for temp
+	inl "d" ; reserve for label, set in loop
+	inl "!+-^d" ; store zero to compare
+	inl "aaaaavddddd^" ; store value from fourth cell
+	inl "!*-^" ; store 4 to compare (matching register)
+	inl "aa" ; go back
+	char_back:
+		inl "a^d" ; store current cell temp
+		inl "!++^"; Go to label 2
+		inl "avd" ; restore temp value
+		inl "<"
+
+		; to go matching register + 1, store temp,
+		; sub matching register, return back
+		inl "ddd^"
+		inl "av-^dvaaa"
+	inl "?" ; equ
+
+	; Goto
+	inl "a^d" ; store current cell temp
+	inl "!+^"; Go to label 1
+	inl "avd" ; restore temp value
+	inl "$"
+
+	char_back_end:
+	inl "aa^dd"
+
+	; Go back.
+	; Now we are currently in the label reg.
+	; Go back to temp reg and store current memory cell.
+	inl "a^d"
+
+	inl "d" ; space for label
+	inl "!+-^d" ; store zero to compare
+	inl "aaaaavddddd^" ; store 4 to compare (matching register)
+	inl "aa" ; go back
+	inl "avd" ; Restore temp value
+	char_forward:
+		inl "a^d" ; store current cell temp
+		inl "!++++^"; Go to label 4
+		inl "avd" ; restore temp value
+		inl ">"
+
+		; to go matching register + 1, store temp,
+		; sub matching register, return back
+		inl "ddd^"
+		inl "av-^dvaaa"
+	inl "?" ; equ
+
+	; Goto
+	inl "a^d" ; store current cell temp
+	inl "!+++^"; Go to label 3
+	inl "avd" ; restore temp value
+	inl "$"
+	char_forward_back:
+	inl "aava" ; go to initial value, when started
+inl "."

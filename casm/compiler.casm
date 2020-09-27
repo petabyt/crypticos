@@ -1,0 +1,175 @@
+; CrypticCode to Linux NASM Assembly language
+; Self hosted compiler, but needs some fixes.
+
+; Initialization
+out "SECTION .text"
+out 10
+out "GLOBAL _start"
+out 10
+out "_start:"
+out 10
+out "MOV ECX,B"
+out 10
+out "MOV ESI,T"
+
+var c 0 ; Holds current char
+var label 'A' ; Holds the label character
+
+top:
+	out 10
+	mov c getchar
+	cmp c '0' end ; end of line
+	cmp c '.' dot
+	cmp c ',' comma
+	cmp c '>' bracketRight
+	cmp c '<' bracketLeft
+	cmp c 'd' de
+	cmp c 'a' ay
+	cmp c '+' plus
+	cmp c '-' minus
+	cmp c '%' percent
+	cmp c '*' asterisk
+	cmp c '!' reset
+	cmp c '^' up
+	cmp c 'v' down
+	cmp c '$' goto
+	cmp c '?' compare
+
+	cmp c '|' label
+jmp top
+
+; Very basic instructions,
+; Self-explainatory.
+
+dot:
+	out "MOV EAX,4"
+	out 10
+	out "MOV EBX,1"
+	out 10
+	out "MOV EDX,1"
+	out 10
+	out "INT 128"
+jmp top
+
+comma:
+	out "MOV EAX,3" ; sys_read
+	out 10
+	out "MOV EBX,1" ; stdin
+	out 10
+	out "MOV EDX,2" ; input 2 char (one for enter)
+	out 10
+	out "int 128"
+jmp top
+
+bracketRight:
+	out "INC ECX"
+jmp top
+
+bracketLeft:
+	out "DEC ECX"
+jmp top
+
+de:
+	out "INC ESI"
+jmp top
+
+ay:
+	out "DEC ESI"
+jmp top
+
+plus:
+	out "INC BYTE [ECX]"
+jmp top
+
+minus:
+	out "DEC BYTE [ECX]"
+jmp top
+
+percent:
+	out "ADD BYTE [ECX],50"
+jmp top
+
+asterisk:
+	out "ADD BYTE [ECX],5"
+jmp top
+
+reset:
+	out "MOV BYTE [ECX],0"
+jmp top
+
+up:
+	out "MOV AL,[ECX]"
+	out 10
+	out "MOV [ESI],AL"
+jmp top
+
+down:
+	out "MOV AL,[ESI]"
+	out 10
+	out "MOV [ECX],AL"
+jmp top
+
+; More complicated instructions
+; compiled here
+
+label:
+	out "L" ; label c
+	out label
+	out ":"
+	add label 1
+jmp top
+
+goto:
+	out "JMP G"
+jmp top
+
+compare:
+	out "MOV AL,[ESI+1]"
+	out 10
+	out "MOV AH,[ESI+2]"
+	out 10
+	out "CMP AL,AH"
+	out 10
+	out "JE G"
+jmp top
+
+end:
+
+; Linux Kernel end signal (0x80)
+out "MOV EAX,1"
+out 10
+out "INT 128"
+out 10
+
+; Map Labels though A-Z alphabet
+
+out "G:"
+out 10
+out "MOV AL,[ESI]"
+out 10
+out "ADD AL,'@'"
+out 10
+
+label_top:
+	cmp label 'A' label_end
+	sub label 1
+
+	; Print:
+	; CMP EAX, 'A'
+	; JE LA
+	out "CMP AL,'"
+	out label
+	out "'"
+	out 10
+	out "JE L"
+	out label
+	out 10
+
+	jmp label_top
+label_end:
+
+out "SECTION .bss"
+out 10
+out "T RESB 50"
+out 10
+out "B RESB 1000"
