@@ -72,7 +72,7 @@ done: db "Done", 0
 invalid: db "Invalid cmd", 0
 pgrm_a: db "!%%*-.+.", 0
 
-;times 510 - ($ - $$) db 0
+times 510 - ($ - $$) db 0
 dw 0xAA55
 
 section .bss

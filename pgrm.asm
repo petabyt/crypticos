@@ -1,5 +1,11 @@
-; Simple implementation of CrypticASM. Actual memory isn't used
-; that much, mostly just registers.
+; Simple implementation of CrypticASM. Stack isn't used much, just
+; fast registers.
+; eax = for chars
+; ecx = char number
+; edx = none
+; ebx = read from
+; edi = memtop
+; esi = membottom
 
 ; ebx = read from
 pgrm:
@@ -11,9 +17,7 @@ pgrm:
 
 	pgrm_top:
 		; Increment char
-		add ebx, ecx ; move to char
-		mov al, [ebx]
-		sub ebx, ecx ; move back
+		mov al, [ebx + ecx]
 		inc ecx ; increment char
 
 		; check for null terminator
@@ -102,18 +106,14 @@ pgrm:
 
 	; ^
 	pgrm_bottom_top:
-		push ecx
 		mov al, [esi]
 		mov [edi], al
-		pop ecx
 	jmp pgrm_top
 
 	; v
 	pgrm_top_bottom:
-		push ecx
-		mov ecx, [edi]
-		mov [esi], ecx
-		pop ecx
+		mov al, [edi]
+		mov [esi], al
 	jmp pgrm_top
 
 	; !
@@ -123,11 +123,8 @@ pgrm:
 
 	; ?
 	pgrm_if:
-		inc edi ; move to first value
-		mov dl, [edi] ; store in dl (first of edx)
-		inc edi ; move to second value
-		mov dh, [edi] ; store in dh (second of edx)
-		sub edi, 2 ; go back to label
+		mov dl, [edi + 1] ; store in dl (first of edx)
+		mov dh, [edi + 2] ; store in dh (second of edx)
 		cmp dh, dl ; compare both values
 		je pgrm_doLoop ; if equal, do loop
 	jmp pgrm_top
@@ -137,9 +134,7 @@ pgrm:
 		mov dl, [edi] ; dl will hold desired goto label, will decrease to 0.
 		pgrm_doLoop_top:
 			; Set char (ebx), then go back
-			add ebx, ecx
-			mov al, [ebx]
-			sub ebx, ecx
+			mov al, [ebx + ecx]
 
 			; Increment char
 			inc ecx

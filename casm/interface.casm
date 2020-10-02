@@ -1,17 +1,18 @@
-; CrypticOS Prompt
+; CrypticOS Main Test Prompt
 
+var spaces '0'
 var input 0
-var new 10
 
-out "# CrypticOS"
+out "; Cryptic OS"
 call newline
 
 top:
 	out ": "
 	mov input getchar
-	call newline
+	;call newline
 
 	cmp input '?' help
+	cmp input ' ' space
 	out "UNKNOWN COMMAND"
 
 	call newline
@@ -19,6 +20,13 @@ jmp top
 
 help:
 	out "YEP"
+	call newline
+jmp top
+
+space:
+	add spaces 1
+	out "PRESSED:"
+	out spaces
 	call newline
 jmp top
 

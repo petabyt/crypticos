@@ -1,21 +1,111 @@
-; CrypticASM Math Functions
-; Contains add, mult, div
+; CrypticOS Kernel / Internal standard function library
 
-var std_first 0 ; initial integer
-var std_second 0 ; second integer (will be zero)
+arr a 6
+mov a[0] 'A'
+mov a[1] 'B'
+mov a[2] 'C'
+mov a[3] 'D'
+mov a[4] 'E'
+mov a[5] 'F'
+
+; operation:
+; 1 = store char
+; 2 = get char
+; Function parameters
+var std_third 0
+var std_second 0
+var std_first 0
 
 var std_result 0 ; Output variable
 var std_i 0 ; General purpose incremental variable
 
 jmp std_end ; jmp program start
 
+; std_first = operation
+; std_second = location
+; std_third = value to set/get
+char:
+	inl "d<<<^>>>" ; Reserve for operation
+	inl "d<<<<^>>>>" ; reserve for location
+	inl "d<<<<<^>>>>>d" ; Reserve for value to set or value to get
+	inl "d" ; reserve for temp
+	inl "d" ; reserve for label, set in loop (label)
+	inl "!^d" ; store zero to compare (value1)
+	inl "aaaaavddddd^" ; store value from fourth cell (value2)
+	inl "aa" ; go back
+	char_back:
+		inl "a^d" ; store current cell temp
+		inl "!+++^"; Go to label 3 (char_back_end)
+		inl "avd" ; restore temp value
+		inl "<"
+
+		; to go matching register + 1, store temp,
+		; sub matching register, return back
+		inl "ddd^"
+		inl "av-^dvaaa"
+	inl "?" ; equ
+
+	; Goto
+	inl "a^d" ; store current cell temp
+	inl "!++^"; Go to label 2 (char_back)
+	inl "avd" ; restore temp value
+	inl "$"
+
+	char_back_end:
+	; Store value.
+
+	inl "a^" ; store temp
+	inl "d!*-^" ; store label 4 (char_set)
+	inl "d!+^" ; store 1
+	inl "aaaaavdddddd^" ; store operation reg
+	inl "aa" ; back to label
+	inl "avd" ; restore value
+	inl "?"
+
+	; If operation is not 1 (2)
+	inl "aavdd" ; set value
+	char_set:
+	; If operation is 1:
+	inl "aa^dd" ; put char into value
+
+	; Now we are currently in the label reg.
+	; Go back to temp reg and store current memory cell.
+	inl "a^d"
+
+	inl "d" ; space for label
+	inl "!^d" ; store zero to compare
+	inl "aaaaavddddd^" ; store 4 to compare (matching register)
+	inl "aa" ; go back
+	inl "avd" ; Restore temp value
+	char_forward:
+		inl "a^d" ; store current cell temp
+		inl "!*+^"; Go to label 5 (char_forward_back)
+		inl "avd" ; restore temp value
+		inl ">"
+
+		; to go matching register + 1, store temp,
+		; sub matching register, return back
+		inl "ddd^"
+		inl "av-^dvaaa"
+	inl "?" ; equ
+
+	; Goto
+	inl "a^d" ; store current cell temp
+	inl "!*^"; Go to label 4 (char_forward)
+	inl "avd" ; restore temp value
+	inl "$"
+	char_forward_back:
+	inl "aavaaa" ; go to initial value, when started
+	inl "."
+ret
+
 std_add:
 	cmp std_second 0 std_add_stop ; is d zero? then stop
 	add std_first 1 ; increase first and
 	sub std_second 1 ; decrease second
 	jmp std_add
-std_add_stop:
-mov std_result std_first
+	std_add_stop:
+	mov std_result std_first
 ret
 
 ; divmod algorithm
@@ -29,7 +119,12 @@ std_divide:
 		sub std_first 1
 	jmp std_divide_sub
 	std_divide_exit:
+
+	; Do offsets
 	sub std_result 1
+	add std_i 1
+
+
 ret
 
 std_mult:
@@ -41,17 +136,19 @@ std_mult:
 		sub std_i 1
 		jmp std_mult_add
 	std_mult_add_end:
-
 	sub std_second 1
-jmp std_mult
-std_mult_end:
+	jmp std_mult
+	std_mult_end:
 ret
 
 std_end:
 
-mov std_first 22
-mov std_second 7
-call std_divide
+; std_first = operation
+; std_second = location
+; std_third = value to set/get
+mov std_third 50
+mov std_second 10
+mov std_first 1
 
-add std_result '0'
-out std_result
+call char
+incl

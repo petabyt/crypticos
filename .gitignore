@@ -2,3 +2,6 @@ build/
 build
 *.bin
 *.img
+*.o
+test
+test.asm
