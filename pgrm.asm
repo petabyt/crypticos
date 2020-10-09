@@ -1,5 +1,6 @@
 ; Simple implementation of CrypticASM. Stack isn't used much, just
 ; fast registers.
+
 ; eax = for chars
 ; ecx = char number
 ; edx = none

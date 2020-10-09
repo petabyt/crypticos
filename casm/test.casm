@@ -1,3 +1,9 @@
+arr a 5
+mov a[0] 'H'
+mov a[1] 'e'
+mov a[2] 'y'
+mov a[3] 0
+
 ; CrypticOS Kernel / Internal standard function library
 ; Revision 5
 
@@ -18,14 +24,18 @@ jmp std_end ; jmp program start
 ; std_second = location
 ; std_third = value to set/get
 std_get:
-	inl "d<<<^>>>" ; Reserve for operation
-	inl "d<<<<^>>>>" ; reserve for location
-	inl "d<<<<<^>>>>>d" ; Reserve for value to set or value to get
+	inl "d<<<^" ; Reserve for operation
+	inl "d<^" ; reserve for location
+	inl "d<^>>>>>" ; Reserve for value to set or value to get
+	inl "d" ; Reserve for temp 2???
 	inl "d" ; reserve for temp
+
+	; Reserve for IF
 	inl "d" ; reserve for label, set in loop (label)
 	inl "!^d" ; store zero to compare (value1)
-	inl "aaaaavddddd^" ; store value from fourth cell (value2)
-	inl "aa" ; go back
+	inl "aaaaavddddd^" ; store value from location
+
+	inl "aa" ; go back to label
 	char_back:
 		inl "a^d" ; store current cell temp
 		inl "!+++^"; Go to label 3 (char_back_end)
@@ -91,58 +101,9 @@ std_get:
 	inl "aa<<v>>aaa" ; go to initial value, when started
 ret
 
-std_add:
-	cmp std_second 0 std_add_stop ; is d zero? then stop
-	add std_first 1 ; increase first and
-	sub std_second 1 ; decrease second
-	jmp std_add
-	std_add_stop:
-	mov std_result std_first
-ret
-
-; divmod algorithm
-std_divide:
-	add std_result 1
-	mov std_i std_second
-	std_divide_sub:
-		cmp std_i 0 std_divide
-		sub std_i 1
-		cmp std_first 0 std_divide_exit
-		sub std_first 1
-	jmp std_divide_sub
-	std_divide_exit:
-
-	; Do offsets
-	sub std_result 1
-	add std_i 1
-ret
-
-std_mult:
-	mov std_result 0
-	cmp std_second 0 std_mult_end
-	mov std_i std_first
-	std_mult_add:
-		cmp std_i 0 std_mult_add_end
-		add std_result 1
-		sub std_i 1
-		jmp std_mult_add
-	std_mult_add_end:
-	sub std_second 1
-	jmp std_mult
-	std_mult_end:
-ret
-
-std_higher:
-	cmp std_second 0 std_higher_secondHigher
-	cmp std_first 0 std_higher_firstHigher
-	sub std_first 1
-	sub std_second 1
-	jmp std_higher
-	std_higher_firstHigher:
-	mov std_result, 2
-	ret
-	std_higher_secondHigher:
-	mov std_result 1
-ret
-
 std_end:
+
+
+mov std_first 1
+mov std_second [a]
+call std_get

@@ -1,5 +1,5 @@
 ; CrypticCode to Linux NASM Assembly language
-; Self hosted compiler, but needs some fixes.
+; Self hosted compiler, up to 27 labels
 
 ; Initialization
 out "SECTION .text"
@@ -56,7 +56,7 @@ comma:
 	out 10
 	out "MOV EBX,1" ; stdin
 	out 10
-	out "MOV EDX,1" ; input 2 char (one for enter)
+	out "MOV EDX,2" ; input 2 char (one for enter)
 	out 10
 	out "int 128"
 jmp top
