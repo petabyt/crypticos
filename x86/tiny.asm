@@ -1,4 +1,4 @@
-; Minimal 256 byte OS
+; Standalone Minimal 256 byte OS
 
 bits 16
 org 0x7c00
