@@ -3,7 +3,7 @@
 rm -rf build
 mkdir build
 
-nasm mini.asm -f bin -o build/boot.bin
+nasm test.asm -f bin -o build/boot.bin
 
 # Burn binary to flash drive
 # sudo dd bs=440 count=1 conv=notrunc if=build/boot.bin of=/dev/sdc

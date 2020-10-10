@@ -22,7 +22,7 @@ pgrm:
 		inc ecx ; increment char
 
 		; check for null terminator
-		cmp al, 0
+		or al, al
 		je pgrm_done
 
 		; Instruction tester
@@ -127,8 +127,7 @@ pgrm:
 		mov dl, [edi + 1] ; store in dl (first of edx)
 		mov dh, [edi + 2] ; store in dh (second of edx)
 		cmp dh, dl ; compare both values
-		je pgrm_doLoop ; if equal, do loop
-	jmp pgrm_top
+		jne pgrm_top ; if equal, do loop
 
 	pgrm_doLoop:
 		mov ecx, 0 ; reset char reading pointer
@@ -143,7 +142,7 @@ pgrm:
 			cmp al, '|' ; reached a label?
 			jne pgrm_doLoop_top ; if not, keep searching
 			dec dl ; decrease labels found
-			cmp dl, 0 ; is dl to zero yet?
+			or dl, dl
 			jne pgrm_doLoop_top ; if not, keep searching
 		; else loop is done
 	jmp pgrm_top
@@ -152,10 +151,6 @@ pgrm:
 		; get char
 		mov ah, 0x0
 		int 0x16
-
-		; write char
-		mov ah, 0x0E
-		int 0x10
 		mov [esi], al
 	jmp pgrm_top
 
