@@ -1,15 +1,15 @@
 # What a mess.
 
-rm -rf x86/build
-mkdir x86/build
+rm -rf build
+mkdir build
 
-nasm x86/tiny.asm -f bin -o x86/build/boot.bin
+nasm test.asm -f bin -o build/boot.bin
 
 # Burn binary to flash drive
 # sudo dd bs=440 count=1 conv=notrunc if=build/boot.bin of=/dev/sdc
 
-dd if=/dev/zero of=x86/build/floppy.img bs=512 count=2880
-dd if=x86/build/boot.bin of=x86/build/floppy.img
+dd if=/dev/zero of=build/floppy.img bs=512 count=2880
+dd if=build/boot.bin of=build/floppy.img
 
 # Build ISO image
 # cd build
@@ -20,6 +20,6 @@ dd if=x86/build/boot.bin of=x86/build/floppy.img
 
 read
 
-qemu-system-x86_64 x86/build/floppy.img -monitor stdio
+qemu-system-x86_64 build/floppy.img -monitor stdio
 
 #qemu-system-x86_64 -monitor tcp:127.0.0.1:1234,server,nowait build/floppy.img &

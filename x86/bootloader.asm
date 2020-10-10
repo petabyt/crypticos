@@ -17,9 +17,8 @@ dw 0xAA55
 main:
 bits 16
 
-init:
-mov ah, 14
-mov al, 'A'
-int 0x10
+; Load regular
+%include "main.asm"
 
-times 1024 - ($ - $$) db 0
+times 5000 - ($ - $$) db 0
+;dw 0AA55h

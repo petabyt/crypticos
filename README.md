@@ -57,10 +57,12 @@ Etc instructions to reduce code size and improve speed (compared to BrainF*)
 
 The small interpreter is currently ~200 bytes.
 
-## How to use
-On boot.asm, try this code:
-```
-!%***.
-+.
-+.
-```
+## Building
+### 256 byte OS
+`nasm -f bin tiny.asm -o build/boot.bin`  
+Simply type in code, and it will run.
+### Deluxe 4kb Version
+`nasm -f bin bootloader.asm -o build/boot.bin`  
+Usage:  
+`p` Enter program mode. `q` to quit.
+`>` load a program. Ex: `>a` to load pgrm a.
