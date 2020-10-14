@@ -1,0 +1,153 @@
+; Main CrypticASM compiler
+
+; Input buffer
+arr code 10
+
+; Command storage
+arr commands 9
+mov commands "movvarprt"
+
+; Compile with Kernel functions
+include "/home/daniel/Documents/os/kernel/kernel.casm"
+
+var tokenStart 0 ; Point to where token started
+var tokenLength 0 ; Point where the token stopped
+var tokenValue 0 ; Parsed int, char..
+var currentChar 0
+
+;mov gb code
+;mov ga 2 ; STORE
+f.top:
+	mov gc getchar
+	out gc
+	cmp gc 'A' dend
+	;call k.get
+	;sub gb 1
+	jmp f.top
+dend:
+
+
+
+mov currentChar [code] ; Start at beginning
+call getToken
+
+
+
+
+; Main ends, jump to end.
+jmp end
+
+; Read a token and store type/value
+; Parses int/char into real int
+getToken:
+	call getToken_next
+	cmp gr 0 getToken_done ; compare with null
+
+	; Check for alpha char (only 1 char)
+	mov gc gr
+
+	; Check digit char, jump
+	call isDigit
+	cmp gr 1 getToken_digit
+
+	mov tokenStart currentChar ; set token start (for strings)
+
+	; Check alpha char, jump
+	call isAlpha
+	cmp gr 1 getToken_alpha
+jmp getToken
+
+getToken_done:
+ret
+
+getToken_next:
+	mov ga 1 ; GET
+	mov gb currentChar
+	call k.get
+	sub currentChar 1 ; increment char
+	mov gc gr
+ret
+
+; Tokenize alpha chars
+getToken_alpha:
+	call getToken_next
+	call isAlpha
+	cmp gr 0 getToken_done
+jmp getToken_alpha
+
+; Parse and convert integers
+getToken_digit:
+	sub gc '0'
+
+	; tokenValue += gc
+	mov ga tokenValue
+	mov gb gc
+	call k.add
+	mov tokenValue gr
+
+	; Next char, check for next
+	call getToken_next
+
+	; Is next char digit? If not, Token done.
+	call isDigit
+	cmp gr 0 getToken_done
+
+	; Else
+	; tokenValue *= 10
+	mov ga tokenValue
+	mov gb 10
+	call k.mult
+	mov tokenValue gr
+jmp getToken_digit
+
+
+; Convert int (123 > %%****++)
+putInt:
+	; Below 50?
+	mov ga gc
+	mov gb 50
+	call k.higher
+	cmp gr 1 putInt_percent
+
+	; Below 5?
+	mov ga gc
+	mov gb 5
+	call k.higher
+	cmp gr 1 putInt_asterisk
+
+	; Below 1?
+	mov ga gc
+	mov gb 1
+	call k.higher
+	cmp gr 1 putInt_plus
+	out gc
+
+	cmp gc 0 putInt_quit
+jmp putInt
+
+putInt_percent:
+	; mov ga gc
+	; mov gb 50
+	; call k.sub
+
+	sub gc 50
+	out '%'
+jmp putInt
+
+putInt_asterisk:
+	sub gc 5
+	out '*'
+jmp putInt
+
+putInt_plus:
+	sub gc 1
+	out '+'
+jmp putInt
+
+putInt_quit:
+ret
+
+; Include kernel string functions
+include "/home/daniel/Documents/os/kernel/string.casm"
+
+end:

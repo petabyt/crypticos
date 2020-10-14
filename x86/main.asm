@@ -1,6 +1,6 @@
 ; CrypticOS 512 byte demo
 
-; Text
+section .text
 	welcome: db ">CrypticOS", 0
 	done: db "Done.", 0
 	invalid: db "Invalid command.", 0
@@ -70,6 +70,7 @@ hlt
 %include "print.asm"
 
 ; Unitialized data
-	buffer resb 100 ; command line input buffer
-	memtop resb 50 ; pgrm memory
-	membottom resb 500 ; pgrm memory
+section .bss:180 ; BSS starts at 180
+	buffer: resb 10 ; command line input buffer
+	memtop: resb 50 ; pgrm memory
+	membottom: resb 50 ; pgrm memory

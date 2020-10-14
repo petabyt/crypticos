@@ -2,7 +2,7 @@
 
 var input 0
 
-out "; Cryptic OS"
+out ": Cryptic OS"
 call newline
 
 top:

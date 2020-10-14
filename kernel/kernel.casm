@@ -1,34 +1,30 @@
 ; CrypticOS Kernel / Internal standard function library
-; Revision 5
 
-; operation:
-; 1 = store char
-; 2 = get char
-; Function parameters
-var std_third 0
-var std_second 0
-var std_first 0
+; General purpose variables
+; (general a, b, c, d)
+var gc 0 ; General c
+var gb 0 ; General b
+var ga 0 ; General a
+var gr 0 ; General result
+var gd 0 ; General d
 
-var std_result 0 ; Output variable
-var std_i 0 ; General purpose incremental variable
+jmp k.end ; jmp program start
 
-jmp std_end ; jmp program start
-
-; std_first = operation
-; std_second = location
-; std_third = value to set/get
-std_get:
-	inl "d<<<^>>>" ; Reserve for operation
-	inl "d<<<<^>>>>" ; reserve for location
-	inl "d<<<<<^>>>>>d" ; Reserve for value to set or value to get
+; ga = operation
+; gb = location
+; gc = value to set/get
+k.get:
+	inl "d<<<^" ; Reserve for operation
+	inl "d<^" ; reserve for location
+	inl "d<^>>>>>d" ; Reserve for value to set or value to get
 	inl "d" ; reserve for temp
 	inl "d" ; reserve for label, set in loop (label)
 	inl "!^d" ; store zero to compare (value1)
 	inl "aaaaavddddd^" ; store value from fourth cell (value2)
 	inl "aa" ; go back
-	char_back:
+	k.get_back:
 		inl "a^d" ; store current cell temp
-		inl "!+++^"; Go to label 3 (char_back_end)
+		inl "!+++^"; Go to label 3 (k.get_back.end)
 		inl "avd" ; restore temp value
 		inl "<"
 
@@ -40,15 +36,15 @@ std_get:
 
 	; Goto
 	inl "a^d" ; store current cell temp
-	inl "!++^"; Go to label 2 (char_back)
+	inl "!++^"; Go to label 2 (k.get_back)
 	inl "avd" ; restore temp value
 	inl "$"
 
-	char_back_end:
+	k.get_back_end:
 	; Store value.
 
 	inl "a^" ; store temp
-	inl "d!*-^" ; store label 4 (char_set)
+	inl "d!*-^" ; store label 4 (k.get_set)
 	inl "d!+^" ; store 1
 	inl "aaaaavdddddd^" ; store operation reg
 	inl "aa" ; back to label
@@ -57,7 +53,7 @@ std_get:
 
 	; If operation is not 1 (2)
 	inl "aavdd" ; set value
-	char_set:
+	k.get_set:
 	; If operation is 1:
 	inl "aa^dd" ; put char into value
 
@@ -70,9 +66,9 @@ std_get:
 	inl "aaaaavddddd^" ; store 4 to compare (matching register)
 	inl "aa" ; go back
 	inl "avd" ; Restore temp value
-	char_forward:
+	k.get_forward:
 		inl "a^d" ; store current cell temp
-		inl "!*+^"; Go to label 5 (char_forward_back)
+		inl "!*+^"; Go to label 5 (k.get_forward.back)
 		inl "avd" ; restore temp value
 		inl ">"
 
@@ -84,65 +80,71 @@ std_get:
 
 	; Goto
 	inl "a^d" ; store current cell temp
-	inl "!*^"; Go to label 4 (char_forward)
+	inl "!*^"; Go to label 4 (k.get_forward)
 	inl "avd" ; restore temp value
 	inl "$"
-	char_forward_back:
+	k.get_forward_back:
 	inl "aa<<v>>aaa" ; go to initial value, when started
 ret
 
-std_add:
-	cmp std_second 0 std_add_stop ; is d zero? then stop
-	add std_first 1 ; increase first and
-	sub std_second 1 ; decrease second
-	jmp std_add
-	std_add_stop:
-	mov std_result std_first
+k.add:
+	cmp gb 0 k.add_stop ; is d zero? then stop
+	add ga 1 ; increase first and
+	sub gb 1 ; decrease second
+	jmp k.add
+	k.add_stop:
+	mov gr ga
 ret
 
 ; divmod algorithm
-std_divide:
-	add std_result 1
-	mov std_i std_second
-	std_divide_sub:
-		cmp std_i 0 std_divide
-		sub std_i 1
-		cmp std_first 0 std_divide_exit
-		sub std_first 1
-	jmp std_divide_sub
-	std_divide_exit:
+k.divide:
+	add gr 1
+	mov gd gb
+	k.divide_sub:
+		cmp gd 0 k.divide
+		sub gd 1
+		cmp ga 0 k.divide_exit
+		sub ga 1
+	jmp k.divide_sub
+	k.divide_exit:
 
 	; Do offsets
-	sub std_result 1
-	add std_i 1
+	sub gr 1
+	add gd 1
 ret
 
-std_mult:
-	mov std_result 0
-	cmp std_second 0 std_mult_end
-	mov std_i std_first
-	std_mult_add:
-		cmp std_i 0 std_mult_add_end
-		add std_result 1
-		sub std_i 1
-		jmp std_mult_add
-	std_mult_add_end:
-	sub std_second 1
-	jmp std_mult
-	std_mult_end:
+k.mult:
+	mov gr 0
+	cmp gb 0 k.mult_end
+	mov gd ga
+	k.mult_add:
+		cmp gd 0 k.mult_add_end
+		add gr 1
+		sub gd 1
+		jmp k.mult_add
+	k.mult_add_end:
+	sub gb 1
+	jmp k.mult
+	k.mult_end:
 ret
 
-std_higher:
-	cmp std_second 0 std_higher_secondHigher
-	cmp std_first 0 std_higher_firstHigher
-	sub std_first 1
-	sub std_second 1
-	jmp std_higher
-	std_higher_firstHigher:
-	mov std_result, 2
+k.higher:
+	cmp gb 0 k.higher_secondHigher
+	cmp ga 0 k.higher_firstHigher
+	sub ga 1
+	sub gb 1
+	jmp k.higher
+	k.higher_firstHigher:
+	mov gr, 2
 	ret
-	std_higher_secondHigher:
-	mov std_result 1
+	k.higher_secondHigher:
+	mov gr 1
 ret
 
-std_end:
+k.end:
+
+mov ga 3
+mov gb 2
+call k.mult
+add gr '0'
+out gr

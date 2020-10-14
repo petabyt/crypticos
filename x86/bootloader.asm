@@ -3,7 +3,7 @@ bits 16
 org 0x7c00
 
 mov ah, 2 ; Load sectors
-mov al, 1 ; Read 1 sector
+mov al, 2 ; Read 2 sectors
 mov ch, 0 ; Cylinder
 mov cl, 2 ; Where to start
 mov dh, 0 ; Head 0
@@ -20,5 +20,5 @@ bits 16
 ; Load regular
 %include "main.asm"
 
-times 5000 - ($ - $$) db 0
+times 1024 - ($ - $$) db 0
 ;dw 0AA55h

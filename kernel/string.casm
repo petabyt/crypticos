@@ -1,95 +1,50 @@
-; Grab char or store char in specific spot in memory.
-; Needs 8 registers.
+; Input: gc = char
+; Check (a >= '0' && a <= '9')
+isDigit:
+	; above '0'
+	mov ga gc
+	mov gb '0'
+	call k.higher
+	cmp gr 2 isDigit_no
 
-arr a 6
-mov a[0] 'A'
-mov a[1] 'B'
-mov a[2] 'C'
-mov a[3] 'D'
-mov a[4] 'E'
-mov a[5] 'F'
+	; Check below '9'
+	mov ga gc
+	mov gb '9'
+	add gb 1
+	call k.higher
+	cmp gr 1 isDigit_no
+jmp isDigit_yes
 
-; operation:
-; 1 = store char
-; 2 = get char
-; Function parameters
-var std_third 50
-var std_second 10
-var std_first 1
+isDigit_no:
+	mov gr 0
+ret
 
-var std_result 0 ; Output variable
-var std_i 0 ; General purpose incremental variable
+isDigit_yes:
+	mov gr 1
+ret
 
-char:
-	inl "<<<^>>>d" ; Reserve for operation
-	inl "<<<<^>>>>d" ; reserve for location
-	inl "<<<<<^>>>>>dd" ; Reserve for value to set or value to get
-	inl "d" ; reserve for temp
-	inl "d" ; reserve for label, set in loop (label)
-	inl "!^d" ; store zero to compare (value1)
-	inl "aaaaavddddd^" ; store value from fourth cell (value2)
-	inl "aa" ; go back
-	char_back:
-		inl "a^d" ; store current cell temp
-		inl "!+++^"; Go to label 3 (char_back_end)
-		inl "avd" ; restore temp value
-		inl "<"
+; Input: gc = char
+; Check (a >= '0' && a <= '9')
+isAlpha:
+	; above 'A'
+	mov ga gc
+	mov gb 'A'
+	call k.higher
+	cmp gr 2 isDigit_no
 
-		; to go matching register + 1, store temp,
-		; sub matching register, return back
-		inl "ddd^"
-		inl "av-^dvaaa"
-	inl "?" ; equ
+	; Check below 'Z'
+	mov ga gc
+	mov gb 'Z'
+	add gb 1
+	call k.higher
+	cmp gr 1 isDigit_no
 
-	; Goto
-	inl "a^d" ; store current cell temp
-	inl "!++^"; Go to label 2 (char_back)
-	inl "avd" ; restore temp value
-	inl "$"
+jmp isAlpha_yes
 
-	char_back_end:
-	; Store value.
+isAlpha_no:
+	mov gr 0
+ret
 
-	inl "a^" ; store temp
-	inl "d!*-^" ; store label 4 (char_set)
-	inl "d!+^" ; store 1
-	inl "aaaaavdddddd^" ; store operation reg
-	inl "aa" ; back to label
-	inl "avd" ; restore value
-	inl "?"
-
-	; If operation is not 1 (2)
-	inl "aavdd" ; set value
-	char_set:
-	; If operation is 1:
-	inl "aa^dd" ; put char into value
-
-	; Now we are currently in the label reg.
-	; Go back to temp reg and store current memory cell.
-	inl "a^d"
-
-	inl "d" ; space for label
-	inl "!^d" ; store zero to compare
-	inl "aaaaavddddd^" ; store 4 to compare (matching register)
-	inl "aa" ; go back
-	inl "avd" ; Restore temp value
-	char_forward:
-		inl "a^d" ; store current cell temp
-		inl "!*+^"; Go to label 5 (char_forward_back)
-		inl "avd" ; restore temp value
-		inl ">"
-
-		; to go matching register + 1, store temp,
-		; sub matching register, return back
-		inl "ddd^"
-		inl "av-^dvaaa"
-	inl "?" ; equ
-
-	; Goto
-	inl "a^d" ; store current cell temp
-	inl "!*^"; Go to label 4 (char_forward)
-	inl "avd" ; restore temp value
-	inl "$"
-	char_forward_back:
-	inl "aava" ; go to initial value, when started
-inl "."
+isAlpha_yes:
+	mov gr 1
+ret
