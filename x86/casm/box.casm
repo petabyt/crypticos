@@ -1,0 +1,18 @@
+; Display an ASCII box
+
+; 201 ╔
+; 186 ║
+; 205 ═
+; 200 ╚
+; 188 ╝
+; 187 ╗
+
+out 201
+out 205
+out 205
+out 187
+inl "!**.+++."
+out 200
+out 205
+out 205
+out 188

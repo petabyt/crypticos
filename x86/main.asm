@@ -81,10 +81,10 @@ init:
 cli
 hlt
 
-%include "pgrm.asm"
-%include "keyboard.asm"
-%include "newline.asm"
-%include "print.asm"
+%include "func/pgrm.asm"
+%include "func/keyboard.asm"
+%include "func/newline.asm"
+%include "func/print.asm"
 
 ; Start one byte away from code. Either NASM ignores the
 ; errors this way, or it is an x86 thing.
