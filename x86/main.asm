@@ -57,6 +57,8 @@ init:
 			je runCommand_preloaded_b
 			cmp al, 'c'
 			je runCommand_preloaded_c
+			cmp al, 'd'
+			je runCommand_preloaded_d
 
 			runCommand_preloaded_back:
 			call pgrm
@@ -74,6 +76,10 @@ init:
 			mov ebx, pgrm_b
 		jmp runCommand_preloaded_back
 
+		runCommand_preloaded_d:
+			mov ebx, pgrm_d
+		jmp runCommand_preloaded_back
+
 		runCommand_done:
 		mov esi, done
 		call printStr
@@ -81,7 +87,7 @@ init:
 cli
 hlt
 
-%include "func/pgrm.asm"
+%include "pgrm.asm"
 %include "func/keyboard.asm"
 %include "func/newline.asm"
 %include "func/print.asm"
