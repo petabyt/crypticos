@@ -20,5 +20,5 @@ bits 16
 ; Load regular
 %include "main.asm"
 
+; 350 bytes for interpreter, the rest for programs
 times 1024 - ($ - $$) db 0
-;dw 0AA55h

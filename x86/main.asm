@@ -20,7 +20,7 @@ init:
 		mov esi, buffer
 		mov al, [esi]
 
-		; Check 'p' (pgrm)
+		; Check 'p' (pgrm mode)
 		cmp al, 'p'
 		je runCommand_pgrm
 
@@ -47,14 +47,23 @@ init:
 			jmp runCommand_pgrm ; back to prompt
 
 		runCommand_preloaded:
+			; Check second char
 			add esi, 1
 			mov al, [esi]
+
 			cmp al, 'a'
 			je runCommand_preloaded_a
-			ret
+			cmp al, 'b'
+			je runCommand_preloaded_b
+		ret
 
 		runCommand_preloaded_a:
 			mov ebx, pgrm_a
+			call pgrm
+			jmp terminal
+
+		runCommand_preloaded_b:
+			mov ebx, pgrm_b
 			call pgrm
 
 		runCommand_done:
@@ -69,8 +78,8 @@ hlt
 %include "newline.asm"
 %include "print.asm"
 
-; Unitialized data
-section .bss:180 ; BSS starts at 180
+; Unitialized data starts at 180
+section .bss:180
 	buffer: resb 10 ; command line input buffer
 	memtop: resb 50 ; pgrm memory
-	membottom: resb 50 ; pgrm memory
+	membottom: resb 500 ; pgrm memory
