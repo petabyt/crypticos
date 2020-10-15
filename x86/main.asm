@@ -55,16 +55,24 @@ init:
 			je runCommand_preloaded_a
 			cmp al, 'b'
 			je runCommand_preloaded_b
-		ret
+			cmp al, 'c'
+			je runCommand_preloaded_c
+
+			runCommand_preloaded_back:
+			call pgrm
+		jmp terminal
 
 		runCommand_preloaded_a:
 			mov ebx, pgrm_a
-			call pgrm
-			jmp terminal
+			jmp runCommand_preloaded_back
+
+		runCommand_preloaded_c:
+			mov ebx, pgrm_c
+		jmp runCommand_preloaded_back
 
 		runCommand_preloaded_b:
 			mov ebx, pgrm_b
-			call pgrm
+		jmp runCommand_preloaded_back
 
 		runCommand_done:
 		mov esi, done
@@ -78,8 +86,9 @@ hlt
 %include "newline.asm"
 %include "print.asm"
 
-; Unitialized data starts at 180
-section .bss:180
+; Start one byte away from code. Either NASM ignores the
+; errors this way, or it is an x86 thing.
+section .bss:1
 	buffer: resb 10 ; command line input buffer
 	memtop: resb 50 ; pgrm memory
 	membottom: resb 500 ; pgrm memory

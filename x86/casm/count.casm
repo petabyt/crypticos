@@ -1,6 +1,5 @@
 ; Demo: Count 0-9
-var a 50
-sub a 2
+var a '0'
 top:
 out a
 cmp a '9' end
