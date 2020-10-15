@@ -143,6 +143,7 @@ ret
 
 k.end:
 
+; 3 * 2 from kernel, print 6
 mov ga 3
 mov gb 2
 call k.mult

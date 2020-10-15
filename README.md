@@ -10,59 +10,67 @@ Tiny Programmable Bootsector (256 bytes) OS written in x86 Assembly.
 MIT Scratch: https://scratch.mit.edu/projects/424817216/
 
 ## Goals
-- [x] Write interpreter OS in 512 bytes  
-- [x] Write simple programs in that interpreter  
+- [x] Write OS in <512 bytes  
+- [x] Write simple programs for it
 - [x] Write assembler that compiles to it (https://github.com/pufflegamerz/CrypticDK)  
-- [ ] Write operating environment in that language  
-- [ ] Rewrite assembler in the assembler  
+- [x] Write operating environment in the assemblers  
+- [ ] Rewrite assembler in the assembler  (not finished, still on lexer)
 
 ## Applications
-CrypticOS has a modified version of BrainF* as it's main run time.  
-It resembles a "machine code" that can be easily interpreted.  
+CrypticOS uses a BrainF* inspired esoteric language as its main runtime.  
+It is different in many ways, mainly with logic and loops. In design it should  
+have the simplicity of BrainF*, but be more usable, efficient, and Assembly-like.
 
-The design is fairly simple. There are two pointers, and two memory arrays.  
-One is the top, and the other is the bottom.  
-The "top" acts like registers.
-The "bottom" acts like real memory.
+There are 16 instructions (2^4), therefore any program written in it can be  
+represented in a "nibble" 4 bit type. The program is loaded and read very similarly  
+to BrainF*.
 
-The following is the instruction set:  
+The design is fairly simple.
+There are two pointers, and two memory arrays. One is the top, and the other is the bottom.  
+The "top" acts like registers. The "bottom" acts like program memory.  
+
+### CrypticCode Instruction Set
 
 Move the two different pointers. Yes, based on WASD and arrow keys.  
 `>` = `pointer++`  
 `<` = `pointer--`  
 `d` = `pointer2++`  
 `a` = `pointer2--`  
-(Change ad to db?)
 
-Use these to move a value up the top or bottom.  
-Very useful for duplicating an integer: `^>v`
+Copying data:  
 `^` = `top[pointer] = bottom[pointer]`
 `v` = `mem[pointer] = top[pointer]`
+These are very useful for copying variables: `^>>v`
 
-Some Brainf inspired functions:
+Some Brainf inspired functions:  
 `+` = `bottom[pointer]++`  
 `-` = `bottom[pointer]--`  
 `.` = `print(mem[pointer])`  
 `,` = `bottom[pointer] = read()`  
 
-
+Logic and Jumping:  
 `?` = `if (top[pointer + 1] != top[pointer + 2]) {goto top[pointer]}`  
 `$` = `goto top[pointer]`  
-`|` = Label character. It can be accessed by it's occurrence (goto).
+`|` = Declare a label. It is jumped to by its occurance (first = 1..)
 
-Etc instructions to reduce code size and improve speed (compared to BrainF*)
+Etc instructions to reduce code size/speed (compared to BrainF*)
 `!` = `bottom[pointer] = 0`  
 `*` = `bottom[pointer] += 5`  
 `%` = `bottom[pointer] += 50`  
 
-The small interpreter is currently ~200 bytes.
+The small interpreter is currently ~200 bytes.  
+The full bootable IDLE is ~250 bytes.
 
 ## Building
 ### 256 byte OS
-`nasm -f bin tiny.asm -o build/boot.bin`  
-Simply type in code, and it will run.
-### Deluxe 4kb Version
+```
+nasm -f bin x86/tiny.asm -o build/boot.bin
+qemu-system-x86_64 build/boot.bin # Run the binary in whatever you want
+```
+### Deluxe >512 byte version
+This version has demos and stuff, but still the idea as `tiny.asm`.
 `nasm -f bin bootloader.asm -o build/boot.bin`  
 Usage:  
 `p` Enter program mode. `q` to quit.
 `>` load a program. Ex: `>a` to load pgrm a.
+There are programs a-c. Have fun.

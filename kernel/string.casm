@@ -1,3 +1,5 @@
+; Misc memory management functions for kernel.
+
 ; Input: gc = char
 ; Check (a >= '0' && a <= '9')
 isDigit:
