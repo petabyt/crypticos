@@ -3,6 +3,11 @@
 rm -rf x86/build
 mkdir x86/build
 
+# Build interface
+#node ../casm/cli/node.js main.casm > x86/build/main.o
+
+
+
 nasm x86/tiny.asm -f bin -o x86/build/boot.bin
 
 # Burn binary to flash drive

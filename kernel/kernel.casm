@@ -1,4 +1,5 @@
 ; CrypticOS Kernel / Internal standard function library
+; k.get, k.add, k.mult, k.div, k.higher
 
 ; General purpose variables
 ; (general a, b, c, d)
@@ -87,6 +88,7 @@ k.get:
 	inl "aa<<v>>aaa" ; go to initial value, when started
 ret
 
+; Add ga until gb is zero
 k.add:
 	cmp gb 0 k.add_stop ; is d zero? then stop
 	add ga 1 ; increase first and
@@ -108,7 +110,7 @@ k.divide:
 	jmp k.divide_sub
 	k.divide_exit:
 
-	; Do offsets
+	; Do offsets from 
 	sub gr 1
 	add gd 1
 ret
@@ -134,9 +136,11 @@ k.higher:
 	sub ga 1
 	sub gb 1
 	jmp k.higher
+
 	k.higher_firstHigher:
-	mov gr, 2
+		mov gr, 2
 	ret
+
 	k.higher_secondHigher:
 	mov gr 1
 ret
@@ -144,8 +148,8 @@ ret
 k.end:
 
 ; 3 * 2 from kernel, print 6
-mov ga 3
-mov gb 2
-call k.mult
-add gr '0'
-out gr
+; mov ga 3
+; mov gb 2
+; call k.mult
+; add gr '0'
+; out gr

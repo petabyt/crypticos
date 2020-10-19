@@ -1,5 +1,8 @@
 ; CrypticOS Main Test Prompt
 
+include "kernel/kernel.casm"
+
+
 var input 0
 
 out ": Cryptic OS"
@@ -9,8 +12,9 @@ top:
 	out ": "
 	mov input getchar
 
-	cmp input 'H' help
-	cmp input 'L' load
+	cmp input 'b' help
+	cmp input 'l' load
+	cmp input 'e' exit
 	out "Unknown"
 
 	call newline
@@ -28,3 +32,5 @@ jmp top
 newline:
 	inl "!**.+++."
 ret
+
+exit:

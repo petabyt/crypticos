@@ -2,34 +2,28 @@
 
 ; Input buffer
 arr code 10
+mov code[0] '1'
+mov code[1] '2'
+mov code[2] '3'
+mov code[3] ' '
+mov code[4] 0
 
 ; Command storage
 arr commands 9
 mov commands "movvarprt"
 
 ; Compile with Kernel functions
-include "/home/daniel/Documents/os/kernel/kernel.casm"
+include "/home/daniel/Documents/crypticos/kernel/kernel.casm"
 
 var tokenStart 0 ; Point to where token started
 var tokenLength 0 ; Point where the token stopped
 var tokenValue 0 ; Parsed int, char..
 var currentChar 0
 
-;mov gb code
-;mov ga 2 ; STORE
-f.top:
-	mov gc getchar
-	out gc
-	cmp gc 'A' dend
-	;call k.get
-	;sub gb 1
-	jmp f.top
-dend:
 
 
-
-mov currentChar [code] ; Start at beginning
-call getToken
+;mov currentChar [code] ; Start at beginning
+;call getToken
 
 
 
@@ -148,6 +142,6 @@ putInt_quit:
 ret
 
 ; Include kernel string functions
-include "/home/daniel/Documents/os/kernel/string.casm"
+include "/home/daniel/Documents/crypticos/kernel/string.casm"
 
 end:
