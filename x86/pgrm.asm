@@ -147,8 +147,24 @@ pgrm:
 		; else loop is done
 	jmp pgrm_top
 
+	pgrm_sys:
+		push ecx
+		push edx
+
+		; Set registers needed for interrupt
+		mov ah, [esi]
+		mov al, [esi + 1]
+		mov ch, [esi + 2]
+		mov cl, [esi + 3]
+		mov dh, [esi + 4]
+		mov dl, [esi + 5]
+		int 0x10
+
+		pop edx
+		pop ecx
+	jmp pgrm_top
+
 	pgrm_comma:
-		; get char
 		mov ah, 0x0
 		int 0x16
 		mov [esi], al

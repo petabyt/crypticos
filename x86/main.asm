@@ -95,6 +95,6 @@ hlt
 ; Start one byte away from code. Either NASM ignores the
 ; errors this way, or it is an x86 thing.
 section .bss:1
-	buffer: resb 10 ; command line input buffer
+	buffer: resb 100 ; command line input buffer
 	memtop: resb 50 ; pgrm memory
 	membottom: resb 500 ; pgrm memory

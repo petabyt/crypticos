@@ -10,4 +10,4 @@ nasm bootloader.asm -f bin -o build/boot.bin
 
 read
 
-qemu-system-x86_64 build/boot.bin
+qemu-system-x86_64 -drive format=raw,file=build/boot.bin
