@@ -1,27 +1,35 @@
 ; CrypticOS Main Test Prompt
 
-include "kernel/kernel.casm"
-
-
+; Input var
 var input 0
 
-out ": Cryptic OS"
+include "../kernel/kernel.casm"
+
+out ">CrypticOS"
 call newline
 
 top:
-	out ": "
+	out ":"
 	mov input getchar
 
-	cmp input 'b' help
+	cmp input 'c' calc
 	cmp input 'l' load
 	cmp input 'e' exit
-	out "Unknown"
 
+	out "Unknown"
 	call newline
 jmp top
 
-help:
-	out "HL"
+calc:
+	out "ascii add"
+	call newline
+
+	mov ga 3
+	mov gb 2
+	call k.mult
+	add gr '0'
+	out gr
+	
 	call newline
 jmp top
 

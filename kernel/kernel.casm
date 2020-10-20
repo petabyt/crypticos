@@ -116,14 +116,17 @@ k.divide:
 ret
 
 k.mult:
-	mov gr 0
+	mov gr 0 ; reset result, will add
+	k.mult_top:
 	cmp gb 0 k.mult_end
 	mov gd ga
+	
 	k.mult_add:
 		cmp gd 0 k.mult_add_end
 		add gr 1
 		sub gd 1
-		jmp k.mult_add
+	jmp k.mult_add
+
 	k.mult_add_end:
 	sub gb 1
 	jmp k.mult
