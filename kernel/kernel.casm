@@ -101,10 +101,10 @@ ret
 ; divmod algorithm
 k.divide:
 	add gr 1
-	mov gd gb
+	mov gd 0
 	k.divide_sub:
-		cmp gd 0 k.divide
-		sub gd 1
+		cmp gd gb k.divide
+		add gd 1
 		cmp ga 0 k.divide_exit
 		sub ga 1
 	jmp k.divide_sub
@@ -129,7 +129,7 @@ k.mult:
 
 	k.mult_add_end:
 	sub gb 1
-	jmp k.mult
+	jmp k.mult_top
 	k.mult_end:
 ret
 

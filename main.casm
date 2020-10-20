@@ -24,9 +24,9 @@ calc:
 	out "ascii add"
 	call newline
 
-	mov ga 3
-	mov gb 2
-	call k.mult
+	mov ga 22
+	mov gb 7
+	call k.div
 	add gr '0'
 	out gr
 	
