@@ -4,7 +4,7 @@ section .text
 	welcome: db ">CrypticOS", 0
 	done: db "Done.", 0
 	invalid: db "Invalid command.", 0
-	%include "pgrms.asm"
+	%include "build/pgrms.asm"
 
 ; Main bootloader jump label
 init:
