@@ -1,5 +1,4 @@
-; CrypticOS Kernel / Internal standard function library
-; k.get, k.add, k.mult, k.div, k.higher
+; CrypticOS Kernel
 
 ; General purpose variables
 ; (general a, b, c, d)
@@ -88,6 +87,14 @@ k.get:
 	inl "aa<<v>>aaa" ; go to initial value, when started
 ret
 
+k.reset:
+	mov gc 0
+	mov gb 0
+	mov ga 0
+	mov gr 0
+	mov gd 0
+ret
+
 ; Add ga until gb is zero
 k.add:
 	cmp gb 0 k.add_stop ; is d zero? then stop
@@ -99,20 +106,20 @@ k.add:
 ret
 
 ; divmod algorithm
-k.divide:
+k.div:
 	add gr 1
 	mov gd 0
-	k.divide_sub:
-		cmp gd gb k.divide
+	k.div_sub:
+		cmp gd gb k.div
 		add gd 1
-		cmp ga 0 k.divide_exit
+		cmp ga 0 k.div_exit
 		sub ga 1
-	jmp k.divide_sub
-	k.divide_exit:
+	jmp k.div_sub
+	k.div_exit:
 
 	; Do offsets from 
 	sub gr 1
-	add gd 1
+	sub gd 1
 ret
 
 k.mult:
@@ -133,26 +140,26 @@ k.mult:
 	k.mult_end:
 ret
 
-k.higher:
-	cmp gb 0 k.higher_secondHigher
-	cmp ga 0 k.higher_firstHigher
+k.high:
+	cmp gb 0 k.high_secondHigher
+	cmp ga 0 k.high_firstHigher
 	sub ga 1
 	sub gb 1
-	jmp k.higher
+	jmp k.high
 
-	k.higher_firstHigher:
+	k.high_firstHigher:
 		mov gr, 2
 	ret
 
-	k.higher_secondHigher:
+	k.high_secondHigher:
 	mov gr 1
 ret
 
 k.end:
 
-; 3 * 2 from kernel, print 6
-; mov ga 3
-; mov gb 2
-; call k.mult
-; add gr '0'
-; out gr
+;mov ga 22
+;mov gb 7
+;call k.mult
+;add gr '0'
+;out gr
+

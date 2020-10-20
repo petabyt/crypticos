@@ -21,14 +21,17 @@ top:
 jmp top
 
 calc:
-	out "ascii add"
 	call newline
 
+	call k.reset
 	mov ga 22
 	mov gb 7
 	call k.div
 	add gr '0'
 	out gr
+	out "."
+	add gd '0'
+	out gd
 	
 	call newline
 jmp top
