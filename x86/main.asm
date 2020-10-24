@@ -59,6 +59,8 @@ init:
 			je runCommand_preloaded_c
 			cmp al, 'd'
 			je runCommand_preloaded_d
+			cmp al, 'e'
+			je runCommand_preloaded_e
 
 			runCommand_preloaded_back:
 			call pgrm
@@ -79,6 +81,10 @@ init:
 		runCommand_preloaded_d:
 			mov ebx, pgrm_d
 		jmp runCommand_preloaded_back
+		
+		runCommand_preloaded_e:
+			mov ebx, pgrm_e
+		jmp runCommand_preloaded_back
 
 		runCommand_done:
 		mov esi, done
@@ -96,5 +102,5 @@ hlt
 ; errors this way, or it is an x86 thing.
 section .bss:1
 	buffer: resb 100 ; command line input buffer
-	memtop: resb 50 ; pgrm memory
-	membottom: resb 500 ; pgrm memory
+	memtop: resw 50 ; pgrm memory
+	membottom: resw 500 ; pgrm memory

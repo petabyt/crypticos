@@ -1,6 +1,7 @@
-; Simple implementation of CrypticASM. Stack isn't used much, just
-; fast registers.
+; Simple implementation of CrypticASM. Stack or reserved mem 
+; isn't used much, just registers.
 
+; What each register is used for:
 ; eax = for chars
 ; ecx = char number
 ; edx = none
@@ -8,7 +9,8 @@
 ; edi = memtop
 ; esi = membottom
 
-; ebx = read from
+; Note that each cell is 16 bit, not 8 bit. So we must increase
+; by 2 bytes instead of 1. 
 pgrm:
 	; Store the memory
 	mov edi, memtop
@@ -21,8 +23,7 @@ pgrm:
 		mov al, [ebx + ecx]
 		inc ecx ; increment char
 
-		; check for null terminator
-		or al, al
+		or al, al ; Is al zero (null terminator)?
 		je pgrm_done
 
 		; Instruction tester
@@ -52,6 +53,8 @@ pgrm:
 			je pgrm_top_bottom
 		cmp al, ','
 			je pgrm_comma
+		cmp al, '@'
+			je pgrm_sys
 		cmp al, '?'
 			je pgrm_if
 		cmp al, '$'
@@ -67,71 +70,75 @@ pgrm:
 
 	; +
 	pgrm_plus:
-		add byte [esi], 1
+		add word [esi], 1
 	jmp pgrm_top
 
 	; *
 	pgrm_plus5:
-		add byte [esi], 5
+		add word [esi], 5
 	jmp pgrm_top
 
 	; %
 	pgrm_plus50:
-		add byte [esi], 50
+		add word [esi], 50
 	jmp pgrm_top
 
 	; -
 	pgrm_minus:
-		sub byte [esi], 1
+		sub word [esi], 1
 	jmp pgrm_top
 
 	; >
 	pgrm_bottom_next:
-		inc esi
+		add esi, 2
+		;inc esi
 	jmp pgrm_top
 
 	; <
 	pgrm_bottom_back:
-		dec esi
+		sub esi, 2
+		;dec esi
 	jmp pgrm_top
 
 	; d
 	pgrm_top_next:
-		inc edi
+		add edi, 2
 	jmp pgrm_top
 
 	; a
 	pgrm_top_back:
-		dec edi
+		sub edi, 2
 	jmp pgrm_top
 
 	; ^
 	pgrm_bottom_top:
-		mov al, [esi]
-		mov [edi], al
+		xor ax, ax
+		mov ax, [esi]
+		mov [edi], ax
 	jmp pgrm_top
 
 	; v
 	pgrm_top_bottom:
-		mov al, [edi]
-		mov [esi], al
+		xor ax, ax
+		mov ax, [edi]
+		mov [esi], ax
 	jmp pgrm_top
 
 	; !
 	pgrm_reset:
-		mov byte [esi], 0
+		mov word [esi], 0
 	jmp pgrm_top
 
 	; ?
 	pgrm_if:
-		mov dl, [edi + 1] ; store in dl (first of edx)
-		mov dh, [edi + 2] ; store in dh (second of edx)
-		cmp dh, dl ; compare both values
+		mov dx, [edi + 2] ; store in dl (first of edx)
+		mov ax, [edi + 4] ; store in dh (second of edx)
+		cmp ax, dx ; compare both values
 		jne pgrm_top ; if equal, do loop
 
 	pgrm_doLoop:
 		mov ecx, 0 ; reset char reading pointer
-		mov dl, [edi] ; dl will hold desired goto label, will decrease to 0.
+		mov dx, [edi] ; dl will hold desired goto label, will decrease to 0.
 		pgrm_doLoop_top:
 			; Set char (ebx), then go back
 			mov al, [ebx + ecx]
@@ -141,8 +148,8 @@ pgrm:
 
 			cmp al, '|' ; reached a label?
 			jne pgrm_doLoop_top ; if not, keep searching
-			dec dl ; decrease labels found
-			or dl, dl
+			dec dx ; decrease labels found
+			or dx, dx
 			jne pgrm_doLoop_top ; if not, keep searching
 		; else loop is done
 	jmp pgrm_top
@@ -153,12 +160,14 @@ pgrm:
 
 		; Set registers needed for interrupt
 		mov ah, [esi]
-		mov al, [esi + 1]
-		mov ch, [esi + 2]
-		mov cl, [esi + 3]
-		mov dh, [esi + 4]
-		mov dl, [esi + 5]
-		int 0x10
+		mov al, [esi + 2]
+		mov ch, [esi + 4]
+		mov cl, [esi + 6]
+		mov dh, [esi + 8]
+		mov dl, [esi + 10]
+		mov bh, [esi + 12]
+		mov bl, [esi + 14]
+		int 0x10 ; Main interupt
 
 		pop edx
 		pop ecx

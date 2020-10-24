@@ -27,10 +27,12 @@ calc:
 	mov ga 22
 	mov gb 7
 	call k.div
-	add gr '0'
+
+	add gr '0' ; Result
+	add gd '0' ; Remainder
+
 	out gr
 	out "."
-	add gd '0'
 	out gd
 	
 	call newline
