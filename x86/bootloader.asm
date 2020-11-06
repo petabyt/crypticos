@@ -2,8 +2,10 @@
 bits 16
 org 0x7c00
 
+%define SIZE 8
+
 mov ah, 2 ; Load sectors
-mov al, 8 ; Read 4 sectors
+mov al, SIZE ; Read 4 sectors
 mov ch, 0 ; Cylinder
 mov cl, 2 ; Where to start
 mov dh, 0 ; Head 0
@@ -21,4 +23,4 @@ bits 16
 %include "main.asm"
 
 ; 350 bytes for interpreter, the rest for programs
-times 4096 - ($ - $$) db 0
+times (SIZE * 512) - ($ - $$) db 0

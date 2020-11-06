@@ -1,0 +1,60 @@
+; x86 Registers
+var ah 0
+var al 0
+
+var ch 0
+var cl 0
+
+var dh 0
+var dl 0
+
+var bh 0
+var bl 0
+
+
+
+set al 5 ; mode 12
+run setVideo
+
+set ah 11
+set bh 0
+set bl 1
+run int
+
+; Print character
+set ah 9
+set al 'A'
+set ch 0
+set cl 1 ; Print once
+set dh 0
+set dl 0
+set bh 0 ; Page number
+set bl 1 ; Color
+run int
+
+
+jmp end
+
+setVideo:
+	set ah 0
+	run int
+ret
+
+drawPixel:
+	set ah 12
+	set al 5
+	set ch 0
+	set cl 10 ; x = 10
+	set dh 0
+	set dl 10 ; y = 10
+	run int
+ret
+
+; Start the interrupt
+int:
+	got 0
+	inl "@"
+ret
+
+end:
+
