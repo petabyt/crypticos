@@ -4,7 +4,7 @@ Tiny Programmable Bootsector (256 bytes) OS written in x86 Assembly.
 ## Design
 1. The core design should not depend on CPU architecture.  
 2. It should be usable within 512 bytes, and not have to squeeze bytes in order to implement basic functionality.  
-3. The kernel, assembler, and environment should be written in CrypticASM.  
+3. The kernel, assembler, and environment should be written in CrypticASM (CASM).  
 
 ## Emulators
 MIT Scratch: https://scratch.mit.edu/projects/424817216/
