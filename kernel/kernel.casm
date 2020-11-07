@@ -88,31 +88,31 @@ k.get:
 ret
 
 k.reset:
-	mov gc 0
-	mov gb 0
-	mov ga 0
-	mov gr 0
-	mov gd 0
+	set gc 0
+	set gb 0
+	set ga 0
+	set gr 0
+	set gd 0
 ret
 
 ; Add ga until gb is zero
 k.add:
-	cmp gb 0 k.add_stop ; is d zero? then stop
+	equ gb 0 k.add_stop ; is d zero? then stop
 	add ga 1 ; increase first and
 	sub gb 1 ; decrease second
 	jmp k.add
 	k.add_stop:
-	mov gr ga
+	set gr ga
 ret
 
 ; divmod algorithm
 k.div:
 	add gr 1
-	mov gd 0
+	set gd 0
 	k.div_sub:
-		cmp gd gb k.div
+		equ gd gb k.div
 		add gd 1
-		cmp ga 0 k.div_exit
+		equ ga 0 k.div_exit
 		sub ga 1
 	jmp k.div_sub
 	k.div_exit:
@@ -122,14 +122,16 @@ k.div:
 	sub gd 1
 ret
 
+; gr = result
+; gd = remainder
 k.mult:
-	mov gr 0 ; reset result, will add
+	set gr 0 ; reset result, will add
 	k.mult_top:
-	cmp gb 0 k.mult_end
-	mov gd ga
+	equ gb 0 k.mult_end
+	set gd ga
 	
 	k.mult_add:
-		cmp gd 0 k.mult_add_end
+		equ gd 0 k.mult_add_end
 		add gr 1
 		sub gd 1
 	jmp k.mult_add
@@ -141,25 +143,26 @@ k.mult:
 ret
 
 k.high:
-	cmp gb 0 k.high_secondHigher
-	cmp ga 0 k.high_firstHigher
+	equ gb 0 k.high_secondHigher
+	equ ga 0 k.high_firstHigher
 	sub ga 1
 	sub gb 1
 	jmp k.high
 
 	k.high_firstHigher:
-		mov gr, 2
+		set gr 1
 	ret
 
 	k.high_secondHigher:
-	mov gr 1
+	set gr 0
 ret
 
 k.end:
 
-;mov ga 22
-;mov gb 7
-;call k.mult
-;add gr '0'
-;out gr
+;set gr 0
+;set ga 22
+;set gb 7
+;run k.div
+;add gd '0'
+;prt gd
 

@@ -4,49 +4,49 @@
 ; Check (a >= '0' && a <= '9')
 isDigit:
 	; above '0'
-	mov ga gc
-	mov gb '0'
-	call k.higher
-	cmp gr 2 isDigit_no
+	set ga gc
+	set gb '0'
+	run k.higher
+	equ gr 2 isDigit_no
 
 	; Check below '9'
-	mov ga gc
-	mov gb '9'
+	set ga gc
+	set gb '9'
 	add gb 1
-	call k.higher
-	cmp gr 1 isDigit_no
+	run k.higher
+	equ gr 1 isDigit_no
 jmp isDigit_yes
 
 isDigit_no:
-	mov gr 0
+	set gr 0
 ret
 
 isDigit_yes:
-	mov gr 1
+	set gr 1
 ret
 
 ; Input: gc = char
 ; Check (a >= '0' && a <= '9')
 isAlpha:
 	; above 'A'
-	mov ga gc
-	mov gb 'A'
-	call k.higher
-	cmp gr 2 isDigit_no
+	set ga gc
+	set gb 'A'
+	run k.higher
+	equ gr 2 isDigit_no
 
 	; Check below 'Z'
-	mov ga gc
-	mov gb 'Z'
+	set ga gc
+	set gb 'Z'
 	add gb 1
-	call k.higher
-	cmp gr 1 isDigit_no
+	run k.higher
+	equ gr 1 isDigit_no
 
 jmp isAlpha_yes
 
 isAlpha_no:
-	mov gr 0
+	set gr 0
 ret
 
 isAlpha_yes:
-	mov gr 1
+	set gr 1
 ret
