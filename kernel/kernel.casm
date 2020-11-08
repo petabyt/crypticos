@@ -1,5 +1,8 @@
 ; CrypticOS Kernel
 
+def GET 2
+def SET 1
+
 ; General purpose variables
 ; (general a, b, c, d)
 var gc 0 ; General c
@@ -95,7 +98,7 @@ k.reset:
 	set gd 0
 ret
 
-; Add ga until gb is zero
+; Simply Add ga until gb is zero
 k.add:
 	equ gb 0 k.add_stop ; is d zero? then stop
 	add ga 1 ; increase first and

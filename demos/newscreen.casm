@@ -1,0 +1,5 @@
+; Print 10 (newlines), then 13 (return to beginning)
+var m 10
+inl "...................................."
+add m 3
+inl ".!"

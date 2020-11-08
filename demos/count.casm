@@ -1,0 +1,9 @@
+var a '0'
+
+top:
+	prt a
+	add a 1
+	equ a '9' end
+jmp top
+
+end:

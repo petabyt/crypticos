@@ -4,19 +4,17 @@ rm -rf build
 mkdir build
 
 
-node ../../casm/cli/node.js ../main.casm >> build/a.o
+casm a ../arch/video.casm > build/a.o
+casm a ../demos/hello.casm > build/b.o
+casm a ../demos/count.casm > build/c.o
 
+# Insert programs
 echo "; Main program file. Store programs here." >> build/pgrms.asm
-echo "pgrm_a: db '!%****++.*****++++.*++..+++.!********++++.!******++.%*.****++++.+++.!%%*+++.!%%.!******+++.a', 0 ; Hello World" >> build/pgrms.asm
-echo "pgrm_b: db '!%-->|<.>dd!<^>a!%*++^a!++^!?<+>!+^$|', 0 ; Count 1-10" >> build/pgrms.asm
-echo "pgrm_c: db '!>!>!>!>!>!>!>!<<<<<<<!**+>>>>>>!>!+>!+^d!+++^$|<<<<<<<<!*++++>!%***>!>!+>!>!>!>!+>!++^d!+++^$|!++++^$|<<<<<<<<@>>>>>>>>a$|', 0; Newline pgrm" >> build/pgrms.asm
-#echo "pgrm_d: db '`cat build/a.o`', 0" >> build/pgrms.asm
-echo "pgrm_d: db '!**++>!*>!>!+>!>!+>!+>!<<<<<<<', 0" >> build/pgrms.asm
-echo "pgrm_e: db '!**->!%***>!>!+>!+>!>!>!++<<<<<<<@', 0" >> build/pgrms.asm
-
-# 9 A 0 1 1 0 0 1
-# !**->!%***>!>!+>!+>!>!>!+<<<<<<<@
-# !**.........................+++.
+echo "pgrm_a: db '`cat build/b.o`', 0" >> build/pgrms.asm
+echo "pgrm_b: db '`cat build/c.o`', 0" >> build/pgrms.asm
+echo "pgrm_c: db '',0" >> build/pgrms.asm
+echo "pgrm_d: db '`cat build/a.o`',0" >> build/pgrms.asm
+echo "pgrm_e: db '',0" >> build/pgrms.asm
 
 nasm bootloader.asm -f bin -o build/boot.bin
 

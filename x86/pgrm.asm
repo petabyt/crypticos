@@ -157,6 +157,7 @@ pgrm:
 	pgrm_sys:
 		push ecx
 		push edx
+		push ebx
 
 		; Set registers needed for interrupt
 		mov ah, [esi]
@@ -169,6 +170,7 @@ pgrm:
 		mov bl, [esi + 14]
 		int 0x10 ; Main interupt
 
+		pop ebx
 		pop edx
 		pop ecx
 	jmp pgrm_top

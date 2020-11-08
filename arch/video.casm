@@ -12,31 +12,51 @@ var bh 0
 var bl 0
 
 
+; Set mode to 0x12
+;set al 5
+;run setVideo
 
-set al 5 ; mode 12
-run setVideo
-
-set ah 11
-set bh 0
-set bl 1
-run int
+;set ah 11
+;set bh 0
+;set bl 1
+;run int
 
 ; Print character
-set ah 9
+
 set al 'A'
-set ch 0
-set cl 1 ; Print once
-set dh 0
-set dl 0
-set bh 0 ; Page number
-set bl 1 ; Color
-run int
+set bl 1
+run drawChar
+
+prt 10
+
+set al 'B'
+set bl 2
+run drawChar
+
+prt 10
+
+set al 'C'
+set bl 3
+run drawChar
+
 
 
 jmp end
 
 setVideo:
 	set ah 0
+	run int
+ret
+
+drawChar:
+	set ah 9
+	;set al 'A'
+	set ch 0
+	set cl 10 ; Print once
+	set dh 0
+	set dl 0
+	set bh 0 ; Page number
+	;set bl 1 ; Color
 	run int
 ret
 
