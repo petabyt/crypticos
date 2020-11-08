@@ -16,7 +16,7 @@ MIT Scratch: https://scratch.mit.edu/projects/424817216/
 - [x] Write operating environment in the assemblers  
 - [ ] Rewrite assembler in the assembler  (not finished, still on lexer)
 
-## Applications
+## So what does it do?
 CrypticOS uses a BrainF* inspired esoteric language as its main runtime.  
 It is different in many ways, mainly with logic and loops. In design it should  
 have the simplicity of BrainF*, but be more usable, efficient, and Assembly-like.
@@ -60,6 +60,12 @@ Etc instructions to reduce code size/speed (compared to BrainF*)
 
 The small interpreter is currently ~200 bytes.  
 The full bootable IDLE is ~250 bytes.
+
+## CrypticASM (CASM)
+The main language for CrypticOS internals and applications. You can find  
+an online emulator and assembler here: https://pufflegamerz.github.io/CrypticDK/www/  
+
+If you wish to write CASM with a modern text editor, use casm.yaml with the Micro editor.  
 
 ## Building
 ### 256 byte OS
