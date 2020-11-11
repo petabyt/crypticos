@@ -1,0 +1,16 @@
+; divmod algorithm
+k.div:
+	add gr 1
+	set gd 0
+	k.div_sub:
+		equ gd gb k.div
+		add gd 1
+		equ ga 0 k.div_exit
+		sub ga 1
+	jmp k.div_sub
+	k.div_exit:
+
+	; Do offsets from 
+	sub gr 1
+	sub gd 1
+ret

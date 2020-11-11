@@ -1,0 +1,9 @@
+; Simply Add ga until gb is zero
+k.add:
+	equ gb 0 k.add_stop ; is d zero? then stop
+	add ga 1 ; increase first and
+	sub gb 1 ; decrease second
+	jmp k.add
+	k.add_stop:
+	set gr ga
+ret

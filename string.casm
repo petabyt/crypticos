@@ -1,4 +1,4 @@
-; Misc memory management functions for kernel.
+; String functions for applications
 
 ; Input: gc = char
 ; Check (a >= '0' && a <= '9')

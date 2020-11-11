@@ -1,19 +1,11 @@
-; CrypticOS Kernel
+; This function is written purely in Cryptic Instruction and
+; Is used to move back and forth to abritary locations in memory
+; on run time, not on compile time.
 
 def GET 2
 def SET 1
 
-; General purpose variables
-; (general a, b, c, d)
-var gc 0 ; General c
-var gb 0 ; General b
-var ga 0 ; General a
-var gr 0 ; General result
-var gd 0 ; General d
-
-jmp k.end ; jmp program start
-
-; ga = operation
+; ga = operation (GET/SET)
 ; gb = location
 ; gc = value to set/get
 k.get:
@@ -89,83 +81,3 @@ k.get:
 	k.get_forward_back:
 	inl "aa<<v>>aaa" ; go to initial value, when started
 ret
-
-k.reset:
-	set gc 0
-	set gb 0
-	set ga 0
-	set gr 0
-	set gd 0
-ret
-
-; Simply Add ga until gb is zero
-k.add:
-	equ gb 0 k.add_stop ; is d zero? then stop
-	add ga 1 ; increase first and
-	sub gb 1 ; decrease second
-	jmp k.add
-	k.add_stop:
-	set gr ga
-ret
-
-; divmod algorithm
-k.div:
-	add gr 1
-	set gd 0
-	k.div_sub:
-		equ gd gb k.div
-		add gd 1
-		equ ga 0 k.div_exit
-		sub ga 1
-	jmp k.div_sub
-	k.div_exit:
-
-	; Do offsets from 
-	sub gr 1
-	sub gd 1
-ret
-
-; gr = result
-; gd = remainder
-k.mult:
-	set gr 0 ; reset result, will add
-	k.mult_top:
-	equ gb 0 k.mult_end
-	set gd ga
-	
-	k.mult_add:
-		equ gd 0 k.mult_add_end
-		add gr 1
-		sub gd 1
-	jmp k.mult_add
-
-	k.mult_add_end:
-	sub gb 1
-	jmp k.mult_top
-	k.mult_end:
-ret
-
-k.high:
-	equ gb 0 k.high_secondHigher
-	equ ga 0 k.high_firstHigher
-	sub ga 1
-	sub gb 1
-	jmp k.high
-
-	k.high_firstHigher:
-		set gr 1
-	ret
-
-	k.high_secondHigher:
-	set gr 0
-ret
-
-k.end:
-
-;set gr 0
-;set ga 22
-;set gb 7
-;run k.div
-;add gd '0'
-;prt gd
-

@@ -1,0 +1,19 @@
+; gr = result
+; gd = remainder
+k.mult:
+	set gr 0 ; reset result, will add
+	k.mult_top:
+	equ gb 0 k.mult_end
+	set gd ga
+	
+	k.mult_add:
+		equ gd 0 k.mult_add_end
+		add gr 1
+		sub gd 1
+	jmp k.mult_add
+
+	k.mult_add_end:
+	sub gb 1
+	jmp k.mult_top
+	k.mult_end:
+ret
