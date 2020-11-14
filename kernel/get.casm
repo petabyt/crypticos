@@ -2,8 +2,8 @@
 ; Is used to move back and forth to abritary locations in memory
 ; on run time, not on compile time.
 
-def GET 2
-def SET 1
+def GET 1
+def SET 2
 
 ; ga = operation (GET/SET)
 ; gb = location
@@ -79,5 +79,6 @@ k.get:
 	inl "avd" ; restore temp value
 	inl "$"
 	k.get_forward_back:
-	inl "aa<<v>>aaa" ; go to initial value, when started
+	got gr
+	inl "aavaaa" ; go to initial value, when started
 ret
