@@ -12,8 +12,8 @@ MIT Scratch: https://scratch.mit.edu/projects/424817216/
 ## Goals
 - [x] Write OS in <512 bytes  
 - [x] Write simple programs for it
-- [x] Write assembler that compiles to it (https://github.com/pufflegamerz/CrypticDK)  
-- [x] Write operating environment in the assemblers  
+- [x] Write assembler that compiles to it (https://github.com/pufflegamerz/casm)  
+- [x] Write operating environment in the assembler  
 - [ ] Rewrite assembler in the assembler  (not finished, still on lexer)
 
 ## So what does it do?
@@ -32,38 +32,39 @@ The "top" acts like registers. The "bottom" acts like program memory.
 ### CrypticCode Instruction Set
 
 Move the two different pointers. Yes, based on WASD and arrow keys.  
-`>` = `pointer++`  
-`<` = `pointer--`  
-`d` = `pointer2++`  
-`a` = `pointer2--`  
+`>` = `pointerb++`  
+`<` = `pointerb--`  
+`d` = `pointera++`  
+`a` = `pointera--`  
 
 Copying data:  
-`^` = `top[pointer] = bottom[pointer]`
-`v` = `mem[pointer] = top[pointer]`
-These are very useful for copying variables: `^>>v`
+`^` = `top[pointer] = bottom[pointerb]`  
+`v` = `mem[pointer] = top[pointer]`  
+These are very useful for copying variables: `^>>v`  
 
-Some Brainf inspired functions:  
-`+` = `bottom[pointer]++`  
-`-` = `bottom[pointer]--`  
-`.` = `print(mem[pointer])`  
-`,` = `bottom[pointer] = read()`  
+Brainf based functions:  
+`+` = `bottom[pointerb]++`  
+`-` = `bottom[pointerb]--`  
+`.` = `print(mem[pointerb])`  
+`,` = `bottom[pointerb] = read()`  
 
 Logic and Jumping:  
-`?` = `if (top[pointer + 1] != top[pointer + 2]) {goto top[pointer]}`  
-`$` = `goto top[pointer]`  
-`|` = Declare a label. It is jumped to by its occurance (first = 1..)
+`?` = `if (top[pointera + 1] != top[pointera + 2]) {goto top[pointera]}`  
+`$` = `goto top[pointera]`  
+`|` = Declare a label. It is jumped to by its occurance (first = 1..)  
 
-Etc instructions to reduce code size/speed (compared to BrainF*)
-`!` = `bottom[pointer] = 0`  
-`*` = `bottom[pointer] += 5`  
-`%` = `bottom[pointer] += 50`  
+MISC Instructions
+`!` = `bottom[pointerb] = 0`  
+`*` = `bottom[pointerb] += 5`  
+`%` = `bottom[pointerb] += 50`  
 
 The small interpreter is currently ~200 bytes.  
 The full bootable IDLE is ~250 bytes.
 
 ## CrypticASM (CASM)
 The main language for CrypticOS internals and applications. You can find  
-an online emulator and assembler here: https://pufflegamerz.github.io/CrypticDK/www/  
+The official assembler here: https://github.com/pufflegamerz/casm
+There is an online assembler and emulator here: https://pufflegamerz.github.io/casm/www
 
 If you wish to write CASM with a modern text editor, use casm.yaml with the Micro editor.  
 
@@ -79,4 +80,4 @@ This version has demos and stuff, but still the idea as `tiny.asm`.
 Usage:  
 `p` Enter program mode. `q` to quit.
 `>` load a program. Ex: `>a` to load pgrm a.
-There are programs a-c. Have fun.
+There are programs a-d. Have fun.
