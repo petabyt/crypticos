@@ -1,10 +1,10 @@
-; CrypticOS Kernel
-; Main file
+; Kernel main variables.
+; Reserve 5 memory cells.
+; Use for functions, incrementing,
+; kernel functions/standard library.
 
-; General purpose variables
-; (general a, b, c, d)
+var gr 0 ; General result
+var gd 0 ; General d
 var gc 0 ; General c
 var gb 0 ; General b
 var ga 0 ; General a
-var gr 0 ; General result
-var gd 0 ; General d
