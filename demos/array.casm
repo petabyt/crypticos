@@ -1,3 +1,5 @@
+arr a 10
+
 ; In order to dynamically retrieve/set a certain cell in memory,
 ; we must include a kernel function in the program.
 inc "../kernel/main.casm"
@@ -5,9 +7,16 @@ jmp a
 inc "../kernel/get.casm"
 a:
 
-; ga = mem[4]
+; mem[gb] = gc
+set ga SET
+set gb 10
+set gc 2
+run k.get
+
+; gr = mem[gb]
 set ga GET
-set gb 4
+set gb 10
+set gc 2
 run k.get
 
 ; Print as digit
@@ -15,4 +24,4 @@ add gr 50
 sub gr 2
 prt gr
 
-; Expect 4, the location of gb.
+; Expect 2, the value we gave to a.

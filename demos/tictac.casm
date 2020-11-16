@@ -1,0 +1,26 @@
+arr board 9 ; Reserve bytes for 3x3 board
+
+; Include general purpose variables
+inc "../kernel/main.casm"
+
+jmp end
+	inc "../kernel/get.casm"
+
+	drawBoard:
+		got 0
+		inl ".>.>." ; first 3
+		inl "^!**.+++.v" ; print newline
+		inl ".>.>." ; second 3
+		inl "^!**.+++.v" ; print newline
+		inl ".>.>." ; third 3
+		inl "^!**.+++.v" ; print newline
+	ret
+
+	getKey:
+		prt ':'
+		got ga
+		inl ","
+	ret
+end:
+
+run drawBoard

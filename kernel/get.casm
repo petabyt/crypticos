@@ -9,9 +9,13 @@ def SET 2
 ; gb = location
 ; gc = value to set/get
 k.get:
-	inl "d<<<^" ; Reserve for operation
-	inl "d<^" ; reserve for location
-	inl "d<^>>>>>d" ; Reserve for value to set or value to get
+	got ga
+	inl "d^" ; Reserve for operation
+	got gb
+	inl "d^" ; reserve for location
+	got gc
+	inl "d^d" ; Reserve for value to set or value to get
+	got WKSP
 	inl "d" ; reserve for temp
 	inl "d" ; reserve for label, set in loop (label)
 	inl "!^d" ; store zero to compare (value1)

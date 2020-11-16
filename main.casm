@@ -1,5 +1,6 @@
 ; Include some kernel functions
 inc "kernel/main.casm"
+jmp k.end
 inc "kernel/add.casm"
 k.end:
 
