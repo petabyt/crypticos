@@ -1,26 +1,43 @@
-arr board 9 ; Reserve bytes for 3x3 board
+; Reserve cells for board. Init with dashes.
+inl "!%-----^"
+inl "v>v>v>v>v>v>v>v>v>"
 
 ; Include general purpose variables
 inc "../kernel/main.casm"
 
+; Point to board end
+def BOARDLOC 6
+
 jmp end
 	inc "../kernel/get.casm"
+	inc "../kernel/sub.casm"
 
 	drawBoard:
 		got 0
-		inl ".>.>." ; first 3
+		inl "<<<<<<<<<"
+		inl ".>.>.>"
 		inl "^!**.+++.v" ; print newline
-		inl ".>.>." ; second 3
+		inl ".>.>.>"
 		inl "^!**.+++.v" ; print newline
-		inl ".>.>." ; third 3
-		inl "^!**.+++.v" ; print newline
+		inl ".>.>.>"
 	ret
 
-	getKey:
+	getInput:
 		prt ':'
-		got ga
+
+		; Input in gb
+		got gb
 		inl ","
+		sub gb '0'
+
+		inl "^!**.+++.v" ; print newline
+
+		; set char in board
+		set ga SET
+		set gc 'A'
+		run k.get
 	ret
 end:
 
+run getInput
 run drawBoard
