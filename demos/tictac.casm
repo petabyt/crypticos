@@ -2,6 +2,8 @@
 inl "!%-----^"
 inl "v>v>v>v>v>v>v>v>v>"
 
+var player 'O'
+
 ; Include general purpose variables
 inc "../kernel/main.casm"
 
@@ -22,22 +24,56 @@ jmp end
 		inl ".>.>.>"
 	ret
 
-	getInput:
-		prt ':'
-
-		; Input in gb
-		got gb
-		inl ","
+	plotInput:
 		sub gb '0'
+
+		; Invert 9-0 to 0-9
+		set ga 10
+		run k.sub
+		set gb gr
+
+		add gb BOARDLOC ; move to location
 
 		inl "^!**.+++.v" ; print newline
 
 		; set char in board
 		set ga SET
-		set gc 'A'
+		set gc player
 		run k.get
+
+		; Toggle player from A/B
+		equ player 'O' plotInput_b
+		set player 'O'
+		ret
+		plotInput_b:
+		set player 'X'
 	ret
+
+	
 end:
 
-run getInput
 run drawBoard
+
+main_top:
+	inl "!**.+++."
+	prt "Turn: "
+
+	prt player
+
+	; We must be careful with inline code.
+	got WKSP
+	inl "!**.+++."
+	
+	prt ':'
+	
+	; Input in gb
+	got gb
+	inl ","
+	equ gb 'x' asd
+	
+	run plotInput
+	run drawBoard
+jmp main_top
+asd:
+
+
