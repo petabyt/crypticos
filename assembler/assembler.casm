@@ -2,28 +2,20 @@
 
 ; Input buffer
 arr code 10
-mov code[0] '1'
-mov code[1] '2'
-mov code[2] '3'
-mov code[3] ' '
-mov code[4] 0
 
 ; Command storage
 arr commands 9
-mov commands "movvarprt"
 
 ; Compile with Kernel functions
-include "/home/daniel/Documents/crypticos/kernel/kernel.casm"
+inc "$/kernel/kernel.casm"
 
 var tokenStart 0 ; Point to where token started
 var tokenLength 0 ; Point where the token stopped
 var tokenValue 0 ; Parsed int, char..
 var currentChar 0
 
-
-
-;mov currentChar [code] ; Start at beginning
-;call getToken
+;set currentChar [code] ; Start at beginning
+;run getToken
 
 
 
@@ -34,39 +26,39 @@ jmp end
 ; Read a token and store type/value
 ; Parses int/char into real int
 getToken:
-	call getToken_next
-	cmp gr 0 getToken_done ; compare with null
+	run getToken_next
+	equ gr 0 getToken_done ; compare with null
 
 	; Check for alpha char (only 1 char)
-	mov gc gr
+	set gc gr
 
 	; Check digit char, jump
-	call isDigit
-	cmp gr 1 getToken_digit
+	run isDigit
+	equ gr 1 getToken_digit
 
-	mov tokenStart currentChar ; set token start (for strings)
+	set tokenStart currentChar ; set token start (for strings)
 
 	; Check alpha char, jump
-	call isAlpha
-	cmp gr 1 getToken_alpha
+	run isAlpha
+	equ gr 1 getToken_alpha
 jmp getToken
 
 getToken_done:
 ret
 
 getToken_next:
-	mov ga 1 ; GET
-	mov gb currentChar
-	call k.get
+	set ga 1 ; GET
+	set gb currentChar
+	run k.get
 	sub currentChar 1 ; increment char
-	mov gc gr
+	set gc gr
 ret
 
 ; Tokenize alpha chars
 getToken_alpha:
-	call getToken_next
-	call isAlpha
-	cmp gr 0 getToken_done
+	run getToken_next
+	run isAlpha
+	equ gr 0 getToken_done
 jmp getToken_alpha
 
 ; Parse and convert integers
@@ -74,55 +66,55 @@ getToken_digit:
 	sub gc '0'
 
 	; tokenValue += gc
-	mov ga tokenValue
-	mov gb gc
-	call k.add
-	mov tokenValue gr
+	set ga tokenValue
+	set gb gc
+	run k.add
+	set tokenValue gr
 
 	; Next char, check for next
-	call getToken_next
+	run getToken_next
 
 	; Is next char digit? If not, Token done.
-	call isDigit
-	cmp gr 0 getToken_done
+	run isDigit
+	equ gr 0 getToken_done
 
 	; Else
 	; tokenValue *= 10
-	mov ga tokenValue
-	mov gb 10
-	call k.mult
-	mov tokenValue gr
+	set ga tokenValue
+	set gb 10
+	run k.mult
+	set tokenValue gr
 jmp getToken_digit
 
 
 ; Convert int (123 > %%****++)
 putInt:
 	; Below 50?
-	mov ga gc
-	mov gb 50
-	call k.higher
-	cmp gr 1 putInt_percent
+	set ga gc
+	set gb 50
+	run k.higher
+	equ gr 1 putInt_percent
 
 	; Below 5?
-	mov ga gc
-	mov gb 5
-	call k.higher
-	cmp gr 1 putInt_asterisk
+	set ga gc
+	set gb 5
+	run k.higher
+	equ gr 1 putInt_asterisk
 
 	; Below 1?
-	mov ga gc
-	mov gb 1
-	call k.higher
-	cmp gr 1 putInt_plus
+	set ga gc
+	set gb 1
+	run k.higher
+	equ gr 1 putInt_plus
 	out gc
 
-	cmp gc 0 putInt_quit
+	equ gc 0 putInt_quit
 jmp putInt
 
 putInt_percent:
-	; mov ga gc
-	; mov gb 50
-	; call k.sub
+	; set ga gc
+	; set gb 50
+	; run k.sub
 
 	sub gc 50
 	out '%'
@@ -142,6 +134,6 @@ putInt_quit:
 ret
 
 ; Include kernel string functions
-include "/home/daniel/Documents/crypticos/kernel/string.casm"
+inc "/home/daniel/Documents/crypticos/kernel/string.casm"
 
 end:
