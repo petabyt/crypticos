@@ -6,8 +6,8 @@ prt "int t[100];int b[1000];int y=0;int n=0;" ; Initialization
 prt "int d;" ; Temp int
 prt "int main(){"
 
-var c 0 ; Holds current char
 var label 'A' ; Holds the label character
+var c 0 ; Holds current char
 
 top:
 	; Get input into 'c'
@@ -124,7 +124,7 @@ label_top:
 	prt "if (d=='"
 	prt label
 	prt "'"
-	prt "){goto "
+	prt "){goto L"
 	prt label
 	prt ";}"
 	
