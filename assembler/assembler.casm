@@ -7,7 +7,7 @@ arr code 10
 arr commands 9
 
 ; Compile with Kernel functions
-inc "$/kernel/kernel.casm"
+inc "$kernel/kernel.casm"
 
 var tokenStart 0 ; Point to where token started
 var tokenLength 0 ; Point where the token stopped
@@ -23,117 +23,116 @@ var currentChar 0
 ; Main ends, jump to end.
 jmp end
 
-; Read a token and store type/value
-; Parses int/char into real int
-getToken:
-	run getToken_next
-	equ gr 0 getToken_done ; compare with null
+	; Read a token and store type/value
+	; Parses int/char into real int
+	getToken:
+		run getToken_next
+		equ gr 0 getToken_done ; compare with null
 
-	; Check for alpha char (only 1 char)
-	set gc gr
+		; Check for alpha char (only 1 char)
+		set gc gr
 
-	; Check digit char, jump
-	run isDigit
-	equ gr 1 getToken_digit
+		; Check digit char, jump
+		run isDigit
+		equ gr 1 getToken_digit
 
-	set tokenStart currentChar ; set token start (for strings)
+		set tokenStart currentChar ; set token start (for strings)
 
-	; Check alpha char, jump
-	run isAlpha
-	equ gr 1 getToken_alpha
-jmp getToken
+		; Check alpha char, jump
+		run isAlpha
+		equ gr 1 getToken_alpha
+	jmp getToken
 
-getToken_done:
-ret
+	getToken_done:
+	ret
 
-getToken_next:
-	set ga 1 ; GET
-	set gb currentChar
-	run k.get
-	sub currentChar 1 ; increment char
-	set gc gr
-ret
+	getToken_next:
+		set ga 1 ; GET
+		set gb currentChar
+		run k.get
+		sub currentChar 1 ; increment char
+		set gc gr
+	ret
 
-; Tokenize alpha chars
-getToken_alpha:
-	run getToken_next
-	run isAlpha
-	equ gr 0 getToken_done
-jmp getToken_alpha
+	; Tokenize alpha chars
+	getToken_alpha:
+		run getToken_next
+		run isAlpha
+		equ gr 0 getToken_done
+	jmp getToken_alpha
 
-; Parse and convert integers
-getToken_digit:
-	sub gc '0'
+	; Parse and convert integers
+	getToken_digit:
+		sub gc '0'
 
-	; tokenValue += gc
-	set ga tokenValue
-	set gb gc
-	run k.add
-	set tokenValue gr
+		; tokenValue += gc
+		set ga tokenValue
+		set gb gc
+		run k.add
+		set tokenValue gr
 
-	; Next char, check for next
-	run getToken_next
+		; Next char, check for next
+		run getToken_next
 
-	; Is next char digit? If not, Token done.
-	run isDigit
-	equ gr 0 getToken_done
+		; Is next char digit? If not, Token done.
+		run isDigit
+		equ gr 0 getToken_done
 
-	; Else
-	; tokenValue *= 10
-	set ga tokenValue
-	set gb 10
-	run k.mult
-	set tokenValue gr
-jmp getToken_digit
+		; Else
+		; tokenValue *= 10
+		set ga tokenValue
+		set gb 10
+		run k.mult
+		set tokenValue gr
+	jmp getToken_digit
 
 
-; Convert int (123 > %%****++)
-putInt:
-	; Below 50?
-	set ga gc
-	set gb 50
-	run k.higher
-	equ gr 1 putInt_percent
+	; Convert int (123 > %%****++)
+	putInt:
+		; Below 50?
+		set ga gc
+		set gb 50
+		run k.higher
+		equ gr 1 putInt_percent
 
-	; Below 5?
-	set ga gc
-	set gb 5
-	run k.higher
-	equ gr 1 putInt_asterisk
+		; Below 5?
+		set ga gc
+		set gb 5
+		run k.higher
+		equ gr 1 putInt_asterisk
 
-	; Below 1?
-	set ga gc
-	set gb 1
-	run k.higher
-	equ gr 1 putInt_plus
-	out gc
+		; Below 1?
+		set ga gc
+		set gb 1
+		run k.higher
+		equ gr 1 putInt_plus
+		out gc
 
-	equ gc 0 putInt_quit
-jmp putInt
+		equ gc 0 putInt_quit
+	jmp putInt
 
-putInt_percent:
-	; set ga gc
-	; set gb 50
-	; run k.sub
+	putInt_percent:
+		; set ga gc
+		; set gb 50
+		; run k.sub
 
-	sub gc 50
-	out '%'
-jmp putInt
+		sub gc 50
+		out '%'
+	jmp putInt
 
-putInt_asterisk:
-	sub gc 5
-	out '*'
-jmp putInt
+	putInt_asterisk:
+		sub gc 5
+		out '*'
+	jmp putInt
 
-putInt_plus:
-	sub gc 1
-	out '+'
-jmp putInt
+	putInt_plus:
+		sub gc 1
+		out '+'
+	jmp putInt
 
-putInt_quit:
-ret
+	putInt_quit:
+	ret
 
-; Include kernel string functions
-inc "/home/daniel/Documents/crypticos/kernel/string.casm"
-
+	; Include kernel string functions
+	inc "$kernel/string.casm"
 end:

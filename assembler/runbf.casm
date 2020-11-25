@@ -1,0 +1,8 @@
+; Initialize 10 array
+arr "!>!>!>!>!>!>"
+def LOC 13
+
+inc "$kernel/main.casm"
+jmp func
+	inc "$kernel/get.casm"
+func:
