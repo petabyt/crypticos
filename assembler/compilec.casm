@@ -1,0 +1,135 @@
+; CINS to C
+; Self hosted compiler, up to 27 labels
+
+; Initialization
+prt "int t[100];int b[1000];int y=0;int n=0;" ; Initialization
+prt "int d;" ; Temp int
+prt "int main(){"
+
+var c 0 ; Holds current char
+var label 'A' ; Holds the label character
+
+top:
+	; Get input into 'c'
+	got c
+	inl ","
+	
+	equ c '0' end ; end of line
+	equ c '.' dot
+	equ c ',' comma
+	equ c '>' bracketRight
+	equ c '<' bracketLeft
+	equ c 'd' de
+	equ c 'a' ay
+	equ c '+' plus
+	equ c '-' minus
+	equ c '*' asterisk
+	equ c '%' percent
+	equ c '!' reset
+	equ c '^' up
+	equ c 'v' down
+	equ c '$' goto
+	equ c '?' compare
+
+	equ c '|' label
+jmp top
+
+; Very basic instructions,
+; Self-explainatory.
+
+dot:
+	prt "putchar(b[n]);"
+jmp top
+
+comma:
+
+jmp top
+
+bracketRight:
+	prt "n++;"
+jmp top
+
+bracketLeft:
+	prt "n--;"
+jmp top
+
+de:
+	prt "y++;"
+jmp top
+
+ay:
+	prt "y--;"
+jmp top
+
+plus:
+	prt "b[n]++;"
+jmp top
+
+minus:
+	prt "b[n]--;"
+jmp top
+
+percent:
+	prt "b[n]+=50;"
+jmp top
+
+asterisk:
+	prt "b[n]+=5;"
+jmp top
+
+reset:
+	prt "b[n]=0;"
+jmp top
+
+up:
+	prt "t[y]=b[n];"
+jmp top
+
+down:
+	prt "b[n]=t[y];"
+jmp top
+
+; Compile labels
+label:
+	prt "L" ; label c
+	prt label
+	prt ":"
+	add label 1
+jmp top
+
+goto:
+	prt "goto g;"
+jmp top
+
+compare:
+	prt "if (t[y+1]==t[y+2]){goto g;}"
+jmp top
+
+end:
+
+prt "return 0;"
+
+; Map Labels though A-Z alphabet
+
+prt "g:"
+prt "d=t[y]+'@';"
+
+label_top:
+	equ label 'A' label_end
+	sub label 1
+
+	; Print:
+	; CMP EAX, 'A'
+	; JE LA
+	prt "if (d=='"
+	prt label
+	prt "'"
+	prt "){goto "
+	prt label
+	prt ";}"
+	
+	jmp label_top
+label_end:
+
+prt "}"
+
