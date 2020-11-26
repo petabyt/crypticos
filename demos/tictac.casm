@@ -5,14 +5,14 @@ inl "v>v>v>v>v>v>v>v>v>"
 var player 'O'
 
 ; Include general purpose variables
-inc "../kernel/main.casm"
+inc "$kernel/main.casm"
 
 ; Point to board end
 def BOARDLOC 6
 
 jmp end
-	inc "../kernel/get.casm"
-	inc "../kernel/sub.casm"
+	inc "$kernel/get.casm"
+	inc "$kernel/sub.casm"
 
 	drawBoard:
 		got 0
@@ -25,7 +25,11 @@ jmp end
 	ret
 
 	plotInput:
-		sub gb '0'
+		set ga gb
+		set gb 50 ; Make sure 48 %-- and not *********+++
+		sub gb 2
+		run k.sub
+		set gb gr
 
 		; Invert 9-0 to 0-9
 		set ga 10
@@ -60,7 +64,7 @@ main_top:
 
 	prt player
 
-	; We must be careful with inline code.
+	; We must be careful with inline instruction.
 	got WKSP
 	inl "!**.+++."
 	

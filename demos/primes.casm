@@ -1,0 +1,27 @@
+; Simple code to calculate prime numbers. "357"
+
+var current 1
+inc "$kernel/main.casm"
+jmp func
+	inc "$kernel/div.casm"
+func:
+
+top:
+	add current 1
+	set ga current
+	set gb 2
+	set gc 0
+	set gr 0
+	run k.div
+	equ gc 0 e
+	jmp isPrime
+	e:
+jmp top
+
+isPrime:
+	set ga current
+	add ga '0'
+	prt ga
+	equ current 7 end
+jmp top
+end:
