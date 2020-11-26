@@ -1,10 +1,14 @@
-; divmod algorithm
+; Div + Mod
+; ga = top
+; gb = bottom
+; gr = result
+; gc = dividend
 k.div:
 	add gr 1
-	set gd 0
+	set gc 0
 	k.div_sub:
-		equ gd gb k.div
-		add gd 1
+		equ gc gb k.div
+		add gc 1
 		equ ga 0 k.div_exit
 		sub ga 1
 	jmp k.div_sub
@@ -12,5 +16,5 @@ k.div:
 
 	; Do offsets from 
 	sub gr 1
-	sub gd 1
+	sub gc 1
 ret

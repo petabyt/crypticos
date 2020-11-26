@@ -12,7 +12,7 @@ def BOARDLOC 6
 
 jmp end
 	inc "$kernel/get.casm"
-	inc "$kernel/sub.casm"
+	inc "$kernel/math/sub.casm"
 
 	drawBoard:
 		got 0

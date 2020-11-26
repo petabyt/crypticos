@@ -1,7 +1,7 @@
 k.reset:
+	set gr 0
+	set gd 0
 	set gc 0
 	set gb 0
 	set ga 0
-	set gr 0
-	set gd 0
 ret

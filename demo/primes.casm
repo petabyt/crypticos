@@ -3,7 +3,7 @@
 var current 1
 inc "$kernel/main.casm"
 jmp func
-	inc "$kernel/div.casm"
+	inc "$kernel/math/div.casm"
 func:
 
 top:

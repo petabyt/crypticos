@@ -1,9 +1,0 @@
-k.sub:
-	equ gb 0 k.sub_end
-	sub ga 1
-	sub gb 1
-jmp k.sub
-
-k.sub_end:
-	set gr ga
-ret

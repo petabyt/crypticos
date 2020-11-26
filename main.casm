@@ -1,11 +1,51 @@
+; Allocate 20 cells in memory
+arr foo 20
+
 ; Include some kernel functions
-inc "kernel/main.casm"
+inc "$kernel/main.casm"
 jmp k.end
-inc "kernel/add.casm"
+	inc "$kernel/get.casm"
+	inc "$kernel/math/div.casm"
+	
+	newLine:
+		inl "!**.+++."
+	ret
+
+	calcPi:
+		set ga 22
+		set gb 7
+		set gc 0
+		set gr 0
+		run k.div
+		
+		add gr '0'
+		prt gr
+		prt '.'
+		add gc '0'
+		prt gc
+	ret
+
+	pointerTest:
+		; Store 'A' from pointer &foo
+		set ga SET
+		set gb &foo
+		set gc 'A'
+		run k.get
+
+		; Get data from pointer &foo
+		set ga GET
+		set gb &foo
+		run k.get
+		prt gr
+	ret
 k.end:
 
-set ga 3
-set gb 4
-run k.add
-add gr '0'
-prt gr
+prt "CrypticOS Tech Test"
+inl "!**."
+
+prt "Pi:"
+run calcPi
+
+inl "!**."
+prt "Pointers:"
+run pointerTest

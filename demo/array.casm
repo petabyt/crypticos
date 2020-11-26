@@ -2,9 +2,9 @@ arr a 10
 
 ; In order to dynamically retrieve/set a certain cell in memory,
 ; we must include a kernel function in the program.
-inc "../kernel/main.casm"
+inc "$kernel/main.casm"
 jmp a
-inc "../kernel/get.casm"
+inc "$kernel/get.casm"
 a:
 
 ; mem[gb] = gc
