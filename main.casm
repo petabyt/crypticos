@@ -40,7 +40,7 @@ jmp k.end
 	ret
 k.end:
 
-prt "CrypticOS Tech Test"
+prt "CrypticOS"
 inl "!**."
 
 prt "Pi:"
