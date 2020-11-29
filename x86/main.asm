@@ -1,9 +1,34 @@
+; Main bootloader
+bits 16
+org 0x7c00
+
+; Size of the OS, in sectors
+%define SIZE 8
+
+mov ah, 0x2 ; Load sector
+mov al, SIZE ; Read x many sectors
+mov ch, 0 ; Cylinder
+mov cl, 2 ; High bits of cylinder
+mov dh, 0 ; Head 0
+mov bx, main ; Start label
+int 0x13 ; Read sector
+jmp init
+
+times 510 - ($ - $$) db 0
+dw 0xAA55
+
+main:
+bits 16
+
+
 ; CrypticOS 512 byte demo
 
 section .text
 	welcome: db ">CrypticOS", 0
 	done: db "Done.", 0
 	invalid: db "Invalid command.", 0
+
+	; Include the pgrm.asm built on compilation
 	%include "build/pgrms.asm"
 
 ; Main bootloader jump label
@@ -11,6 +36,11 @@ init:
 	; Zero data segment register
 	xor bx, bx
 	mov ds, bx
+
+	; Set up stack
+	mov sp, 0x7e0
+	mov ss, sp
+	mov sp, 0xfffe
 
 	mov si, welcome
 	call printStr
@@ -27,6 +57,9 @@ init:
 		; Check 'p' (pgrm mode)
 		cmp al, 'p'
 		je runCommand_pgrm
+
+		cmp al, 'q'
+		je runCommand_reboot
 
 		; Check custom program
 		cmp al, '>'
@@ -49,6 +82,9 @@ init:
 
 			call pgrm ; execute program
 			jmp runCommand_pgrm ; back to prompt
+
+		runCommand_reboot:
+			int CF9h
 
 		runCommand_preloaded:
 			; Check second char
@@ -98,9 +134,9 @@ cli
 hlt
 
 %include "pgrm.asm"
-%include "func/keyboard.asm"
-%include "func/newline.asm"
-%include "func/print.asm"
+%include "keyboard.asm"
+%include "newline.asm"
+%include "print.asm"
 
 ; Start one byte away from code. Either NASM ignores the
 ; errors this way, or it is an x86 thing.
@@ -108,3 +144,6 @@ section .bss:1
 	buffer: resb 100 ; command line input buffer
 	memtop: resw 50 ; pgrm memory
 	membottom: resw 500 ; pgrm memory
+
+; 350 bytes for interpreter, the rest for programs
+times (SIZE * 512) - ($ - $$) db 0
