@@ -16,6 +16,25 @@ MIT Scratch: https://scratch.mit.edu/projects/424817216/
 - [x] Write operating environment in the assembler  
 - [ ] Rewrite assembler in the assembler  (not finished, still on lexer)
 
+## CrypticASM (CASM)
+The main language for CrypticOS internals and applications. You can find the official  
+development kit here: https://github.com/pufflegamerz/casm (assembler + emulator)  
+
+## Building
+### 256 byte OS
+```
+# Make sure you are in the x86 folder.
+nasm -f bin x86/tiny.asm -o build/boot.bin
+qemu-system-x86_64 build/boot.bin
+```
+### Deluxe >256 byte version
+This version has demos and stuff, but still the same idea as `tiny.asm`.
+`nasm -f bin bootloader.asm -o build/boot.bin`  
+Usage:  
+`p` Enter program mode. `q` to quit.
+`>` load a program. Ex: `>a` to load pgrm a.
+There are programs a-d. Have fun.
+
 ## So what does it do?
 CrypticOS uses a BrainF* inspired esoteric language as its main runtime.  
 It is different in many ways, mainly with logic and loops. In design it should  
@@ -52,32 +71,9 @@ Logic and Jumping:
 `?` = `if (top[pointera + 1] != top[pointera + 2]) {goto top[pointera]}`  
 `$` = `goto top[pointera]`  
 `|` = Declare a label. It is jumped to by its occurance (first = 1..)  
+(a real specification paper will be finished soon)
 
 MISC Instructions
 `!` = `bottom[pointerb] = 0`  
 `*` = `bottom[pointerb] += 5`  
 `%` = `bottom[pointerb] += 50`  
-
-The small interpreter is currently ~200 bytes.  
-The full bootable IDLE is ~250 bytes.
-
-## CrypticASM (CASM)
-The main language for CrypticOS internals and applications. You can find  
-The official assembler here: https://github.com/pufflegamerz/casm
-There is an online assembler and emulator here: https://pufflegamerz.github.io/casm/www
-
-If you wish to write CASM with a modern text editor, use casm.yaml with the Micro editor.  
-
-## Building
-### 256 byte OS
-```
-nasm -f bin x86/tiny.asm -o build/boot.bin
-qemu-system-x86_64 build/boot.bin # Run the binary in whatever you want
-```
-### Deluxe >512 byte version
-This version has demos and stuff, but still the idea as `tiny.asm`.
-`nasm -f bin bootloader.asm -o build/boot.bin`  
-Usage:  
-`p` Enter program mode. `q` to quit.
-`>` load a program. Ex: `>a` to load pgrm a.
-There are programs a-d. Have fun.
