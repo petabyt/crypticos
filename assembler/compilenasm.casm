@@ -17,7 +17,9 @@ var label 'A' ; Holds the label character
 
 top:
 	prt 10
-	set c getchar
+	got c
+	inl ","
+	
 	equ c '0' end ; end of line
 	equ c '.' dot
 	equ c ',' comma
