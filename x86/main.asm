@@ -8,6 +8,10 @@ section .text
 
 ; Main bootloader jump label
 init:
+	; Zero data segment register
+	xor bx, bx
+	mov ds, bx
+
 	mov si, welcome
 	call printStr
 

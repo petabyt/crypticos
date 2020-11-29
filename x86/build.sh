@@ -22,4 +22,4 @@ nasm bootloader.asm -f bin -o build/boot.bin
 
 qemu-system-x86_64 -drive format=raw,file=build/boot.bin -monitor stdio
 
-rm -rf build
+#rm -rf build
