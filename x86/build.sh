@@ -13,7 +13,7 @@ echo "pgrm_c: db '',0" >> build/pgrms.asm
 echo "pgrm_d: db '`cat build/a.o`',0" >> build/pgrms.asm
 echo "pgrm_e: db '',0" >> build/pgrms.asm
 
-nasm bootloader.asm -f bin -o build/boot.bin
+nasm main.asm -f bin -o build/boot.bin
 
 # dd if=/dev/zero of=build/floppy.img bs=1024 count=2880
 # dd if=build/boot.bin of=build/floppy.img
@@ -22,4 +22,4 @@ nasm bootloader.asm -f bin -o build/boot.bin
 
 qemu-system-x86_64 -drive format=raw,file=build/boot.bin -monitor stdio
 
-rm -rf build
+#rm -rf build
