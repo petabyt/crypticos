@@ -5,3 +5,4 @@ build
 *.o
 test
 test.asm
+a
