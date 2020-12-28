@@ -1,5 +1,6 @@
-![](https://raw.githubusercontent.com/CrypticOS/CrypticOS.github.io/master/logo.png)  
-A tiny programmable operating system.  
+
+![](https://raw.githubusercontent.com/CrypticOS/CrypticOS.github.io/master/logo.png)
+### A Tiny Programmable Operating System.
 
 CrypticOS attempts to recreate the programming experience of old  
 computers, and have the simplicity of a TI calculator.
@@ -24,13 +25,17 @@ development kit here: https://github.com/pufflegamerz/casm (assembler + emulator
 ## Building
 ### 256 byte OS
 ```
-# Make sure you are in the x86 folder.
+# Make sure you are in the x86 directory
 nasm -f bin x86/tiny.asm -o build/boot.bin
 qemu-system-x86_64 build/boot.bin
 ```
 ### Deluxe >256 byte version
 This version has demos and stuff, but still the same idea as `tiny.asm`.
-`nasm -f bin bootloader.asm -o build/boot.bin`  
+```
+# Make sure you are in the x86 directory
+# This will open in qemu
+./build.sh
+```
 Usage:  
 `p` Enter program mode. `q` to quit.
 `>` load a program. Ex: `>a` to load pgrm a.
@@ -78,3 +83,5 @@ MISC Instructions
 `!` = `bottom[pointerb] = 0`  
 `*` = `bottom[pointerb] += 5`  
 `%` = `bottom[pointerb] += 50`  
+
+Official specification document coming soon™
