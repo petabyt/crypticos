@@ -1,13 +1,14 @@
-# CrypticOS
-Tiny Programmable Bootsector (256 bytes) OS written in x86 Assembly.
+![](https://raw.githubusercontent.com/CrypticOS/CrypticOS.github.io/master/logo.png)
+A tiny programmable operating system.  
+
+CrypticOS attempts to recreate the programming experience of old  
+computers, and have the simplicity of a TI calculator.
 
 ## Design
-1. The core design should not depend on CPU architecture.  
+1. Any program should be loaded on any architecture, and run perfectly.
 2. It should be usable within 512 bytes, and not have to squeeze bytes in order to implement basic functionality.  
-3. The kernel, assembler, and environment should be written in CrypticASM (CASM).  
-
-## Emulators
-MIT Scratch: https://scratch.mit.edu/projects/424817216/
+3. Programs would be written in CASM, and loaded via floppy or by serial cable.
+4. Everything should be as simple as possible, and be easy to hack and play with.
 
 ## Goals
 - [x] Write OS in <512 bytes  
