@@ -1,4 +1,4 @@
-![](https://raw.githubusercontent.com/CrypticOS/CrypticOS.github.io/master/logo.png)
+![](https://raw.githubusercontent.com/CrypticOS/CrypticOS.github.io/master/logo.png)  
 A tiny programmable operating system.  
 
 CrypticOS attempts to recreate the programming experience of old  
