@@ -4,19 +4,19 @@ arr a 10
 ; we must include a kernel function in the program.
 inc "$kernel/main.casm"
 jmp a
-inc "$kernel/get.casm"
+inc "$kernel/mov.casm"
 a:
 
 ; mem[gb] = gc
 set ga SET
 set gb &a
 set gc 2
-run k.get
+run k.mov
 
 ; gr = mem[gb]
 set ga GET
 set gb &a
-run k.get
+run k.mov
 
 ; Print as digit
 add gr 50

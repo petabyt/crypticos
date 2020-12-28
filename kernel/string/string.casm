@@ -2,7 +2,7 @@
 
 ; Input: gc = char
 ; Check (a >= '0' && a <= '9')
-isDigit:
+s.isDigit:
 	; above '0'
 	set ga gc
 	set gb '0'
@@ -17,17 +17,17 @@ isDigit:
 	equ gr 1 isDigit_no
 jmp isDigit_yes
 
-isDigit_no:
+s.isDigit_no:
 	set gr 0
 ret
 
-isDigit_yes:
+s.isDigit_yes:
 	set gr 1
 ret
 
 ; Input: gc = char
 ; Check (a >= '0' && a <= '9')
-isAlpha:
+s.isAlpha:
 	; above 'A'
 	set ga gc
 	set gb 'A'
@@ -43,10 +43,10 @@ isAlpha:
 
 jmp isAlpha_yes
 
-isAlpha_no:
+s.isAlpha_no:
 	set gr 0
 ret
 
-isAlpha_yes:
+s.isAlpha_yes:
 	set gr 1
 ret

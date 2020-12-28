@@ -11,7 +11,7 @@ inc "$kernel/main.casm"
 def BOARDLOC 6
 
 jmp end
-	inc "$kernel/get.casm"
+	inc "$kernel/mov.casm"
 	inc "$kernel/math/sub.casm"
 
 	drawBoard:
@@ -43,7 +43,7 @@ jmp end
 		; set char in board
 		set ga SET
 		set gc player
-		run k.get
+		run k.mov
 
 		; Toggle player from A/B
 		equ player 'O' plotInput_b
