@@ -1,3 +1,4 @@
+
 ; Simple implementation of CrypticASM. Stack or reserved mem 
 ; isn't used much, just registers.
 
@@ -139,6 +140,7 @@ pgrm:
 	pgrm_doLoop:
 		mov ecx, 0 ; reset char reading pointer
 		mov dx, [edi] ; dl will hold desired goto label, will decrease to 0.
+		add dx, 1 ; December 2020 CISN revision
 		pgrm_doLoop_top:
 			; Set char (ebx), then go back
 			mov al, [ebx + ecx]

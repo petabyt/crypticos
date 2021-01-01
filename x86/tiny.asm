@@ -151,7 +151,7 @@ pgrm_if:
 
 pgrm_doLoop:
 	xor ecx, ecx ; reset char reading pointer
-	mov dl, [edi] ; dl will hold desired goto label, will decrease to 0.
+	mov dl, [edi] - 1 ; dl will hold desired goto label, will decrease to 0.
 	pgrm_doLoop_top:
 		; Set char (ebx), then go back
 		mov al, [ebx + ecx]

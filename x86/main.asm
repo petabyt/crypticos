@@ -58,9 +58,6 @@ init:
 		cmp al, 'p'
 		je runCommand_pgrm
 
-		cmp al, 'q'
-		je runCommand_reboot
-
 		; Check custom program
 		cmp al, '>'
 		je runCommand_preloaded
@@ -82,10 +79,7 @@ init:
 
 			call pgrm ; execute program
 			jmp runCommand_pgrm ; back to prompt
-
-		runCommand_reboot:
-			int CF9h
-
+			
 		runCommand_preloaded:
 			; Check second char
 			add esi, 1

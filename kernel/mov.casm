@@ -23,7 +23,7 @@ k.mov:
 	inl "aa" ; go back
 	k.get_back:
 		inl "a^d" ; store current cell temp
-		inl "!+++^"; Go to label 3 (k.get_back.end)
+		inl "!++^"; Go to label 2 (k.get_back.end)
 		inl "avd" ; restore temp value
 		inl "<"
 
@@ -35,7 +35,7 @@ k.mov:
 
 	; Goto
 	inl "a^d" ; store current cell temp
-	inl "!++^"; Go to label 2 (k.get_back)
+	inl "!+^"; Go to label 1 (k.get_back)
 	inl "avd" ; restore temp value
 	inl "$"
 
@@ -43,7 +43,7 @@ k.mov:
 	; Store value.
 
 	inl "a^" ; store temp
-	inl "d!*-^" ; store label 4 (k.get_set)
+	inl "d!+++^" ; store label 3 (k.get_set)
 	inl "d!+^" ; store 1
 	inl "aaaaavdddddd^" ; store operation reg
 	inl "aa" ; back to label
@@ -67,7 +67,7 @@ k.mov:
 	inl "avd" ; Restore temp value
 	k.get_forward:
 		inl "a^d" ; store current cell temp
-		inl "!*+^"; Go to label 5 (k.get_forward.back)
+		inl "!*^"; Go to label 5 (k.get_forward.back)
 		inl "avd" ; restore temp value
 		inl ">"
 
