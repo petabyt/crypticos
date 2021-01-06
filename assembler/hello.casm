@@ -1,5 +1,0 @@
-top:
-prt "Hello, Test here"
-jmp top
-
-inl "0"

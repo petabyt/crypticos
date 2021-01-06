@@ -20,7 +20,7 @@ top:
 	got c
 	inl ","
 	
-	equ c '0' end ; end of line
+	equ c 0 end ; end of line
 	equ c '.' dot
 	equ c ',' comma
 	equ c '>' bracketRight

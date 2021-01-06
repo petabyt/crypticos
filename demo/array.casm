@@ -9,13 +9,13 @@ a:
 
 ; mem[gb] = gc
 set ga SET
-set gb &a
+set gb [a]
 set gc 2
 run k.mov
 
 ; gr = mem[gb]
 set ga GET
-set gb &a
+set gb [a]
 run k.mov
 
 ; Print as digit

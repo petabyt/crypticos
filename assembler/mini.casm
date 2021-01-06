@@ -1,0 +1,18 @@
+arr a 20 'A'
+inl "<!>" ; Dummy null terminator
+
+inc "$kernel/main.casm"
+jmp func
+	inc "$kernel/mov.casm"
+func:
+
+set ga GET
+set gb [a]
+
+top:
+run k.mov
+equ gr 0 end
+prt gr
+sub gb 1
+jmp top
+end:

@@ -17,9 +17,6 @@ var currentChar 0
 ;set currentChar [code] ; Start at beginning
 ;run getToken
 
-
-
-
 ; Main ends, jump to end.
 jmp end
 
