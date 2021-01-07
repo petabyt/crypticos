@@ -1,4 +1,5 @@
-; CrypticCode to Linux NASM Assembly language
+; Will generate NASM x86 assembly when
+; given CINS as input.
 ; Self hosted compiler, up to 27 labels
 
 ; Initialization

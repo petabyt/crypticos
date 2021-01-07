@@ -1,18 +1,121 @@
-arr a 20 'A'
-inl "<!>" ; Dummy null terminator
+; MiniCASM Assembler
+; Syntax:
+; {p35}		write an integer
+; {lA}		declare label A (only A-Z are possible)
+; {jA}		Jump to label A
+; [foobar]	Declare a comment
+; Examples:
+; {lA} [declare label A]
+; !%***. [print 'A']
+; {jA} [goto label A]
+
+arr buffer 100
+var temp 0
 
 inc "$kernel/main.casm"
 jmp func
 	inc "$kernel/mov.casm"
+	inc "$kernel/math/high.casm"
+
+	; Convert ga/int (123 > %%****++)
+	putInt:
+		; Below 50?
+		set ga gc
+		set gb 50
+		run k.high
+		equ gr FIRST putInt_percent
+
+		; Below 5?
+		set ga gc
+		set gb 5
+		run k.high
+		equ gr FIRST putInt_asterisk
+
+		equ gc 0 putInt_quit
+		
+		sub gc 1
+		prt '+'
+	jmp putInt
+
+	putInt_percent:
+		sub gc 50
+		prt '%'
+	jmp putInt
+
+	putInt_asterisk:
+		sub gc 5
+		prt '*'
+	jmp putInt
+
+	putInt_quit:
+	ret
+
+	
+
+	; Assembler commands
+	a.comment:
+		sub gb 1 ; next char
+		run k.mov
+		equ gr ']' a.topA
+	jmp a.comment
+
+	a.topA:
+		sub gb 1
+	jmp a.top
+	
+	a.command:
+		sub gb 1 ; next char
+		run k.mov
+		;equ gr 'l' a.label
+		equ gr 'p' a.print
+	
+	a.print:
+		; next char
+		sub gb 1
+		run k.mov
+
+		; Use temp variable because
+		; putInt needs gb
+		set temp gb
+		set gc gr
+		run putInt
+		set gb temp
+
+		; Next chars
+		sub gb 2
+	jmp a.top
+
+	;a.label:
 func:
 
-set ga GET
-set gb [a]
+; Store the string into the buffer
+set gb [buffer]
+set ga SET
+s.top:
+	got gc
+	inl ","
+	run k.mov
+	; Compare after so '\0' can be added
+	equ gc 0 s.end
+	
+	sub gb 1
+	jmp s.top
+s.end:
 
-top:
-run k.mov
-equ gr 0 end
-prt gr
-sub gb 1
-jmp top
-end:
+; Assembler
+set gb [buffer]
+a.top:
+	set ga GET
+	run k.mov
+	
+	equ gr 0 a.end ; null terminator
+	equ gr '[' a.comment
+	equ gr '{' a.command
+
+	sub gb 1
+	equ gr 10 a.top ; skip newlines
+
+	; Else, print
+	prt gr
+	jmp a.top
+a.end:

@@ -10,7 +10,7 @@ a:
 ; mem[gb] = gc
 set ga SET
 set gb [a]
-set gc 2
+set gc 3 ; value to set
 run k.mov
 
 ; gr = mem[gb]
@@ -19,8 +19,7 @@ set gb [a]
 run k.mov
 
 ; Print as digit
-add gr 50
-sub gr 2
+add gr '0'
 prt gr
 
 ; Expect 2, the value we gave to a.

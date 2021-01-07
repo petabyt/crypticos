@@ -1,4 +1,4 @@
-; CINS to C
+; CINS to C generator
 ; Self hosted compiler, up to 27 labels
 
 ; Initialization
@@ -14,7 +14,7 @@ top:
 	got c
 	inl ","
 	
-	equ c '0' end ; end of line
+	equ c 0 end ; end of line
 	equ c '.' dot
 	equ c ',' comma
 	equ c '>' bracketRight
