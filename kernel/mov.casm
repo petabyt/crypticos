@@ -1,4 +1,4 @@
-; This function is written purely in Cryptic Instruction and
+; This function is written mostly in Cryptic Instruction and
 ; Is used to move back and forth to abritary locations in memory
 ; on run time, not on compile time.
 
@@ -21,9 +21,11 @@ k.mov:
 	inl "!^d" ; store zero to compare (value1)
 	inl "aaaaavddddd^" ; store value from fourth cell (value2)
 	inl "aa" ; go back
-	k.get_back:
+	
+	k.mov_back:
 		inl "a^d" ; store current cell temp
-		inl "!++^"; Go to label 3 (k.get_back.end)
+		set WKSP [k.mov_back_end]
+		inl "^"
 		inl "avd" ; restore temp value
 		inl "<"
 
@@ -35,15 +37,15 @@ k.mov:
 
 	; Goto
 	inl "a^d" ; store current cell temp
-	inl "!+^"; Go to label 2 (k.get_back)
+	set WKSP [k.mov_back]
+	inl "^"
 	inl "avd" ; restore temp value
 	inl "$"
+	k.mov_back_end:
 
-	k.get_back_end:
-	; Store value.
-
-	inl "a^" ; store temp
-	inl "d!+++^" ; store label 4 (k.get_set)
+	inl "a^d" ; store temp
+	set WKSP [k.mov_set]
+	inl "^"
 	inl "d!+^" ; store 1
 	inl "aaaaavdddddd^" ; store operation reg
 	inl "aa" ; back to label
@@ -52,7 +54,7 @@ k.mov:
 
 	; If operation is not 1 (2)
 	inl "aavdd" ; set value
-	k.get_set:
+	k.mov_set:
 	; If operation is 1:
 	inl "aa^dd" ; put char into value
 
@@ -62,12 +64,13 @@ k.mov:
 
 	inl "d" ; space for label
 	inl "!^d" ; store zero to compare
-	inl "aaaaavddddd^" ; store 4 to compare (matching register)
+	inl "aaaaavddddd^" ; store 4 to compare (from matching register)
 	inl "aa" ; go back
 	inl "avd" ; Restore temp value
-	k.get_forward:
+	k.mov_forward:
 		inl "a^d" ; store current cell temp
-		inl "!*^"; Go to label 5 (k.get_forward.back)
+		set WKSP [k.mov_forward_back]
+		inl "^"
 		inl "avd" ; restore temp value
 		inl ">"
 
@@ -79,10 +82,11 @@ k.mov:
 
 	; Goto
 	inl "a^d" ; store current cell temp
-	inl "!++++^"; Go to label 4 (k.get_forward)
+	set WKSP [k.mov_forward]
+	inl "^"
 	inl "avd" ; restore temp value
 	inl "$"
-	k.get_forward_back:
+	k.mov_forward_back:
 	got gr
 	inl "aavaaa" ; go to initial value, when started
 ret

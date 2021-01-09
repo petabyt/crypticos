@@ -10,7 +10,7 @@ a:
 ; mem[gb] = gc
 set ga SET
 set gb [a]
-set gc 3 ; value to set
+set gc 5 ; value to set
 run k.mov
 
 ; gr = mem[gb]
