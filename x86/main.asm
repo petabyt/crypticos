@@ -1,143 +1,259 @@
-; Main bootloader
+; Main CrypticOS 16 bit Bootable
+; HOW TO USE:
+; Type in CINS any CINS code, and it will run.
+; To execute the second sector program type "!%+"
+; and enter.
+
+; Register usage:
+; eax temp
+; ebx memrun_top
+; ecx membottom
+; edx
+; esi
+; edi current char
+
 bits 16
 org 0x7c00
 
-; Size of the OS, in sectors
-%define SIZE 8
+; Zero out the data segment register
+xor bx, bx
+mov ds, bx
 
-mov ah, 0x2 ; Load sector
-mov al, SIZE ; Read x many sectors
-mov ch, 0 ; Cylinder
-mov cl, 2 ; High bits of cylinder
-mov dh, 0 ; Head 0
-mov bx, main ; Start label
+start:
+	mov esi, welcome
+	call printString
+
+	prompt:
+		; print terminal char,
+		; (ah always kept from printString or printNewline)
+		mov al, ':'
+		int 0x10
+
+		mov esi, buffer
+		prompt_top:
+			; Read keyboard (0)
+			xor ah, ah
+			int 0x16
+
+			; Write char, already in al
+			mov ah, 0x0E
+			int 0x10
+
+			cmp al, 13 ; compare with enter
+			je input_done ; if enter, quit
+			cmp al, 8 ; compare with backspace
+			je input_backspace ; if backspace, quit
+
+			; Append read char to buffer
+			mov [esi], al
+			inc esi
+		jmp prompt_top ; else, repeat loop
+
+		input_backspace:
+			dec esi ; sub 1 char
+		jmp prompt_top
+		
+		input_done:
+		mov byte [esi], 0 ; null terminator
+		call printNewline
+	; end of getting input
+	
+
+	; Run buffer input and go back
+	mov esi, buffer
+	call run
+	prompt_done:
+
+	; The program can return a value to the
+	; operating system via the current bottom
+	; cell. System calls start at 50+.
+
+	; Load sector program (!%+)
+	cmp byte [ecx], 51
+	je prompt_load
+	
+	call printNewline
+jmp prompt
+
+; Read second sector data
+prompt_load:
+mov ah, 0x2 ; Load sector call
+mov al, 1 ; Read x many sectors
+xor ch, ch ; Cylinder zero
+mov cl, 2 ; Second sector
+xor dh, dh ; Head 0
+mov bx, copy
 int 0x13 ; Read sector
-jmp init
+mov esi, copy
+
+; Main emulate "function". Takes esi as code
+; address
+run:
+	mov ebx, memtop
+	mov ecx, membottom
+	xor edi, edi ; 0 current char
+	run_top:
+		mov al, [esi + edi]
+		inc edi ; increment to next
+		
+		or al, al ; is char null terminator?
+		je prompt_done ; then goto end if 0
+		
+		cmp al, '*'
+		je run_asterisk
+		cmp al, '%'
+		je run_percent
+		cmp al, '+'
+		je run_plus
+		cmp al, '-'
+		je run_minus
+		cmp al, '!'
+		je run_mark
+		cmp al, '.'
+		je run_dot
+		cmp al, '>'
+		je run_bracket_right
+		cmp al, '<'
+		je run_bracket_left
+		cmp al, 'a'
+		je run_a
+		cmp al, 'd'
+		je run_d
+		cmp al, '^'
+		je run_up
+		cmp al, 'v'
+		je run_v
+		cmp al, '$'
+		je run_loop
+		cmp al, '?'
+		je run_if
+	jmp run_top
+
+
+	; Jump/logic instructions
+	run_if:
+		mov dx, [ebx + 2]
+		mov ax, [ebx + 4]
+		cmp ax, dx ; compare both values
+		jne run_top ; if equal, do, run_loop
+
+	run_loop:
+		xor edi, edi ; reset char reading pointer
+		mov dx, [ebx] ; DX holds goto label.
+		inc dx ; labels start at zero
+		run_loop_top:
+			; Set char (ebx), then go back
+			mov al, [copy + edi]
+			inc edi ; Increment char
+
+			cmp al, '|' ; reached a label?
+			jne run_loop_top ; if not, keep searching
+			or dx, dx ; is dx zero?
+			dec dx ; decrease labels found
+			jne run_loop_top ; if not, keep searching
+		; else, loop is done
+	jmp run_top
+
+
+	; Memory instructions
+	run_bracket_right:
+		add ecx, 2
+	jmp run_top
+
+	run_bracket_left:
+		sub ecx, 2
+	jmp run_top
+
+	run_a:
+		sub ebx, 2
+	jmp run_top
+
+	run_d:
+		add ebx, 2
+	jmp run_top
+
+	run_up:
+		mov ax, [ecx]
+		mov [ebx], ax
+	jmp run_top
+
+	run_v:
+		mov ax, [ebx]
+		mov [ecx], ax
+	jmp run_top
+
+
+	; Reset
+	run_mark:
+		mov word [ecx], 0
+	jmp run_top
+
+
+	; add/sub
+	run_percent:
+		mov ax, 50
+	jmp run_addSomething
+
+	run_asterisk:
+		mov ax, 5
+	jmp run_addSomething
+
+	run_plus:
+		mov ax, 1
+	jmp run_addSomething
+
+	run_minus:
+		mov ax, -1
+
+	run_addSomething:
+		add word [ecx], ax
+	jmp run_top
+
+
+	; Input/Output
+	run_dot:
+		mov ah, 0x0E
+		mov al, [ecx]
+		int 0x10
+	jmp run_top
+; End of run
+
+
+; Print a string. esi = location
+printString:
+	mov ah, 0x0E ; print char bios
+	printString_loop:
+		mov al, [si] ; get char
+		inc esi ; next char
+		int 0x10 ; print it
+		or al, al ; is al zero?
+	jne printString_loop ; if not equal, then loop
+	call printNewline
+ret
+
+printNewline:
+	mov ah, 0x0E ; print char bios
+	mov al, 10 ; newline
+	int 0x10
+	add al, 3 ; carriage return
+	int 0x10
+ret
+
+; OS Text stored here:
+welcome: db ">CrypticOS", 0
 
 times 510 - ($ - $$) db 0
 dw 0xAA55
 
-main:
-bits 16
+; Second sector contains
+; demo program
+copy:
+db "!%****++.*****++++.****.!******++.%++++.*****++++.!%*********++.****.!%*********++++.++.!*********+.!******++.*********.*****+++.!%*********++++.*.!%*********++.++++.*++.!******++.%****++.!%%+.**+++.!%%+.!*********+.!******++.********+.!******++.%***.**++.!******++.%***++.**++.!%%.+.!*********+.", 0
 
+times 1024 - ($ - $$) db 0
 
-; CrypticOS 512 byte demo
-
-section .text
-	welcome: db ">CrypticOS", 0
-	done: db "Done.", 0
-	invalid: db "Invalid command.", 0
-
-	; Include the pgrm.asm built on compilation
-	%include "build/pgrms.asm"
-
-; Main bootloader jump label
-init:
-	; Zero data segment register
-	xor bx, bx
-	mov ds, bx
-
-	; Set up stack
-	mov sp, 0x7e0
-	mov ss, sp
-	mov sp, 0xfffe
-
-	mov si, welcome
-	call printStr
-
-	terminal:
-		; Get input in buffer
-		mov edi, buffer
-		call input
-
-		; Store first char
-		mov esi, buffer
-		mov al, [esi]
-
-		; Check 'p' (pgrm mode)
-		cmp al, 'p'
-		je runCommand_pgrm
-
-		; Check custom program
-		cmp al, '>'
-		je runCommand_preloaded
-
-		; Else, invalid command
-		mov esi, invalid
-		call printStr
-		jmp terminal
-
-		runCommand_pgrm:
-			; Get input
-			mov edi, buffer
-			call input
-			mov ebx, buffer ; reset edi
-
-			mov al, [ebx]
-			cmp al, 'q'
-			je runCommand_done
-
-			call pgrm ; execute program
-			jmp runCommand_pgrm ; back to prompt
-			
-		runCommand_preloaded:
-			; Check second char
-			add esi, 1
-			mov al, [esi]
-
-			cmp al, 'a'
-			je runCommand_preloaded_a
-			cmp al, 'b'
-			je runCommand_preloaded_b
-			cmp al, 'c'
-			je runCommand_preloaded_c
-			cmp al, 'd'
-			je runCommand_preloaded_d
-			cmp al, 'e'
-			je runCommand_preloaded_e
-
-			runCommand_preloaded_back:
-			call pgrm
-		jmp terminal
-
-		runCommand_preloaded_a:
-			mov ebx, pgrm_a
-			jmp runCommand_preloaded_back
-
-		runCommand_preloaded_c:
-			mov ebx, pgrm_c
-		jmp runCommand_preloaded_back
-
-		runCommand_preloaded_b:
-			mov ebx, pgrm_b
-		jmp runCommand_preloaded_back
-
-		runCommand_preloaded_d:
-			mov ebx, pgrm_d
-		jmp runCommand_preloaded_back
-		
-		runCommand_preloaded_e:
-			mov ebx, pgrm_e
-		jmp runCommand_preloaded_back
-
-		runCommand_done:
-		mov esi, done
-		call printStr
-	jmp terminal
-cli
-hlt
-
-%include "pgrm.asm"
-%include "keyboard.asm"
-%include "newline.asm"
-%include "print.asm"
-
-; Start one byte away from code. Either NASM ignores the
-; errors this way, or it is an x86 thing.
-section .bss:1
-	buffer: resb 100 ; command line input buffer
-	memtop: resw 50 ; pgrm memory
-	membottom: resw 500 ; pgrm memory
-
-; 350 bytes for interpreter, the rest for programs
-times (SIZE * 512) - ($ - $$) db 0
+; Program reserved memory here
+section .bss
+	memtop: resb 500
+	membottom: resb 2000
+	buffer: resb 100
