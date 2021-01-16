@@ -2,8 +2,8 @@ var a '0'
 
 top:
 	prt a
-	add a 1
 	equ a '9' end
+	add a 1
 jmp top
 
 end:

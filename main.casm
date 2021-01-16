@@ -4,8 +4,8 @@ arr foo 20
 ; Include some kernel functions
 inc "$kernel/main.casm"
 jmp k.end
-	inc "$kernel/mov.casm"
 	inc "$kernel/math/div.casm"
+	inc "$kernel/mov.casm"
 	
 	newLine:
 		inl "!**.+++."
@@ -28,13 +28,13 @@ jmp k.end
 	pointerTest:
 		; Store 'A' from pointer &foo
 		set ga SET
-		set gb &foo
+		set gb [foo]
 		set gc 'A'
 		run k.mov
 
 		; Get data from pointer &foo
 		set ga GET
-		set gb &foo
+		set gb [foo]
 		run k.mov
 		prt gr
 	ret
