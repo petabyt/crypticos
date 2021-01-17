@@ -1,14 +1,15 @@
 ; Main CrypticOS 16 bit Bootable
 ; HOW TO USE:
-; Type in CINS any CINS code, and it will run.
-; To execute the second sector program type "!%+"
-; and enter.
+; Type in any CINS code, and it will run.
+; To execute the second sector program, leave 51
+; in the current bottom cell. The easiest way to
+; do this is by running "!%+".
 
 ; Register usage:
 ; eax temp
 ; ebx memrun_top
 ; ecx membottom
-; edx
+; edx reserved for drive number
 ; esi
 ; edi current char
 
@@ -54,7 +55,7 @@ start:
 		jmp prompt_top
 		
 		input_done:
-		mov byte [esi], 0 ; null terminator
+		mov byte [esi], 0
 		call printNewline
 	; end of getting input
 	
@@ -75,16 +76,19 @@ start:
 	call printNewline
 jmp prompt
 
+
 ; Read second sector data
 prompt_load:
-mov ah, 0x2 ; Load sector call
-mov al, 1 ; Read x many sectors
-xor ch, ch ; Cylinder zero
-mov cl, 2 ; Second sector
-xor dh, dh ; Head 0
-mov bx, copy
-int 0x13 ; Read sector
-mov esi, copy
+	mov ah, 0x2 ; Load sector call
+	mov al, 1 ; How many sectors to read
+	xor ch, ch ; Cylinder zero
+	mov cl, 2 ; Second sector
+	xor dh, dh ; Head 0
+	mov bx, copy
+	int 0x13 ; Read sector
+	mov esi, copy
+; will go to run
+
 
 ; Main emulate "function". Takes esi as code
 ; address
@@ -96,7 +100,7 @@ run:
 		mov al, [esi + edi]
 		inc edi ; increment to next
 		
-		or al, al ; is char null terminator?
+		cmp al, 0 ; is char null terminator?
 		je prompt_done ; then goto end if 0
 		
 		cmp al, '*'
@@ -111,6 +115,8 @@ run:
 		je run_mark
 		cmp al, '.'
 		je run_dot
+		cmp al, ','
+		je run_comma
 		cmp al, '>'
 		je run_bracket_right
 		cmp al, '<'
@@ -212,12 +218,38 @@ run:
 
 	; Input/Output
 	run_dot:
-		mov ah, 0x0E
+		cmp word [ebx], 50
+		je run_setVideo
+		cmp word [ebx], 51
+		je run_setPixel
+
+		; Else, just print the character
 		mov al, [ecx]
+		mov ah, 0x0E
 		int 0x10
 	jmp run_top
-; End of run
 
+	run_comma:
+		xor ah, ah ; 0x0
+		int 0x16
+		mov [ecx], al
+	jmp run_top
+
+	run_setVideo:
+		; note: 2 = default, 19 = 13h
+		xor ah, ah ; ah = 0x0
+		mov al, [ebx + 2] ; mode
+		int 0x10
+	jmp run_top
+
+	run_setPixel:
+		mov ax, 0xA000
+		mov es, ax
+		mov bp, [ebx + 2] ; base stack reg for offset/location
+		mov ax, [ebx + 4] ; ax for color
+		mov word [es:bp], ax
+	jmp run_top
+; End of run
 
 ; Print a string. esi = location
 printString:
@@ -248,8 +280,7 @@ dw 0xAA55
 ; Second sector contains
 ; demo program
 copy:
-db "!%****++.*****++++.****.!******++.%++++.*****++++.!%*********++.****.!%*********++++.++.!*********+.!******++.*********.*****+++.!%*********++++.*.!%*********++.++++.*++.!******++.%****++.!%%+.**+++.!%%+.!*********+.!******++.********+.!******++.%***.**++.!******++.%***++.**++.!%%.+.!*********+.", 0
-
+db "!*********+++>|<.>!******++.dd<^a>!%*++^a!+^?<+>!^$|!*********++++.!*********+++.", 0
 times 1024 - ($ - $$) db 0
 
 ; Program reserved memory here
