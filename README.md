@@ -23,23 +23,21 @@ The main language for CrypticOS internals and applications. You can find the off
 development kit here: https://github.com/pufflegamerz/casm (assembler + emulator)  
 
 ## Building
-### 256 byte OS
+Note: Make sure you are in the `x86` directory.  
+### 256 Byte Bootable
 ```
-# Make sure you are in the x86 directory
-nasm -f bin x86/tiny.asm -o build/boot.bin
-qemu-system-x86_64 build/boot.bin
+nasm -f bin tiny.asm
+qemu-system-x86_64 tiny
 ```
-### Deluxe >256 byte version
-This version has demos and stuff, but still the same idea as `tiny.asm`.
+Type in CINS code. It will run.  
+
+### 512 byte Version
+The same as `tiny.asm`, but more usable and stuff.  
 ```
-# Make sure you are in the x86 directory
-# This will open in qemu
-./build.sh
+nasm -f bin main.asm
+qemu-system-x86_64 main
 ```
-Usage:  
-`p` Enter program mode. `q` to quit.
-`>` load a program. Ex: `>a` to load pgrm a.
-There are programs a-d. Have fun.
+Usage: See comments in `x86/main.asm`.
 
 ## So what does it do?
 CrypticOS uses a BrainF* inspired esoteric language as its main runtime.  
