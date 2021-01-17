@@ -1,4 +1,6 @@
-; Standalone Minimal 256 byte OS
+; Standalone Minimal 8 bit OS
+; MUST be under 256 bytes
+; Current size: 242 bytes
 
 bits 16
 org 0x7c00
@@ -10,12 +12,12 @@ os_top:
 		mov ah, 0x0
 		int 0x16
 
-		cmp al, 13 ; compare with enter
-		je input_done ; if key == enter, quit
-
 		; Write char, already in al
 		mov ah, 0x0E
 		int 0x10
+
+		cmp al, 13 ; compare with enter
+		je input_done ; if key == enter, quit
 
 		; Append read char to buffer
 		mov [edi], al
@@ -25,159 +27,149 @@ os_top:
 	input_done:
 		mov byte [edi], 0 ; null terminator
 
-		; Print newline
+		; Print newline, carriage return already
+		; printed by user, when enter pressed
 		mov ah, 0x0E
-		mov al, 0xA
-		int 0x10
-		mov al, 0xD
+		mov al, 10
 		int 0x10
 
 		; Prepare to interpret
-		mov edi, memtop
-		mov esi, membottom
-		xor ecx, ecx
-		mov ebx, buffer
+		mov ebx, memtop
+		mov ecx, membottom
+		mov esi, buffer
+		xor edi, edi ; current char
+; end of input
 
-; Execute program
-pgrm_top:
-	; Store char
-	mov al, [ebx + ecx]
-	inc ecx ; increment char
-
-	; check for null terminator
-	or al, al
-	je os_top
-
-	; Instruction tester
-	cmp al, '+'
-		je pgrm_plus
+run_top:
+	mov al, [esi + edi]
+	inc edi ; increment to next
+	
+	or al, al ; is char null terminator?
+	je os_top ; then goto end if 0
+	
 	cmp al, '*'
-		je pgrm_plus5
+	je run_asterisk
 	cmp al, '%'
-		je pgrm_plus50
+	je run_percent
+	cmp al, '+'
+	je run_plus
 	cmp al, '-'
-		je pgrm_minus
-	cmp al, '>'
-		je pgrm_bottom_next
-	cmp al, '<'
-		je pgrm_bottom_back
-	cmp al, 'd'
-		je pgrm_top_next
-	cmp al, 'a'
-		je pgrm_top_back
-	cmp al, '^'
-		je pgrm_bottom_top
-	cmp al, 'v'
-		je pgrm_top_bottom
-	cmp al, ','
-		je pgrm_comma
-	cmp al, '?'
-		je pgrm_if
-	cmp al, '$'
-		je pgrm_doLoop
+	je run_minus
 	cmp al, '!'
-		je pgrm_reset
-
-	; Else, print char.
-	mov al, [esi]
-	mov ah, 0x0E
-	int 0x10
-jmp pgrm_top
-
-; +
-pgrm_plus:
-	inc byte [esi]
-jmp pgrm_top
-
-; -
-pgrm_minus:
-	dec byte [esi]
-jmp pgrm_top
-
-; *
-pgrm_plus5:
-	add byte [esi], 5
-jmp pgrm_top
-
-; %
-pgrm_plus50:
-	add byte [esi], 50
-jmp pgrm_top
-
-; >
-pgrm_bottom_next:
-	inc esi
-jmp pgrm_top
-
-; <
-pgrm_bottom_back:
-	dec esi
-jmp pgrm_top
-
-; d
-pgrm_top_next:
-	inc edi
-jmp pgrm_top
-
-; a
-pgrm_top_back:
-	dec edi
-jmp pgrm_top
-
-; ^
-pgrm_bottom_top:
-	mov al, [esi] ; works? mov al, [esi]
-	mov [edi], al
-jmp pgrm_top
-
-; v
-pgrm_top_bottom:
-	mov al, [edi]
-	mov [esi], al
-jmp pgrm_top
-
-; !
-pgrm_reset:
-	mov byte [esi], 0
-jmp pgrm_top
+	je run_mark
+	cmp al, '.'
+	je run_dot
+	cmp al, '>'
+	je run_bracket_right
+	cmp al, '<'
+	je run_bracket_left
+	cmp al, 'a'
+	je run_a
+	cmp al, 'd'
+	je run_d
+	cmp al, '^'
+	je run_up
+	cmp al, 'v'
+	je run_v
+	cmp al, '$'
+	je run_loop
+	cmp al, '?'
+	je run_if
+jmp run_top
 
 
-; ?
-pgrm_if:
-	mov dl, [edi + 1] ; store in dl (first of edx)
-	mov dh, [edi + 2] ; store in dh (second of edx)
-	cmp dh, dl ; compare both values
-	jne pgrm_top ; not equal, return. Else, doLoop is below.
+; Jump/logic instructions
+run_if:
+	mov dx, [ebx + 1]
+	mov ax, [ebx + 2]
+	cmp ax, dx ; compare both values
+	jne run_top ; if equal, do, run_loop
 
-pgrm_doLoop:
-	xor ecx, ecx ; reset char reading pointer
-	mov dl, [edi] ; dl will hold desired goto label, will decrease to 0.
-	inc dl ; dec 2020 revision
-	pgrm_doLoop_top:
+run_loop:
+	xor edi, edi ; reset char reading pointer
+	mov dx, [ebx] ; DX holds goto label.
+	inc dx ; labels start at zero
+	run_loop_top:
 		; Set char (ebx), then go back
-		mov al, [ebx + ecx]
-
-		; Increment char
-		inc ecx
+		mov al, [esi + edi]
+		inc edi ; Increment char
 
 		cmp al, '|' ; reached a label?
-		jne pgrm_doLoop_top ; if not, keep searching
-		dec dl ; decrease labels found
-		or dl, dl ; is dl to zero yet? CMP DL, DL
-		jne pgrm_doLoop_top ; if not, keep searching
-	; else loop is done
-jmp pgrm_top
+		jne run_loop_top ; if not, keep searching
+		or dx, dx ; is dx zero?
+		dec dx ; decrease labels found
+		jne run_loop_top ; if not, keep searching
+	; else, loop is done
+jmp run_top
 
-pgrm_comma:
-	mov ah, 0x0
-	int 0x16
-	mov [esi], al
-jmp pgrm_top
 
+; Memory instructions
+run_bracket_right:
+	inc ecx
+jmp run_top
+
+run_bracket_left:
+	dec ecx
+jmp run_top
+
+run_a:
+	dec ebx
+jmp run_top
+
+run_d:
+	inc ebx
+jmp run_top
+
+run_up:
+	mov al, [ecx]
+	mov [ebx], al
+jmp run_top
+
+run_v:
+	mov al, [ebx]
+	mov [ecx], al
+jmp run_top
+
+
+; Reset
+run_mark:
+	mov byte [ecx], 0
+jmp run_top
+
+
+; add/sub
+run_percent:
+	mov al, 50
+jmp run_addSomething
+
+run_asterisk:
+	mov al, 5
+jmp run_addSomething
+
+run_plus:
+	mov al, 1
+jmp run_addSomething
+
+run_minus:
+	mov al, -1
+
+run_addSomething:
+	add [ecx], al
+jmp run_top
+
+
+; Input/Output
+run_dot:
+	mov ah, 0x0E
+	mov al, [ecx]
+	int 0x10
+jmp run_top
+
+; Program size is measured when following two lines are removed:
 times 510 - ($ - $$) db 0
 dw 0xAA55
 
 section .bss
-	buffer resb 100 ; input buffer
-	memtop resb 100 ; pgrm memory
-	membottom resb 1000 ; pgrm memory
+	buffer: resb 100 ; input buffer
+	memtop: resb 100 ; pgrm memory
+	membottom: resb 1000 ; pgrm memory
