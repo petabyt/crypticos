@@ -52,34 +52,4 @@ The design is fairly simple.
 There are two pointers, and two memory arrays. One is the top, and the other is the bottom.  
 The "top" acts like registers. The "bottom" acts like program memory.  
 
-### CrypticCode Instruction Set
-
-Move the two different pointers. Yes, based on WASD and arrow keys.  
-`>` = `pointerb++`  
-`<` = `pointerb--`  
-`d` = `pointera++`  
-`a` = `pointera--`  
-
-Copying data:  
-`^` = `top[pointer] = bottom[pointerb]`  
-`v` = `mem[pointer] = top[pointer]`  
-These are very useful for copying variables: `^>>v`  
-
-Brainf based functions:  
-`+` = `bottom[pointerb]++`  
-`-` = `bottom[pointerb]--`  
-`.` = `print(mem[pointerb])`  
-`,` = `bottom[pointerb] = read()`  
-
-Logic and Jumping:  
-`?` = `if (top[pointera + 1] != top[pointera + 2]) {goto top[pointera]}`  
-`$` = `goto top[pointera]`  
-`|` = Declare a label. It is jumped to by its occurance (first = 1..)  
-(a real specification paper will be finished soon)
-
-MISC Instructions
-`!` = `bottom[pointerb] = 0`  
-`*` = `bottom[pointerb] += 5`  
-`%` = `bottom[pointerb] += 50`  
-
-Official specification document coming soon™
+You can see the full specification here: https://github.com/CrypticOS/cins  
