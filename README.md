@@ -23,23 +23,21 @@ The main language for CrypticOS internals and applications. You can find the off
 development kit here: https://github.com/pufflegamerz/casm (assembler + emulator)  
 
 ## Building
-### 256 byte OS
+Note: Make sure you are in the `x86` directory.  
+### 256 Byte Bootable
 ```
-# Make sure you are in the x86 directory
-nasm -f bin x86/tiny.asm -o build/boot.bin
-qemu-system-x86_64 build/boot.bin
+nasm -f bin tiny.asm
+qemu-system-x86_64 tiny
 ```
-### Deluxe >256 byte version
-This version has demos and stuff, but still the same idea as `tiny.asm`.
+Type in CINS code. It will run.  
+
+### 512 byte Version
+The same as `tiny.asm`, but more usable and stuff.  
 ```
-# Make sure you are in the x86 directory
-# This will open in qemu
-./build.sh
+nasm -f bin main.asm
+qemu-system-x86_64 main
 ```
-Usage:  
-`p` Enter program mode. `q` to quit.
-`>` load a program. Ex: `>a` to load pgrm a.
-There are programs a-d. Have fun.
+Usage: See comments in `x86/main.asm`.
 
 ## So what does it do?
 CrypticOS uses a BrainF* inspired esoteric language as its main runtime.  
@@ -54,34 +52,4 @@ The design is fairly simple.
 There are two pointers, and two memory arrays. One is the top, and the other is the bottom.  
 The "top" acts like registers. The "bottom" acts like program memory.  
 
-### CrypticCode Instruction Set
-
-Move the two different pointers. Yes, based on WASD and arrow keys.  
-`>` = `pointerb++`  
-`<` = `pointerb--`  
-`d` = `pointera++`  
-`a` = `pointera--`  
-
-Copying data:  
-`^` = `top[pointer] = bottom[pointerb]`  
-`v` = `mem[pointer] = top[pointer]`  
-These are very useful for copying variables: `^>>v`  
-
-Brainf based functions:  
-`+` = `bottom[pointerb]++`  
-`-` = `bottom[pointerb]--`  
-`.` = `print(mem[pointerb])`  
-`,` = `bottom[pointerb] = read()`  
-
-Logic and Jumping:  
-`?` = `if (top[pointera + 1] != top[pointera + 2]) {goto top[pointera]}`  
-`$` = `goto top[pointera]`  
-`|` = Declare a label. It is jumped to by its occurance (first = 1..)  
-(a real specification paper will be finished soon)
-
-MISC Instructions
-`!` = `bottom[pointerb] = 0`  
-`*` = `bottom[pointerb] += 5`  
-`%` = `bottom[pointerb] += 50`  
-
-Official specification document coming soon™
+You can see the full specification here: https://github.com/CrypticOS/cins  
