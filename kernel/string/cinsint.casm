@@ -1,0 +1,35 @@
+; Convert gc > CINS numbers
+; aka (123 > %%****++), into stdout
+; requires high.casm
+
+k.cinsInt:
+	; Below 50?
+	set ga gc
+	set gb 50
+	run k.high
+	equ gr FIRST k.cinsInt_percent
+
+	; Below 5?
+	set ga gc
+	set gb 5
+	run k.high
+	equ gr FIRST k.cinsInt_asterisk
+
+	equ gc 0 k.cinsInt_quit
+	
+	sub gc 1
+	prt '+'
+jmp k.cinsInt
+
+k.cinsInt_percent:
+	sub gc 50
+	prt '%'
+jmp k.cinsInt
+
+k.cinsInt_asterisk:
+	sub gc 5
+	prt '*'
+jmp k.cinsInt
+
+k.cinsInt_quit:
+ret

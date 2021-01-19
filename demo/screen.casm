@@ -1,0 +1,22 @@
+var a
+top:
+	got a
+	inl ","
+
+	equ a 13 enter
+	equ a 8 backspace
+	prt a
+jmp top
+
+enter:	
+	set WKSP 10
+	prt WKSP
+	add WKSP 3
+	prt WKSP
+jmp top
+
+backspace:
+	prt 8
+	prt ' '
+	prt 8
+jmp top

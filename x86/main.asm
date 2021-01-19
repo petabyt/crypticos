@@ -16,6 +16,8 @@
 bits 16
 org 0x7c00
 
+%define SECTORS 6
+
 ; Zero out the data segment register
 xor bx, bx
 mov ds, bx
@@ -80,7 +82,7 @@ jmp prompt
 ; Read second sector data
 prompt_load:
 	mov ah, 0x2 ; Load sector call
-	mov al, 1 ; How many sectors to read
+	mov al, 6 ; How many sectors to read
 	xor ch, ch ; Cylinder zero
 	mov cl, 2 ; Second sector
 	xor dh, dh ; Head 0
@@ -280,8 +282,8 @@ dw 0xAA55
 ; Second sector contains
 ; demo program
 copy:
-db "!*********+++>|<.>!******++.dd<^a>!%*++^a!+^?<+>!^$|!*********++++.!*********+++.", 0
-times 1024 - ($ - $$) db 0
+%include "build.asm"
+times 512 + (512 * SECTORS) - ($ - $$) db 0
 
 ; Program reserved memory here
 section .bss
