@@ -1,9 +1,10 @@
 ; Main CrypticOS 16 bit Bootable
 ; HOW TO USE:
 ; Type in any CINS code, and it will run.
-; To execute the second sector program, leave 51
-; in the current bottom cell. The easiest way to
-; do this is by running "!%+".
+; To execute the second sector program, run:
+; !%
+
+
 
 ; Register usage:
 ; eax temp
@@ -71,8 +72,8 @@ start:
 	; operating system via the current bottom
 	; cell. System calls start at 50+.
 
-	; Load sector program (!%+)
-	cmp byte [ecx], 51
+	; Load sector program (!%)
+	cmp byte [ecx], 50
 	je prompt_load
 	
 	call printNewline
@@ -257,8 +258,7 @@ run:
 printString:
 	mov ah, 0x0E ; print char bios
 	printString_loop:
-		mov al, [si] ; get char
-		inc esi ; next char
+		lodsb ; mov al, [si], inc si
 		int 0x10 ; print it
 		or al, al ; is al zero?
 	jne printString_loop ; if not equal, then loop
