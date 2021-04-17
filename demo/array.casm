@@ -1,16 +1,16 @@
-arr a 10
+arr a 10 0
 
 ; In order to dynamically retrieve/set a certain cell in memory,
 ; we must include a kernel function in the program.
 inc "$kernel/main.casm"
 jmp a
-inc "$kernel/mov.casm"
+	inc "$kernel/mov.casm"
 a:
 
 ; mem[gb] = gc
 set ga SET
 set gb [a]
-set gc 5 ; value to set
+set gc '2' ; value to set
 run k.mov
 
 ; gr = mem[gb]
@@ -18,9 +18,5 @@ set ga GET
 set gb [a]
 run k.mov
 
-; Print as digit
-add gr '0'
-prt gr
-
-; Expect 2, the value we gave to a.
-
+; Debug char
+inl "#"

@@ -7,4 +7,4 @@ dd if=main of=floppy.img seek=0 conv=notrunc
 
 genisoimage -quiet -V "CrypticOS" -input-charset iso8859-1 -o cryptic.iso -b floppy.img -hide floppy.img .
 
-rm -rf main build.asm
+rm -rf main floppy.img build.asm

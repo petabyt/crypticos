@@ -1,11 +1,5 @@
-; This function is written mostly in Cryptic Instruction and
-; Is used to move back and forth to abritary locations in memory
-; on run time, not on compile time.
-
-; ga = operation (GET/SET)
-; gb = location
-; gc = value to set/get
-k.mov:
+; Duplicate of k.mov, but goes forward.
+k.movf:
 	got ga
 	inl "d^" ; Reserve for operation
 	got gb
@@ -18,55 +12,10 @@ k.mov:
 	inl "!^d" ; store zero to compare (value1)
 	inl "aaaaavddddd^" ; store value from fourth cell (value2)
 	inl "aa" ; go back
-	
-	k.mov_back:
+
+	k.movf_back:
 		inl "a^d" ; store current cell temp
-		set WKSP [k.mov_back_end]
-		inl "^"
-		inl "avd" ; restore temp value
-		inl "<"
-
-		; to go matching register + 1, store temp,
-		; sub matching register, return back
-		inl "ddd^"
-		inl "av-^dvaaa"
-	inl "?" ; equ
-
-	; Goto
-	inl "a^d" ; store current cell temp
-	set WKSP [k.mov_back]
-	inl "^"
-	inl "avd" ; restore temp value
-	inl "$"
-	k.mov_back_end:
-
-	inl "a^d" ; store temp
-	set WKSP [k.mov_set]
-	inl "^"
-	inl "d!+^" ; store 1
-	inl "aaaaavdddddd^" ; store operation reg
-	inl "aa" ; back to label
-	inl "avd" ; restore value
-	inl "?"
-
-	; If operation is not 1 (2)
-	inl "aavdd" ; set value
-	k.mov_set:
-	; If operation is 1:
-	inl "aa^dd" ; put char into value
-
-	; Now we are currently in the label reg.
-	; Go back to temp reg and store current memory cell.
-	inl "a^d"
-
-	inl "d" ; space for label
-	inl "!^d" ; store zero to compare
-	inl "aaaaavddddd^" ; store 4 to compare (from matching register)
-	inl "aa" ; go back
-	inl "avd" ; Restore temp value
-	k.mov_forward:
-		inl "a^d" ; store current cell temp
-		set WKSP [k.mov_forward_back]
+		set WKSP [k.movf_back_end]
 		inl "^"
 		inl "avd" ; restore temp value
 		inl ">"
@@ -79,11 +28,56 @@ k.mov:
 
 	; Goto
 	inl "a^d" ; store current cell temp
-	set WKSP [k.mov_forward]
+	set WKSP [k.movf_back]
 	inl "^"
 	inl "avd" ; restore temp value
 	inl "$"
-	k.mov_forward_back:
+	k.movf_back_end:
+
+	inl "a^d" ; store temp
+	set WKSP [k.movf_set]
+	inl "^"
+	inl "d!+^" ; store 1
+	inl "aaaaavdddddd^" ; store operation reg
+	inl "aa" ; back to label
+	inl "avd" ; restore value
+	inl "?"
+
+	; If operation is not 1 (2)
+	inl "aavdd" ; set value
+	k.movf_set:
+	; If operation is 1:
+	inl "aa^dd" ; put char into value
+
+	; Now we are currently in the label reg.
+	; Go back to temp reg and store current memory cell.
+	inl "a^d"
+
+	inl "d" ; space for label
+	inl "!^d" ; store zero to compare
+	inl "aaaaavddddd^" ; store 4 to compare (from matching register)
+	inl "aa" ; go back
+	inl "avd" ; Restore temp value
+	k.movf_forward:
+		inl "a^d" ; store current cell temp
+		set WKSP [k.movf_forward_back]
+		inl "^"
+		inl "avd" ; restore temp value
+		inl "<"
+
+		; to go matching register + 1, store temp,
+		; sub matching register, return back
+		inl "ddd^"
+		inl "av-^dvaaa"
+	inl "?" ; equ
+
+	; Goto
+	inl "a^d" ; store current cell temp
+	set WKSP [k.movf_forward]
+	inl "^"
+	inl "avd" ; restore temp value
+	inl "$"
+	k.movf_forward_back:
 	got gr
 	inl "aavaaa" ; go to initial value, when started
 ret

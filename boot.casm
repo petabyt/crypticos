@@ -1,0 +1,5 @@
+inc "$kernel/main.casm"
+
+top:
+	got WKSP
+	

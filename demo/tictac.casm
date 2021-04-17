@@ -77,6 +77,7 @@ main_top:
 	
 	run plotInput
 	run drawBoard
+	inl "#"
 jmp main_top
 asd:
 

@@ -2,6 +2,8 @@
 var WIDTH 640
 var HEIGHT 480
 
+var tmp 0
+
 inc "$kernel/main.casm"
 jmp func
 	drawPixel:
@@ -25,22 +27,29 @@ jmp func
 	ret
 func:
 
-set ga 97
-set gb 186
-set gc 192
-run setColor
+set tmp 100
 
-; Fill up the screen
-set gb HEIGHT
-topH:
-	set ga WIDTH
-	equ gb 0 endW
-	topW:
-		equ ga 0 endH
-		run drawPixel
-		sub ga 1
-	jmp topW
-	endH:
-	sub gb 1
-jmp topH
-endW:
+topL:
+	; Warning: Adds by 10, will go above integer limit
+	
+	add tmp 10
+	set ga tmp
+	set gb tmp
+	set gc tmp
+	run setColor
+
+	; Fill up the screen
+	set gb HEIGHT
+	topH:
+		set ga WIDTH
+		equ gb 0 endW
+		topW:
+			equ ga 0 endH
+			run drawPixel
+			sub ga 1
+		jmp topW
+		endH:
+		sub gb 1
+	jmp topH
+	endW:
+jmp topL
