@@ -1,4 +1,12 @@
 [Demo MicroCASM file]
-[Hello, I'm a comment]
-!{pH}.
-!{pi}.
+
+!%-->		[Increment to '0']
+|			[Label 0]
+<.+>		[Print and increment]
+dd!	<^>a	[If c0 == '9', goto label 1]
+	!%*++^a	[Up 9]
+	!+^		[Label 1]
+	!		[ ]
+	?
+!^$			[Goto label 0]
+|			[Label 1]

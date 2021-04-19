@@ -3,6 +3,7 @@ default: mini
 mini:
 	@casm -a mini.casm > a
 	@casm -r a -i "`cat test.mcas`" > b
+	@cat b
 	@casm -r b
 	@rm -f a b c d
 

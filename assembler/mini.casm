@@ -9,7 +9,7 @@
 ; !%***. [print 'A']
 ; {jA} [goto label A]
 
-arr buffer 100
+arr buffer 200
 var temp 0
 
 inc "$kernel/main.casm"
@@ -94,6 +94,11 @@ set ga SET
 s.top:
 	got gc
 	inl ","
+
+	; Skip tabs, spaces
+	equ gc 9 s.top
+	equ gc ' ' s.top
+
 	run k.mov
 	; Compare after so '\0' can be added
 	equ gc 0 s.end
