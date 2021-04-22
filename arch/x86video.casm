@@ -1,80 +1,57 @@
-; x86 Registers
-var ah 0
-var al 0
+; Define data as variable
+var WIDTH 640
+var HEIGHT 480
 
-var ch 0
-var cl 0
+var tmp 0
 
-var dh 0
-var dl 0
+inl "!%^."
 
-var bh 0
-var bl 0
+inc "$kernel/main.casm"
+jmp func
+	drawPixel:
+		inl "!^d"
+		got ga
+		inl "^d"
+		got gb
+		inl "^aa"
+		inl "."
+	ret
 
+	setColor:
+		inl "!+^d"
+		got ga
+		inl "^d"
+		got gb
+		inl "^d"
+		got gc
+		inl "^aaa"
+		inl "."
+	ret
+func:
 
-; Set mode to 0x12
-;set al 5
-;run setVideo
+set tmp 100
 
-;set ah 11
-;set bh 0
-;set bl 1
-;run int
+topL:
+	; Warning: Adds by 10, will go above integer limit
+	
+	add tmp 10
+	set ga tmp
+	set gb tmp
+	set gc tmp
+	run setColor
 
-; Print character
-
-set al 'A'
-set bl 1
-run drawChar
-
-prt 10
-
-set al 'B'
-set bl 2
-run drawChar
-
-prt 10
-
-set al 'C'
-set bl 3
-run drawChar
-
-
-
-jmp end
-
-setVideo:
-	set ah 0
-	run int
-ret
-
-drawChar:
-	set ah 9
-	;set al 'A'
-	set ch 0
-	set cl 10 ; Print once
-	set dh 0
-	set dl 0
-	set bh 0 ; Page number
-	;set bl 1 ; Color
-	run int
-ret
-
-drawPixel:
-	set ah 12
-	set al 5
-	set ch 0
-	set cl 10 ; x = 10
-	set dh 0
-	set dl 10 ; y = 10
-	run int
-ret
-
-; Start the interrupt
-int:
-	got 0
-	inl "@"
-ret
-
-end:
-
+	; Fill up the screen
+	set gb HEIGHT
+	topH:
+		set ga WIDTH
+		equ gb 0 endW
+		topW:
+			equ ga 0 endH
+			run drawPixel
+			sub ga 1
+		jmp topW
+		endH:
+		sub gb 1
+	jmp topH
+	endW:
+jmp topL

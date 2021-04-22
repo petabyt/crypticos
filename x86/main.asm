@@ -1,14 +1,13 @@
 ; Main CrypticOS 16 bit Bootable
 ; HOW TO USE:
 ; Type in any CINS code, and it will run.
-; To execute the second sector program, run:
+; To execute the second sector program, leave 50
+; in bottom pointer:
 ; !%
-
-
 
 ; Register usage:
 ; eax temp
-; ebx memrun_top
+; ebx memtop
 ; ecx membottom
 ; edx reserved for drive number
 ; esi
@@ -61,7 +60,6 @@ start:
 		mov byte [esi], 0
 		call printNewline
 	; end of getting input
-	
 
 	; Run buffer input and go back
 	mov esi, buffer
@@ -87,14 +85,14 @@ prompt_load:
 	xor ch, ch ; Cylinder zero
 	mov cl, 2 ; Second sector
 	xor dh, dh ; Head 0
-	mov bx, copy
+	mov bx, demo
 	int 0x13 ; Read sector
-	mov esi, copy
-; will go to run
+	mov esi, demo
+; Go to run...
 
 
-; Main emulate "function". Takes esi as code
-; address
+; Main emulate "function", Takes esi
+; as code address
 run:
 	mov ebx, memtop
 	mov ecx, membottom
@@ -138,7 +136,6 @@ run:
 		je run_if
 	jmp run_top
 
-
 	; Jump/logic instructions
 	run_if:
 		mov dx, [ebx + 2]
@@ -152,7 +149,7 @@ run:
 		inc dx ; labels start at zero
 		run_loop_top:
 			; Set char (ebx), then go back
-			mov al, [copy + edi]
+			mov al, [demo + edi]
 			inc edi ; Increment char
 
 			cmp al, '|' ; reached a label?
@@ -162,7 +159,6 @@ run:
 			jne run_loop_top ; if not, keep searching
 		; else, loop is done
 	jmp run_top
-
 
 	; Memory instructions
 	run_bracket_right:
@@ -191,12 +187,10 @@ run:
 		mov [ecx], ax
 	jmp run_top
 
-
 	; Reset
 	run_mark:
 		mov word [ecx], 0
 	jmp run_top
-
 
 	; add/sub
 	run_percent:
@@ -279,13 +273,11 @@ welcome: db ">CrypticOS", 0
 times 510 - ($ - $$) db 0
 dw 0xAA55
 
-; Second sector contains
-; demo program
-copy:
-%include "build.asm"
+; Second sector contains demo program
+demo: incbin "a"
 times 512 + (512 * SECTORS) - ($ - $$) db 0
 
-; Program reserved memory here
+; Declare reserved memory
 section .bss
 	memtop: resb 500
 	membottom: resb 2000

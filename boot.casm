@@ -1,5 +1,58 @@
 inc "$kernel/main.casm"
+jmp k.end
+	inc "$kernel/movf.casm"
+k.end:
+
+def BUFFER 50
+
+; Buffer location
+set gb BUFFER
+
+prt "CrypticOS"
+run newline
+prt ':'
 
 top:
-	got WKSP
+	got ga
+	inl ","
+
+	equ ga 13 enter
+	equ ga 8 backspace
+	equ ga 27 exit ; escape key
+
+	set gc ga
+	set ga SET
+	run k.movf
+	add gb 1
+jmp top
+
+enter:
+	run newline
+
+	; Print first char
+	set ga GET
+	set gb BUFFER
+	run k.movf
+	prt gr
 	
+	run newline
+	prt ':'
+jmp top
+
+backspace:
+	prt 8
+	prt ' '
+	prt 8
+jmp top
+
+newline:
+	; Newline
+	set WKSP 10
+	prt WKSP
+
+	; Carriage return
+	add WKSP 3
+	prt WKSP
+ret
+
+exit:

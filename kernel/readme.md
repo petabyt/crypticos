@@ -1,2 +1,2 @@
 # Kernel Code
-Essential system functions, required by most programs
+CASM Base Kernel functions

@@ -5,6 +5,7 @@ top:
 
 	equ a 13 enter
 	equ a 8 backspace
+	equ a 'q' exit
 	prt a
 jmp top
 
@@ -20,3 +21,5 @@ backspace:
 	prt ' '
 	prt 8
 jmp top
+
+exit:
