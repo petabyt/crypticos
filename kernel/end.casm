@@ -1,0 +1,15 @@
+jmp KERNELFUNC
+	; Math
+	inc "$kernel/math/add.casm"
+	inc "$kernel/math/sub.casm"
+	inc "$kernel/math/div.casm"
+	inc "$kernel/math/mult.casm"
+	inc "$kernel/math/high.casm"
+
+	; Memory jumping
+	inc "$kernel/mov.casm"
+	inc "$kernel/movf.casm"
+
+	; Strings
+	inc "$kernel/string/cinsint.casm"
+KERNELFUNC:

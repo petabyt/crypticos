@@ -1,4 +1,8 @@
 ; Duplicate of k.mov, but goes forward.
+
+; ga = operation (GET/SET)
+; gb = location
+; gc = value to set/get
 k.movf:
 	got ga
 	inl "d^" ; Reserve for operation

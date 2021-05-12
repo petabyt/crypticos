@@ -1,22 +1,21 @@
-arr a 10 0
+def ARR 50
 
 ; In order to dynamically retrieve/set a certain cell in memory,
 ; we must include a kernel function in the program.
 inc "$kernel/main.casm"
 jmp a
-	inc "$kernel/mov.casm"
+	inc "$kernel/movf.casm"
 a:
 
-; mem[gb] = gc
+; ARR[gb] = gc
 set ga SET
-set gb [a]
+set gb ARR
 set gc '2' ; value to set
-run k.mov
+run k.movf
 
-; gr = mem[gb]
+; gr = ARR[gb]
 set ga GET
-set gb [a]
-run k.mov
+set gb ARR
+run k.movf
 
-; Debug char
-inl "#"
+prt gr

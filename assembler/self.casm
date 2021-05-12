@@ -1,0 +1,260 @@
+; Libs
+inc "$kernel/main.casm"
+
+; Self hosting CINS VM
+
+; Program memory start
+def MCODE 20
+
+; MCODE (expanded) | MEMTOP [50] | MEMBOTTOM (infinity)
+var s.code MCODE
+var s.memtop MCODE
+var s.membottom MCODE
+add s.membottom 50
+
+; Load the file into memory
+set ga SET
+set gb s.code
+s.load:
+	got gc
+	inl ","
+	equ gc 0 s.load_end
+	run k.movf
+	add gb 1
+
+	; Inc memory addr to ensure
+	; code has enough space
+	add s.memtop 1
+	add s.membottom 1
+jmp s.load
+s.load_end:
+
+; Loop through the code
+set gb s.code
+s.interpret:
+	; gc = *code; code++;
+	set ga GET
+	run k.movf
+	add gb 1
+
+	equ gr '!' s.reset
+	equ gr '+' s.addone
+	equ gr '-' s.subone
+	equ gr '*' s.addfive
+	equ gr '%' s.addfifty
+	equ gr '>' s.addbottom
+	equ gr '<' s.subbottom
+	equ gr 'd' s.addtop
+	equ gr 'a' s.subtop
+	equ gr '.' s.print
+	equ gr '^' s.up
+	equ gr 'v' s.down
+	equ gr '$' s.goto
+	equ gr '?' s.if
+	equ gr '#' s.dbg
+	equ gr 0 s.interpret_end
+jmp s.interpret
+
+s.reset:
+	; Push gb
+	got gb
+	inl "^d"
+
+	; *membottom = 0;
+	set ga SET
+	set gb s.membottom
+	set gc 0
+	run k.movf
+
+	; pop gb
+	got gb
+	inl "av"
+jmp s.interpret
+
+s.addone:
+	got gb
+	inl "^d"
+
+	; (*membottom)++;
+	set ga GET
+	set gb s.membottom
+	run k.movf
+	set ga SET
+	set gc gr
+	add gc 1
+	run k.movf
+
+	got gb
+	inl "av"
+jmp s.interpret
+
+s.subone:
+	got gb
+	inl "^d"
+
+	; (*membottom)--;
+	set ga GET
+	set gb s.membottom
+	run k.movf
+	set ga SET
+	set gc gr
+	sub gc 1
+	run k.movf
+
+	got gb
+	inl "av"
+jmp s.interpret
+
+s.addfive:
+	got gb
+	inl "^d"
+
+	; (*membottom) += 5;
+	set ga GET
+	set gb s.membottom
+	run k.movf
+	set ga SET
+	set gc gr
+	add gc 5
+	run k.movf
+
+	got gb
+	inl "av"
+jmp s.interpret
+
+s.addfifty:
+	got gb
+	inl "^d"
+
+	; (*membottom) += 50;
+	set ga GET
+	set gb s.membottom
+	run k.movf
+	set ga SET
+	set gc gr
+	add gc 50
+	run k.movf
+
+	got gb
+	inl "av"
+jmp s.interpret
+
+s.print:
+	got gb
+	inl "^d"
+
+	set ga GET
+	set gb s.membottom
+	run k.movf
+	prt gr
+
+	got gb
+	inl "av"
+jmp s.interpret
+
+s.addbottom:
+	add s.membottom 1
+jmp s.interpret
+
+s.subbottom:
+	sub s.membottom 1
+jmp s.interpret
+
+s.addtop:
+	add s.memtop 1
+jmp s.interpret
+
+s.subtop:
+	sub s.memtop 1
+jmp s.interpret
+
+s.up:
+	got gb
+	inl "^d"
+
+	; *memtop = *membottom;
+	set ga GET
+	set gb s.membottom
+	run k.movf
+	set ga SET
+	set gb s.memtop
+	set gc gr
+	run k.movf
+
+	got gb
+	inl "av"
+jmp s.interpret
+
+s.down:
+	got gb
+	inl "^d"
+
+	; *membottom = *memtop;
+	set ga GET
+	set gb s.memtop
+	run k.movf
+	set ga SET
+	set gb s.membottom
+	set gc gr
+	run k.movf
+
+	got gb
+	inl "av"
+jmp s.interpret
+
+s.if:
+	got gb
+	inl "^d"
+
+	; gd = *memtop + 1;
+	; gr = *memtop + 2;
+	set ga GET
+	set gb s.memtop
+	add gb 1
+	run k.movf
+	set gd gr
+	add gb 1
+	run k.movf
+
+	got gb
+	inl "av"
+
+	; if (gd == gr) goto();
+	equ gr gd s.goto
+jmp s.interpret
+
+s.goto:
+	; gd = *memtop;
+	set ga GET
+	set gb s.memtop
+	run k.movf
+	set gd gr
+
+	; labels start at zero
+	add gd 1
+
+	; Loop through code, decrement gd
+	; to find correct label
+	set gb s.code
+	s.goto_top:
+		run k.movf
+		add gb 1
+		equ gr '|' s.goto_sub
+	jmp s.goto_top
+	s.goto_end:
+jmp s.interpret
+
+s.goto_sub:
+	sub gd 1
+	equ gd 0 s.goto_end
+jmp s.goto_top
+
+s.dbg:
+	inl "#"
+
+s.interpret_end:
+
+; Libs
+jmp a
+	inc "$kernel/movf.casm"
+a:

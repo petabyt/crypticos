@@ -1,0 +1,11 @@
+var a '0'
+top:
+prt a
+prt ' '
+equ a '9' end
+add a 1
+jmp top
+end:
+prt "10"
+
+

@@ -9,6 +9,8 @@
 ; !%***. [print 'A']
 ; {jA} [goto label A]
 
+; TODO: Use movf instead of mov
+
 arr buffer 200
 var temp 0
 
