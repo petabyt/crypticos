@@ -1,15 +1,23 @@
-; Libs
-inc "$kernel/main.casm"
+; Dirty quick fix for x86, TODO Fix
+#define DUMPINPUT 0
+
+#ifdef DUMPINPUT
+	prt "Self-Hosting VM"
+	prt 10
+	prt 13
+#end
+
+#ifndef STANDALONE
+	; Libs
+	inc "$kernel/main.casm"
+#end
 
 ; Self hosting CINS VM
 
-; Program memory start
-def MCODE 20
-
 ; MCODE (expanded) | MEMTOP [50] | MEMBOTTOM (infinity)
-var s.code MCODE
-var s.memtop MCODE
-var s.membottom MCODE
+var s.code INPUT
+var s.memtop INPUT
+var s.membottom INPUT
 add s.membottom 50
 
 ; Load the file into memory
@@ -18,7 +26,13 @@ set gb s.code
 s.load:
 	got gc
 	inl ","
+
+	#ifdef DUMPINPUT
+		inl "."
+	#end
+	
 	equ gc 0 s.load_end
+	equ gc '0' s.load_end
 	run k.movf
 	add gb 1
 
@@ -53,6 +67,7 @@ s.interpret:
 	equ gr '?' s.if
 	equ gr '#' s.dbg
 	equ gr 0 s.interpret_end
+	equ gr '0' s.interpret_end
 jmp s.interpret
 
 s.reset:
@@ -254,7 +269,15 @@ s.dbg:
 
 s.interpret_end:
 
-; Libs
-jmp a
-	inc "$kernel/movf.casm"
-a:
+#ifdef STANDALONE
+	fre s.code
+	fre s.memtop
+	fre s.membottom
+	got 0
+#end
+
+#ifndef STANDALONE
+	jmp kernelfunc
+		inc "$kernel/movf.casm"
+	kernelfunc:
+#end

@@ -72,12 +72,11 @@ main_top:
 	
 	; Input in gb
 	got gb
-	inl ","
+	inl ",."
 	equ gb 'x' asd
 	
 	run plotInput
 	run drawBoard
-	inl "#"
 jmp main_top
 asd:
 

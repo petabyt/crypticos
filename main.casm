@@ -1,14 +1,18 @@
 ; Buffer
 arr buffer 20
 
-; Include general purpose variables
-inc "$kernel/main.casm"
-jmp k.end
-	inc "$kernel/math/div.casm"
-	inc "$kernel/mov.casm"
-	inc "$kernel/math/high.casm"
-	inc "$kernel/string/cinsint.casm"
-	
+#ifndef STANDALONE
+	; Include general purpose variables
+	inc "$kernel/main.casm"
+	jmp k.end
+		inc "$kernel/math/div.casm"
+		inc "$kernel/mov.casm"
+		inc "$kernel/math/high.casm"
+		inc "$kernel/string/cinsint.casm"
+	k.end:
+#end
+
+jmp main
 	newLine:
 		inl "!**.+++."
 	ret
@@ -40,7 +44,7 @@ jmp k.end
 		run k.mov
 		prt gr
 	ret
-k.end:
+main:
 
 prt "CrypticOS"
 inl "!**.+++."

@@ -1,0 +1,20 @@
+#ifndef STANDALONE
+	inc "$kernel/main.casm"
+#end
+
+top:
+	got gc
+	inl ","
+	equ gc 13 enter
+	equ gc 9 indent
+	prt gc
+jmp top
+
+enter:
+	prt 13
+	prt 10
+jmp top
+
+indent:
+	prt "    "
+jmp top

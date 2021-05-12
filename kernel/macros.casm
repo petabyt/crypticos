@@ -1,0 +1,9 @@
+; This is a GPP preprocessed file
+; This may change later at some point
+#ifdef DUMP
+	#define INPUT inl ",."
+#else
+	#define INPUT inl ","
+#endif
+
+INPUT

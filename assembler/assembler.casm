@@ -1,4 +1,5 @@
 ; Main CrypticASM compiler
+; Very much unfinished and outdated
 
 ; Input buffer
 arr code 10

@@ -1,9 +1,11 @@
-inc "$kernel/main.casm"
-jmp k.end
-	inc "$kernel/movf.casm"
-k.end:
+#ifndef STANDALONE
+	inc "$kernel/main.casm"
+	jmp k.end
+		inc "$kernel/movf.casm"
+	k.end:
+#end
 
-def BUFFER 50
+#define BUFFER 50
 
 ; Buffer location
 set gb BUFFER
@@ -14,7 +16,7 @@ prt ':'
 
 top:
 	got ga
-	inl ","
+	inl ",."
 
 	equ ga 13 enter
 	equ ga 8 backspace
@@ -33,7 +35,7 @@ enter:
 	set ga GET
 	set gb BUFFER
 	run k.movf
-	prt gr
+	equ gr 'e' edit
 	
 	run newline
 	prt ':'
@@ -54,5 +56,23 @@ newline:
 	add WKSP 3
 	prt WKSP
 ret
+
+edit:
+	e.top:
+		got gc
+		inl ","
+		equ gc 13 e.enter
+		equ gc 9 e.indent
+		prt gc
+	jmp e.top
+	
+	e.enter:
+		prt 13
+		prt 10
+	jmp e.top
+	
+	e.indent:
+		prt "    "
+	jmp e.top
 
 exit:

@@ -6,8 +6,7 @@ help:
 	@echo "make tiny	Run tiny <256 version"
 
 compile:
-	@touch build.asm
-	@casm -a ../boot.casm > a
+	@casm -a ../assembler/self.casm > a
 	@nasm -f bin main.asm -o main
 
 compiletiny:

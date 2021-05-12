@@ -16,6 +16,8 @@
 bits 16
 org 0x7c00
 
+;%define INPUTFEEDBACK
+
 %define SECTORS 6
 
 ; Zero out the data segment register
@@ -230,6 +232,10 @@ run:
 		xor ah, ah ; 0x0
 		int 0x16
 		mov [ecx], al
+		%ifdef INPUTFEEDBACK
+			mov ah, 0x0E
+			int 0x10
+		%endif
 	jmp run_top
 
 	run_setVideo:

@@ -7,5 +7,3 @@ add a 1
 jmp top
 end:
 prt "10"
-
-

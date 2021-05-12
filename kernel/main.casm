@@ -1,9 +1,13 @@
-def true 1
-def false 0
+; Standard location for memory start/
+; location for program data
+#define INPUT_LOC 100
+
+#define true 1
+#define false 0
 
 ; For k.mov/k.movf
-def GET 1
-def SET 2
+#define GET 1
+#define SET 2
 
 ; Kernel main variables.
 ; Reserve 5 memory cells.
@@ -13,3 +17,4 @@ var gd 0 ; General d
 var gc 0 ; General c
 var gb 0 ; General b
 var ga 0 ; General a
+
