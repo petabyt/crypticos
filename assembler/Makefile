@@ -24,7 +24,8 @@ nasm:
 	@nasm -felf64 b -o c
 	@ld c -o d
 	@chmod +x d
-	@./d
+	@./d || :
+	@echo ""
 	@rm -f a b c d
 
 c:
@@ -33,7 +34,7 @@ c:
 	@casm -r a -i "`cat c`" > b.c
 	@$(CC) -w b.c -o d
 	@./d
-
+	@echo ""
 	@rm -f a b.c c d
 
 clean:

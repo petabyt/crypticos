@@ -112,7 +112,7 @@ prt "return 0;"
 ; Map Labels though A-Z alphabet
 
 prt "g:"
-prt "d=t[y]+'@';"
+prt "d=t[y]+'A';"
 
 label_top:
 	equ label 'A' label_end

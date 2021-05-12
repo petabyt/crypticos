@@ -150,7 +150,7 @@ prt "G:"
 prt 10
 prt "MOV AL,[ESI]"
 prt 10
-prt "ADD AL,'@'"
+prt "ADD AL,65"
 prt 10
 
 label_top:
