@@ -1,12 +1,12 @@
 default: mini
 
-demo := ../demo/count.casm
+demo := ../demo/tictac.casm
 CC := tcc
 
-self:
-	@casm -a self.casm > a
+interpret:
+	@casm -a interpret.casm > a
 	@casm -a $(demo) > b
-	@casm -r a -i "`cat b`"
+	@casm -r a -i "`cat b`0123q"
 
 mini:
 	@casm -a mini.casm > a
@@ -17,6 +17,7 @@ mini:
 nasm:
 	@casm -a $(demo) > d
 	@casm -a compilenasm.casm > a
+	
 	@casm -r a -i "`cat d`" > b
 	@cat b | head
 	@nasm -felf64 b -o c
@@ -26,13 +27,19 @@ nasm:
 	@echo ""
 
 c:
+# Assemble main file
 	@casm -a compilec.casm > a
-	@casm -a $(demo) > c
-	@casm -r a -i "`cat c`" > b.c
-	@cat b.c | head
+	@casm -r a -i "`cat a`" > b.c
+
+# Now, self host a few times
 	@$(CC) -w b.c -o d
-	@./d
+	@./d a > b.c
+	@$(CC) -w b.c -o d
+	@./d a > b.c
+	@$(CC) -w b.c -o d
+	@./d a
+
 	@echo ""
 
 clean:
-	@rm -f a b c d b.c
+	@rm -f a b c d b.c c.c

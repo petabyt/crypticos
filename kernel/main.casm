@@ -1,6 +1,6 @@
 ; Standard location for memory start/
 ; location for program data
-#define INPUT_LOC 100
+#define INPUT 100
 
 #define true 1
 #define false 0

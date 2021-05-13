@@ -1,5 +1,8 @@
+; This is a full CINS interpreter
+; Don't try to use it for anything big,
+; performance will be awful.
 ; Dirty quick fix for x86, TODO Fix
-#define DUMPINPUT 0
+;#define DUMPINPUT 0
 
 #ifdef DUMPINPUT
 	prt "Self-Hosting VM"
@@ -33,6 +36,11 @@ s.load:
 	
 	equ gc 0 s.load_end
 	equ gc '0' s.load_end
+
+	#ifdef STANDALONE
+		equ gc '1' s.manual
+	#end
+	
 	run k.movf
 	add gb 1
 
@@ -41,6 +49,16 @@ s.load:
 	add s.memtop 1
 	add s.membottom 1
 jmp s.load
+
+#ifdef STANDALONE
+; Manually allocate space for memory
+s.manual:
+	set s.memtop INPUT
+	add s.memtop 1000
+	set s.membottom s.memtop
+	add s.membottom 50
+#end
+
 s.load_end:
 
 ; Loop through the code
@@ -51,6 +69,7 @@ s.interpret:
 	run k.movf
 	add gb 1
 
+	equ gr ',' s.input
 	equ gr '!' s.reset
 	equ gr '+' s.addone
 	equ gr '-' s.subone
@@ -70,8 +89,24 @@ s.interpret:
 	equ gr '0' s.interpret_end
 jmp s.interpret
 
-s.reset:
+s.input:
 	; Push gb
+	got gb
+	inl "^d"
+
+	; *membottom = getchar();
+	set ga SET
+	set gb s.membottom
+	got gc
+	inl ","
+	run k.movf
+
+	; pop gb
+	got gb
+	inl "av"
+jmp s.interpret
+
+s.reset:
 	got gb
 	inl "^d"
 
@@ -81,7 +116,6 @@ s.reset:
 	set gc 0
 	run k.movf
 
-	; pop gb
 	got gb
 	inl "av"
 jmp s.interpret
@@ -266,6 +300,7 @@ jmp s.goto_top
 
 s.dbg:
 	inl "#"
+	prt "[DBG]"
 
 s.interpret_end:
 

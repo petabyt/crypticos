@@ -1,10 +1,21 @@
 ; CINS to C generator
 ; Self hosted compiler, up to 27 labels
 
+#define FILEINPUT
+
 ; Initialization
 prt "int t[100];int b[1000];int y=0;int n=0;" ; Initialization
 prt "int d;" ; Temp int
-prt "int main(){"
+#ifdef FILEINPUT
+	prt "int main(int argc,char *argv[]){int *a=fopen(argv[1],"
+	prt '"'
+	prt 'r'
+	prt '"'
+	prt ");"
+#end
+#ifndef FILEINPUT
+	prt "int main(){"
+#end
 
 var label 'A' ; Holds the label character
 var c 0 ; Holds current char
@@ -15,6 +26,7 @@ top:
 	inl ","
 	
 	equ c 0 end ; end of line
+	equ c '0' end ; end of line
 	equ c '.' dot
 	equ c ',' comma
 	equ c '>' bracketRight
@@ -42,7 +54,12 @@ dot:
 jmp top
 
 comma:
-
+	#ifdef FILEINPUT
+		prt "b[n]=(char)fgetc(a);"
+	#end
+	#ifndef FILEINPUT
+		prt "b[n]=getchar();"
+	#end
 jmp top
 
 bracketRight:
@@ -133,3 +150,4 @@ label_end:
 
 prt "}"
 
+inl "0"
