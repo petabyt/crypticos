@@ -2,7 +2,7 @@
 ; Don't try to use it for anything big,
 ; performance will be awful.
 ; Dirty quick fix for x86, TODO Fix
-;#define DUMPINPUT 0
+#define DUMPINPUT 0
 
 #ifdef DUMPINPUT
 	prt "Self-Hosting VM"
@@ -31,7 +31,7 @@ s.load:
 	inl ","
 
 	#ifdef DUMPINPUT
-		inl "."
+		prt gc
 	#end
 	
 	equ gc 0 s.load_end
@@ -316,3 +316,6 @@ s.interpret_end:
 		inc "$kernel/movf.casm"
 	kernelfunc:
 #end
+
+got 0
+inl "!^"

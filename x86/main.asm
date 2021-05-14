@@ -10,7 +10,7 @@
 ; ebx memtop
 ; ecx membottom
 ; edx reserved for drive number
-; esi
+; esi load location
 ; edi current char
 
 bits 16
@@ -18,6 +18,8 @@ org 0x7c00
 
 ;%define INPUTFEEDBACK
 
+; Max sectors to load in (5.1k)
+; anything else is leftover memory
 %define SECTORS 6
 
 ; Zero out the data segment register
@@ -25,6 +27,14 @@ xor bx, bx
 mov ds, bx
 
 start:
+	mov ah, 0x2 ; Load sector call
+	mov al, SECTORS ; How many sectors to read
+	xor ch, ch ; Cylinder zero
+	mov cl, 2 ; Second sector
+	xor dh, dh ; Head 0
+	mov bx, afterProgram
+	int 0x13 ; Read sector
+	
 	mov esi, welcome
 	call printString
 
@@ -72,25 +82,18 @@ start:
 	; operating system via the current bottom
 	; cell. System calls start at 50+.
 
-	; Load sector program (!%)
+	; DemoA (!%)
 	cmp byte [ecx], 50
-	je prompt_load
+	mov esi, demoA
+	je run
+
+	; DemoB (!%+)
+	cmp byte [ecx], 51
+	mov esi, demoB
+	je run
 	
 	call printNewline
 jmp prompt
-
-
-; Read second sector data
-prompt_load:
-	mov ah, 0x2 ; Load sector call
-	mov al, 6 ; How many sectors to read
-	xor ch, ch ; Cylinder zero
-	mov cl, 2 ; Second sector
-	xor dh, dh ; Head 0
-	mov bx, demo
-	int 0x13 ; Read sector
-	mov esi, demo
-; Go to run...
 
 
 ; Main emulate "function", Takes esi
@@ -151,7 +154,7 @@ run:
 		inc dx ; labels start at zero
 		run_loop_top:
 			; Set char (ebx), then go back
-			mov al, [demo + edi]
+			mov al, [esi + edi]
 			inc edi ; Increment char
 
 			cmp al, '|' ; reached a label?
@@ -273,15 +276,21 @@ printNewline:
 	int 0x10
 ret
 
-; OS Text stored here:
+; OS Text:
 welcome: db ">CrypticOS", 0
 
 times 510 - ($ - $$) db 0
 dw 0xAA55
+afterProgram:
 
 ; Second sector contains demo program
-demo: incbin "a"
-times 512 + (512 * SECTORS) - ($ - $$) db 0
+demoA: incbin "a"
+db 0
+
+demoB: incbin "b"
+db 0
+
+times (SECTORS * 512) + 510 - ($ - $$) db 0
 
 ; Declare reserved memory
 section .bss
