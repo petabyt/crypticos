@@ -1,4 +1,4 @@
-def ARR 50
+#define ARR 90
 
 ; In order to dynamically retrieve/set a certain cell in memory,
 ; we must include a kernel function in the program.
@@ -17,5 +17,4 @@ run k.movf
 set ga GET
 set gb ARR
 run k.movf
-
-prt gr
+inl "#"

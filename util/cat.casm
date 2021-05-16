@@ -1,0 +1,21 @@
+inc "$kernel/main.casm"
+
+set ga GET
+set gb INPUT
+
+top:
+	run k.movf
+	prt gr
+
+	equ gr '0' LIB
+	equ gr 0 LIB
+	
+	add gb 1
+jmp top
+
+
+jmp LIB
+	inc "$kernel/movf.casm"
+LIB:
+
+got 0

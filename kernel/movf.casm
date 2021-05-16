@@ -17,9 +17,9 @@ k.movf:
 	inl "aaaaavddddd^" ; store value from fourth cell (value2)
 	inl "aa" ; go back
 
-	k.movf_back:
+	_k.movf_back:
 		inl "a^d" ; store current cell temp
-		set WKSP [k.movf_back_end]
+		set WKSP [_k.movf_back_end]
 		inl "^"
 		inl "avd" ; restore temp value
 		inl ">"
@@ -32,14 +32,14 @@ k.movf:
 
 	; Goto
 	inl "a^d" ; store current cell temp
-	set WKSP [k.movf_back]
+	set WKSP [_k.movf_back]
 	inl "^"
 	inl "avd" ; restore temp value
 	inl "$"
-	k.movf_back_end:
+	_k.movf_back_end:
 
 	inl "a^d" ; store temp
-	set WKSP [k.movf_set]
+	set WKSP [_k.movf_set]
 	inl "^"
 	inl "d!+^" ; store 1
 	inl "aaaaavdddddd^" ; store operation reg
@@ -47,11 +47,19 @@ k.movf:
 	inl "avd" ; restore value
 	inl "?"
 
+	; Move based on the previous
+	; variables defined
+	;got 0
+
 	; If operation is not 1 (2)
+	got 0
 	inl "aavdd" ; set value
-	k.movf_set:
+	got WKSP
+	_k.movf_set:
 	; If operation is 1:
+	got 0
 	inl "aa^dd" ; put char into value
+	got WKSP
 
 	; Now we are currently in the label reg.
 	; Go back to temp reg and store current memory cell.
@@ -62,9 +70,10 @@ k.movf:
 	inl "aaaaavddddd^" ; store 4 to compare (from matching register)
 	inl "aa" ; go back
 	inl "avd" ; Restore temp value
-	k.movf_forward:
+	
+	_k.movf_forward:
 		inl "a^d" ; store current cell temp
-		set WKSP [k.movf_forward_back]
+		set WKSP [_k.movf_forward_back]
 		inl "^"
 		inl "avd" ; restore temp value
 		inl "<"
@@ -77,11 +86,13 @@ k.movf:
 
 	; Goto
 	inl "a^d" ; store current cell temp
-	set WKSP [k.movf_forward]
+	set WKSP [_k.movf_forward]
 	inl "^"
 	inl "avd" ; restore temp value
 	inl "$"
-	k.movf_forward_back:
+	_k.movf_forward_back:
 	got gr
-	inl "aavaaa" ; go to initial value, when started
+	inl "aav"
+	inl "aaa" ; go to initial value, when started
+	inl "#"
 ret

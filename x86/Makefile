@@ -1,16 +1,24 @@
 run: compile emulate clean
-tiny: compiletiny emulate clean
+tiny: compileTiny emulate clean
+
+define compile
+	@touch t
+	@echo "#define X86 0" > t
+	@cat ../$(1) >> t
+	@casm -a t > $(2)
+	@rm -rf t
+endef
 
 help:
 	@echo "make run		Run main OS"
 	@echo "make tiny	Run tiny <256 version"
 
 compile:
-	@casm -a ../assembler/interpret.casm > a
-	@casm -a ../edit.casm > b
+	$(call compile,cins/interpret.casm,a)
+	$(call compile,util/edit.casm,b)
 	@nasm -f bin main.asm -o main
 
-compiletiny:
+compileTiny:
 	@nasm -f bin tiny.asm -o main
 
 iso: compile isoA
@@ -23,9 +31,5 @@ isoA:
 emulate:
 	@qemu-system-x86_64 main
 
-cleanBin:
-	@rm -rf *.bin main a b c
-
-clean: cleanBin cleanImg
-cleanImg:
-	@rm -rf *.img *.iso
+clean:
+	@rm -rf *.bin main a b c t *.img *.iso

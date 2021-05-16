@@ -1,0 +1,53 @@
+inc "$kernel/main.casm"
+
+#ifdef X86
+	prt "Text Editor"
+	prt 13
+	prt 10
+#end
+
+set ga SET
+set gb INPUT
+
+top:
+	got gc
+	inl ","
+	run k.movf
+	add gb 1
+
+	equ gc 8 backspace
+	equ gc 13 newline
+	equ gc 9 indent
+	equ gc 27 escape
+
+	#ifndef X86
+		equ gc '0' escape
+	#end
+
+	prt gc
+jmp top
+
+backspace:
+	sub gb 1
+	prt 8
+ret
+
+newline:
+	prt 13
+	prt 10
+jmp top
+
+indent:
+	prt "    "
+jmp top
+
+escape:
+	set gc 0
+	run k.movf
+	jmp LIB
+
+jmp LIB
+	inc "$kernel/movf.casm"
+LIB:
+
+got 0

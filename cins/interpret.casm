@@ -1,10 +1,7 @@
 ; This is a full CINS interpreter
-; Don't try to use it for anything big,
-; performance will be awful.
-; Dirty quick fix for x86, TODO Fix
-#define DUMPINPUT 0
+; Don't try to use it for anything big
 
-#ifdef DUMPINPUT
+#ifdef X86
 	prt "Self-Hosting VM"
 	prt 10
 	prt 13
@@ -28,19 +25,16 @@ set ga SET
 set gb s.code
 s.load:
 	got gc
-	inl ","
-
-	#ifdef DUMPINPUT
-		prt gc
-	#end
+	inl ",."
 	
 	equ gc 0 s.load_end
 	equ gc '0' s.load_end
-
-	#ifdef STANDALONE
+	
+	; Allow manual input override
+	#ifdef X86
 		equ gc '1' s.manual
 	#end
-	
+
 	run k.movf
 	add gb 1
 
@@ -50,11 +44,11 @@ s.load:
 	add s.membottom 1
 jmp s.load
 
-#ifdef STANDALONE
+#ifdef X86
 ; Manually allocate space for memory
 s.manual:
 	set s.memtop INPUT
-	add s.memtop 1000
+	add s.memtop 50
 	set s.membottom s.memtop
 	add s.membottom 50
 #end
@@ -312,10 +306,11 @@ s.interpret_end:
 #end
 
 #ifndef STANDALONE
-	jmp kernelfunc
+	jmp KERNEL
 		inc "$kernel/movf.casm"
-	kernelfunc:
+	KERNEL:
 #end
 
 got 0
 inl "!^"
+inl "#"

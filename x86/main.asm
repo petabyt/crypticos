@@ -20,7 +20,7 @@ org 0x7c00
 
 ; Max sectors to load in (5.1k)
 ; anything else is leftover memory
-%define SECTORS 6
+%define SECTORS 7
 
 ; Zero out the data segment register
 xor bx, bx
@@ -34,6 +34,11 @@ start:
 	xor dh, dh ; Head 0
 	mov bx, afterProgram
 	int 0x13 ; Read sector
+
+	; Load memory pointers first so that it
+	; isn't reset on every run
+	mov ebx, memtop
+	mov ecx, membottom
 	
 	mov esi, welcome
 	call printString
@@ -99,46 +104,64 @@ jmp prompt
 ; Main emulate "function", Takes esi
 ; as code address
 run:
-	mov ebx, memtop
-	mov ecx, membottom
 	xor edi, edi ; 0 current char
 	run_top:
 		mov al, [esi + edi]
 		inc edi ; increment to next
 		
 		cmp al, 0 ; is char null terminator?
-		je prompt_done ; then goto end if 0
-		
-		cmp al, '*'
-		je run_asterisk
-		cmp al, '%'
-		je run_percent
-		cmp al, '+'
-		je run_plus
+		je prompt_done ; then goto
+
 		cmp al, '-'
 		je run_minus
-		cmp al, '!'
-		je run_mark
 		cmp al, '.'
 		je run_dot
 		cmp al, ','
 		je run_comma
-		cmp al, '>'
-		je run_bracket_right
-		cmp al, '<'
-		je run_bracket_left
+		cmp al, 'v'
+		je run_v
 		cmp al, 'a'
 		je run_a
 		cmp al, 'd'
 		je run_d
+		cmp al, '>'
+		je run_bracket_right
+		cmp al, '<'
+		je run_bracket_left
+
+		; No shift controls (ergonomical and stuff)
+		%define NOSHIFT
+		%ifdef NOSHIFT
+			cmp al, '6'
+			je run_up
+			cmp al, '4'
+			je run_loop
+			cmp al, '/'
+			je run_if
+			cmp al, '1'
+			je run_mark
+			cmp al, '8'
+			je run_asterisk
+			cmp al, '5'
+			je run_percent
+			cmp al, '='
+			je run_plus
+		%endif
+
+		cmp al, '+'
+		je run_plus
 		cmp al, '^'
 		je run_up
-		cmp al, 'v'
-		je run_v
 		cmp al, '$'
 		je run_loop
 		cmp al, '?'
 		je run_if
+		cmp al, '!'
+		je run_mark
+		cmp al, '*'
+		je run_asterisk
+		cmp al, '%'
+		je run_percent
 	jmp run_top
 
 	; Jump/logic instructions
