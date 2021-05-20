@@ -14,11 +14,14 @@ help:
 	@echo "make tiny	Run tiny <256 version"
 
 compile:
-	$(call compile,cins/interpret.casm,a)
-	$(call compile,util/edit.casm,b)
+	@casm -a ../util/copy.casm > a; casm -r a -i "`casm -a ../demo/hello.casm`" > b
+	$(call compile,util/cat.casm,a)
+	@#$(call compile,cins/interpret.casm,a)
 	@nasm -f bin main.asm -o main
 
 compileTiny:
+	@nasm -f bin -DSIZE tiny.asm -o main
+	@ls -l main
 	@nasm -f bin tiny.asm -o main
 
 iso: compile isoA
@@ -32,4 +35,4 @@ emulate:
 	@qemu-system-x86_64 main
 
 clean:
-	@rm -rf *.bin main a b c t *.img *.iso
+	@rm -rf *.bin main a b c t *.img *.iso tiny

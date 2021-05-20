@@ -6,7 +6,7 @@ CC := tcc
 interpret:
 	@casm -a interpret.casm > a
 	@casm -a $(demo) > b
-	@casm -r a -i "`cat b`0123q"
+	@casm -r a -i "`cat b`"
 
 mini:
 	@casm -a mini.casm > a

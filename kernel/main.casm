@@ -1,3 +1,8 @@
+#ifdef MAIN_CASM
+	#error "main.casm included twice"
+#end
+#define MAIN_CASM
+
 ; Standard location for memory start/
 ; location for program data
 #define INPUT 100
@@ -17,4 +22,3 @@ var gd 0 ; General d
 var gc 0 ; General c
 var gb 0 ; General b
 var ga 0 ; General a
-

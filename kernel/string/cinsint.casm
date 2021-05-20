@@ -1,6 +1,6 @@
+; requires high.casm
 ; Convert gc > CINS numbers
 ; aka (123 > %%****++), into stdout
-; requires high.casm
 
 k.cinsInt:
 	; Below 50?

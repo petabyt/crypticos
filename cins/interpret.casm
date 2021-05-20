@@ -1,6 +1,5 @@
 ; This is a full CINS interpreter
 ; Don't try to use it for anything big
-
 #ifdef X86
 	prt "Self-Hosting VM"
 	prt 10
@@ -25,7 +24,7 @@ set ga SET
 set gb s.code
 s.load:
 	got gc
-	inl ",."
+	inl ","
 	
 	equ gc 0 s.load_end
 	equ gc '0' s.load_end

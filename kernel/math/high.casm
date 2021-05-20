@@ -1,5 +1,5 @@
-def FIRST 0
-def SECOND 1
+#define FIRST 0
+#define SECOND 1
 
 k.high:
 	equ gb 0 k.high_secondHigher

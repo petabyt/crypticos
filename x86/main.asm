@@ -20,7 +20,7 @@ org 0x7c00
 
 ; Max sectors to load in (5.1k)
 ; anything else is leftover memory
-%define SECTORS 7
+%define SECTORS 12
 
 ; Zero out the data segment register
 xor bx, bx
@@ -104,6 +104,13 @@ jmp prompt
 ; Main emulate "function", Takes esi
 ; as code address
 run:
+	; Remove paramter from membottom to
+	; prevent random recursion/crashes
+	%define RESETPARAM
+	%ifdef RESETPARAM
+		mov word [ecx], 0
+	%endif
+	
 	xor edi, edi ; 0 current char
 	run_top:
 		mov al, [esi + edi]
@@ -319,4 +326,4 @@ times (SECTORS * 512) + 510 - ($ - $$) db 0
 section .bss
 	memtop: resb 500
 	membottom: resb 2000
-	buffer: resb 100
+	buffer: resb 1000

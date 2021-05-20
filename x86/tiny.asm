@@ -1,11 +1,17 @@
 ; Standalone Minimal 8 bit OS
 ; MUST be under 256 bytes
-; Current size: 242 bytes
+
+; (sometime in 2020)				242 bytes
+; May 19 2021 (made user friendly)	253 bytes
 
 bits 16
 org 0x7c00
 
 os_top:
+	call newline
+	add al, 3
+	int 0x10
+		
 	mov edi, buffer
 	input_loop:
 		; Read char
@@ -29,9 +35,7 @@ os_top:
 
 		; Print newline, carriage return already
 		; printed by user, when enter pressed
-		mov ah, 0x0E
-		mov al, 10
-		int 0x10
+		call newline
 
 		; Prepare to interpret
 		mov ebx, memtop
@@ -42,6 +46,7 @@ os_top:
 
 run_top:
 	mov al, [esi + edi]
+	
 	inc edi ; increment to next
 	
 	or al, al ; is char null terminator?
@@ -157,6 +162,13 @@ run_addSomething:
 	add [ecx], al
 jmp run_top
 
+; print a 10 newline, carriage return
+; must be printed after or before this call
+newline:
+	mov ah, 0x0E
+	mov al, 10
+	int 0x10
+ret
 
 ; Input/Output
 run_dot:
@@ -165,9 +177,10 @@ run_dot:
 	int 0x10
 jmp run_top
 
-; Program size is measured when following two lines are removed:
-times 510 - ($ - $$) db 0
-dw 0xAA55
+%ifndef SIZE
+	times 510 - ($ - $$) db 0
+	dw 0xAA55
+%endif
 
 section .bss
 	buffer: resb 100 ; input buffer

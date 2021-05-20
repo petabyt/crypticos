@@ -1,4 +1,9 @@
-inc "$kernel/main.casm"
+; cat
+; Writes the contents of INPUT
+
+#ifndef STANDALONE
+	inc "$kernel/main.casm"
+#end
 
 set ga GET
 set gb INPUT
@@ -13,9 +18,14 @@ top:
 	add gb 1
 jmp top
 
+#ifdef STANDALONE
+	ret
+#end
 
+#ifndef STANDALONE
 jmp LIB
 	inc "$kernel/movf.casm"
 LIB:
+#end
 
 got 0

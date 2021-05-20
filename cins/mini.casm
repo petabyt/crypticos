@@ -9,89 +9,54 @@
 ; !%***. [print 'A']
 ; {jA} [goto label A]
 
-; TODO: Use movf instead of mov
+#ifdef X86
+	prt "MiniCASM"
+	prt 10
+	prt 13
+#end
 
-arr buffer 200
 var temp 0
 
 inc "$kernel/main.casm"
 jmp func
-	inc "$kernel/mov.casm"
-	inc "$kernel/math/high.casm"
-
-	; Convert ga/int (123 > %%****++)
-	putInt:
-		; Below 50?
-		set ga gc
-		set gb 50
-		run k.high
-		equ gr FIRST putInt_percent
-
-		; Below 5?
-		set ga gc
-		set gb 5
-		run k.high
-		equ gr FIRST putInt_asterisk
-
-		equ gc 0 putInt_quit
-		
-		sub gc 1
-		prt '+'
-	jmp putInt
-
-	putInt_percent:
-		sub gc 50
-		prt '%'
-	jmp putInt
-
-	putInt_asterisk:
-		sub gc 5
-		prt '*'
-	jmp putInt
-
-	putInt_quit:
-	ret
-
-	
-
 	; Assembler commands
 	a.comment:
-		sub gb 1 ; next char
-		run k.mov
+		add gb 1 ; next char
+		run k.movf
 		equ gr ']' a.topA
 	jmp a.comment
 
 	a.topA:
-		sub gb 1
+		add gb 1
 	jmp a.top
 	
 	a.command:
-		sub gb 1 ; next char
-		run k.mov
+		add gb 1 ; next char
+		run k.movf
 		;equ gr 'l' a.label
 		equ gr 'p' a.print
 	
 	a.print:
 		; next char
-		sub gb 1
-		run k.mov
+		add gb 1
+		run k.movf
 
 		; Use temp variable because
 		; putInt needs gb
 		set temp gb
 		set gc gr
-		run putInt
+		run k.cinsInt
 		set gb temp
 
 		; Next chars
-		sub gb 2
+		add gb 2
 	jmp a.top
 
 	;a.label:
 func:
 
 ; Store the string into the buffer
-set gb [buffer]
+set gb INPUT
 set ga SET
 s.top:
 	got gc
@@ -101,28 +66,40 @@ s.top:
 	equ gc 9 s.top
 	equ gc ' ' s.top
 
-	run k.mov
+	#ifdef X86
+		equ gc '1' s.end
+	#end
+
+	run k.movf
 	; Compare after so '\0' can be added
 	equ gc 0 s.end
 	
-	sub gb 1
+	add gb 1
 	jmp s.top
 s.end:
 
 ; Assembler
-set gb [buffer]
+set gb INPUT
 a.top:
 	set ga GET
-	run k.mov
+	run k.movf
 	
 	equ gr 0 a.end ; null terminator
 	equ gr '[' a.comment
 	equ gr '{' a.command
 
-	sub gb 1
+	add gb 1
 	equ gr 10 a.top ; skip newlines
 
 	; Else, print
 	prt gr
 	jmp a.top
 a.end:
+
+#ifndef STANDALONE
+jmp LIB
+	inc "$kernel/movf.casm"
+	inc "$kernel/math/high.casm"
+	inc "$kernel/string/cinsint.casm"
+LIB:
+#end

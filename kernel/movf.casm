@@ -94,5 +94,4 @@ k.movf:
 	got gr
 	inl "aav"
 	inl "aaa" ; go to initial value, when started
-	inl "#"
 ret

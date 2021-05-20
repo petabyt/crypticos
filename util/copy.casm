@@ -1,0 +1,60 @@
+; copy
+; Generates CINS code that will write input into
+; standard INPUT
+
+#ifndef STANDALONE
+	inc "$kernel/main.casm"
+#end
+
+set ga INPUT
+copy.top:
+	prt '>'
+	sub ga 1
+	equ ga 0 copy.end
+jmp copy.top
+copy.end:
+
+set ga INPUT
+copy.input:
+	; push ga
+	got ga
+	inl "^d"
+	
+	got gc
+	inl ","
+	equ gc 0 copy.quit
+	equ gc '0' copy.quit
+	prt '!'
+	run k.cinsInt
+	prt '>'
+
+	; pop ga
+	got ga
+	inl "av"
+	
+	add ga 1
+jmp copy.input
+
+copy.quit:
+
+; Strange crash in x86
+;sub ga 1
+
+copy.topBack:
+	prt '<'
+	sub ga 1
+	equ ga 0 copy.endBack
+jmp copy.topBack
+copy.endBack:
+
+#ifdef X86
+	prt "Loaded"
+	inl "!**.+++."
+#end
+
+#ifndef STANDALONE
+jmp LIB
+	inc "$kernel/math/high.casm"
+	inc "$kernel/string/cinsint.casm"
+LIB:
+#end
