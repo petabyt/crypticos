@@ -1,0 +1,20 @@
+#define SETMODE 50
+#define DRAWPIXEL 51
+
+k.setMode:
+	set WKSP SETMODE
+	inl "^d"
+	got ga
+	inl "^a"
+	inl "."
+ret
+
+k.drawPixel:
+	set WKSP DRAWPIXEL
+	inl "^d"
+	got ga
+	inl "^d"
+	got gb
+	inl "^aa"
+	inl "."
+ret

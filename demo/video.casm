@@ -1,23 +1,6 @@
-inc "$kernel/main.casm"
-jmp LIB
-	k.setMode:
-		set WKSP 50
-		inl "^d"
-		got ga
-		inl "^a"
-		inl "."
-	ret
-
-	k.drawPixel:
-		set WKSP 51
-		inl "^d"
-		got ga
-		inl "^d"
-		got gb
-		inl "^aa"
-		inl "."
-	ret
-LIB:
+#ifndef STANDALONE
+	inc "$kernel/main.casm"
+#end
 
 #ifdef X86
 	set ga 19 ; (320x200 13h)
@@ -41,13 +24,19 @@ reset:
 	
 	got gd
 	inl ","
-	equ gd ' ' kill
+	equ gd 'q' kill
 jmp top
 
 kill:
 #ifdef X86
 	set ga 3 ; (text 80*25 16 color)
 	run k.setMode
+#end
+
+#ifndef STANDALONE
+	jmp KERNEL:
+		inc "$kernel/graphics.casm"
+	KERNEL:
 #end
 
 got 0

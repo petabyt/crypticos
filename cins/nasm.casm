@@ -3,7 +3,7 @@
 ; Self hosted compiler, up to 27 labels
 
 ; Initialization
-#ifndef X85
+#ifndef X86
 prt "SECTION .text"
 prt 10
 prt "GLOBAL _start"
