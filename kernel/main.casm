@@ -3,6 +3,13 @@
 #end
 #define MAIN_CASM
 
+; CrypticOS graphical system for CINS
+#define SETMODE 50
+#define SETPIXEL 51
+
+; 0x13 (320x200) standard x86 graphics
+#define MODE 19
+
 ; Standard location for memory start/
 ; location for program data
 #define INPUT 100

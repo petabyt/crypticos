@@ -1,57 +1,13 @@
-; Define data as variable
-var WIDTH 640
-var HEIGHT 480
+set WKSP 50
+inl "^d"
+set WKSP 19
+inl "^a"
+prt WKSP
 
-var tmp 0
-
-inl "!%^."
-
-inc "$kernel/main.casm"
-jmp func
-	drawPixel:
-		inl "!^d"
-		got ga
-		inl "^d"
-		got gb
-		inl "^aa"
-		inl "."
-	ret
-
-	setColor:
-		inl "!+^d"
-		got ga
-		inl "^d"
-		got gb
-		inl "^d"
-		got gc
-		inl "^aaa"
-		inl "."
-	ret
-func:
-
-set tmp 100
-
-topL:
-	; Warning: Adds by 10, will go above integer limit
-	
-	add tmp 10
-	set ga tmp
-	set gb tmp
-	set gc tmp
-	run setColor
-
-	; Fill up the screen
-	set gb HEIGHT
-	topH:
-		set ga WIDTH
-		equ gb 0 endW
-		topW:
-			equ ga 0 endH
-			run drawPixel
-			sub ga 1
-		jmp topW
-		endH:
-		sub gb 1
-	jmp topH
-	endW:
-jmp topL
+set WKSP 51
+inl "^d"
+set WKSP 5000
+inl "^d"
+set WKSP 255
+inl "^aa"
+prt WKSP

@@ -1,55 +1,54 @@
-; Define data as variable
-var WIDTH 640
-var HEIGHT 480
-
-var tmp 0
-
 inc "$kernel/main.casm"
-jmp func
+jmp LIB
+	setMode:
+		set WKSP 50
+		inl "^d"
+		got ga
+		inl "^a"
+		inl "."
+	ret
+
 	drawPixel:
-		inl "!^d"
+		set WKSP 51
+		inl "^d"
 		got ga
 		inl "^d"
 		got gb
 		inl "^aa"
 		inl "."
 	ret
+LIB:
 
-	setColor:
-		inl "!+^d"
-		got ga
-		inl "^d"
-		got gb
-		inl "^d"
-		got gc
-		inl "^aaa"
-		inl "."
-	ret
-func:
+#ifdef X86
+	set ga 19 ; (320x200 13h)
+	run setMode
+#end
 
-set tmp 100
+; 320x200
+set gc 64000
 
-topL:
-	; Warning: Adds by 10, will go above integer limit
+set gb 10 ; white
+set ga 0 ; pixel 0
+top:
+	run drawPixel
+	add ga 1
+	equ ga gc reset
+jmp top
+
+reset:
+	set ga 0
+	sub gb 1
 	
-	add tmp 10
-	set ga tmp
-	set gb tmp
-	set gc tmp
-	run setColor
+	got gd
+	inl ","
+	equ gd ' ' kill
+jmp top
 
-	; Fill up the screen
-	set gb HEIGHT
-	topH:
-		set ga WIDTH
-		equ gb 0 endW
-		topW:
-			equ ga 0 endH
-			run drawPixel
-			sub ga 1
-		jmp topW
-		endH:
-		sub gb 1
-	jmp topH
-	endW:
-jmp topL
+kill:
+#ifdef X86
+	set ga 3 ; (text 80*25 16 color)
+	run setMode
+#end
+
+got 0
+inl "!"
