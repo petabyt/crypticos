@@ -1,22 +1,21 @@
 
 ![](https://raw.githubusercontent.com/CrypticOS/CrypticOS.github.io/master/logo.png)
-### A Tiny Programmable Operating System.
-
-CrypticOS attempts to recreate the programming experience of old  
-computers, and have the simplicity of a TI calculator.
+### World's Smallest Operating System
+CrypticOS is a simple hobby OS that aims to feel like a  
+programming a TI calculator, but be 10x simpler.  
 
 ## Design
-1. Any program should be loaded on any architecture, and run perfectly.
+1. Any program should be loaded on any emulator, and run perfectly.
 2. It should be usable within 512 bytes, and not have to squeeze bytes in order to implement basic functionality.  
-3. Programs would be written in CASM, and loaded via floppy or by serial cable.
-4. Everything should be as simple as possible, and be easy to hack and play with.
+3. Programs would be written in CASM, assembled, and loaded via floppy or by serial cable.
+4. Everything should be as simple as possible, and be easy to hack and mess with.
 
 ## Goals
 - [x] Write OS in <512 bytes  
 - [x] Write simple programs for it
 - [x] Write assembler that compiles to it (https://github.com/pufflegamerz/casm)  
 - [x] Write operating environment in the assembler  
-- [ ] Rewrite assembler in the assembler  (not finished, still on lexer)
+- [ ] Self host the assembler  
 
 ## CrypticASM (CASM)
 The main language for CrypticOS internals and applications. You can find the official  
@@ -28,28 +27,21 @@ Note: Make sure you are in the `x86` directory.
 ```
 nasm -f bin tiny.asm
 qemu-system-x86_64 tiny
+# Or, type `make tiny`
 ```
-Type in CINS code. It will run.  
+Try: `!%***.`  
 
 ### 512 byte Version
 The same as `tiny.asm`, but more usable and stuff.  
+The final binary will be a few kilobytes, since it has to  
+load in demo programs.
 ```
-nasm -f bin main.asm
-qemu-system-x86_64 main
+make
 ```
-Usage: See comments in `x86/main.asm`.
 
 ## So what does it do?
 CrypticOS uses a BrainF* inspired esoteric language as its main runtime.  
 It is different in many ways, mainly with logic and loops. In design it should  
 have the simplicity of BrainF*, but be more usable, efficient, and Assembly-like.
-
-There are 16 instructions (2^4), therefore any program written in it can be  
-represented in a "nibble" 4 bit type. The program is loaded and read very similarly  
-to BrainF*.
-
-The design is fairly simple.
-There are two pointers, and two memory arrays. One is the top, and the other is the bottom.  
-The "top" acts like registers. The "bottom" acts like program memory.  
 
 You can see the full specification here: https://github.com/CrypticOS/cins  
