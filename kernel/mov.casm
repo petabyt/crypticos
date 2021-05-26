@@ -50,10 +50,14 @@ k.mov:
 	inl "?"
 
 	; If operation is not 1 (2)
+	got 0
 	inl "aavdd" ; set value
+	got WKSP
 	k.mov_set:
 	; If operation is 1:
+	got 0
 	inl "aa^dd" ; put char into value
+	got WKSP
 
 	; Now we are currently in the label reg.
 	; Go back to temp reg and store current memory cell.

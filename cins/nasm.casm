@@ -3,12 +3,15 @@
 ; Self hosted compiler, up to 27 labels
 
 ; Initialization
+#ifndef X85
 prt "SECTION .text"
 prt 10
 prt "GLOBAL _start"
 prt 10
 prt "_start:"
 prt 10
+#end
+
 prt "MOV ECX,B" ; We will always be printing to ECX (bottom)
 prt 10
 prt "MOV ESI,T"
@@ -45,6 +48,7 @@ jmp top
 ; Self-explainatory.
 
 dot:
+	#ifndef X86
 	prt "MOV EAX,4"
 	prt 10
 	prt "MOV EBX,1"
@@ -52,9 +56,11 @@ dot:
 	prt "MOV EDX,1"
 	prt 10
 	prt "INT 128"
+	#end
 jmp top
 
 comma:
+	#ifndef X86
 	prt "MOV EAX,3" ; sys_read
 	prt 10
 	prt "MOV EBX,1" ; stdin
@@ -62,6 +68,7 @@ comma:
 	prt "MOV EDX,2" ; input 2 char (one for enter)
 	prt 10
 	prt "int 128"
+	#end
 jmp top
 
 bracketRight:

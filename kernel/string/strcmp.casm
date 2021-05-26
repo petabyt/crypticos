@@ -1,0 +1,29 @@
+; ga = loc1
+; gb = loc2
+k.strcmp:
+	; Push ga
+	got ga
+	inl "^d"
+	set gd 0 ; gd holds diff
+
+	k.strcmp_top:
+		set ga GET
+		; gb is loc2
+		run k.movf
+		equ gr zero
+
+		; Push gr
+		got gr
+		inl "^d"
+
+		; Push gb
+		got gb
+		inl "^d"
+
+		; Copy ga
+		got gb
+		inl "aaavaaa"
+	jmp k.strcmp_top
+	
+	zero:
+ret

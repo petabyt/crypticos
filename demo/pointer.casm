@@ -10,11 +10,11 @@ a:
 ; ARR[gb] = gc
 set ga SET
 set gb ARR
-set gc '2' ; value to set
+set gc 'C' ; value to set
 run k.movf
 
 ; gr = ARR[gb]
 set ga GET
 set gb ARR
 run k.movf
-inl "#"
+prt gr
