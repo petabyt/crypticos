@@ -9,7 +9,6 @@
 ; eax temp
 ; ebx memtop
 ; ecx membottom
-; edx reserved for drive number
 ; esi load location
 ; edi current char
 
@@ -254,10 +253,20 @@ run:
 		je run_setVideo
 		cmp word [ebx], 51
 		je run_setPixel
+		cmp word [ebx], 52
+		je run_setCursor
 
 		; Else, just print the character
 		mov al, [ecx]
 		mov ah, 0x0E
+		int 0x10
+	jmp run_top
+
+	run_setCursor:
+		mov dh, [ebx + 2] ; row
+		mov dl, [ebx + 4] ; column
+		mov bh, 0 ; page
+		mov ah, 0x02 ; set cursor pos
 		int 0x10
 	jmp run_top
 
@@ -272,8 +281,11 @@ run:
 	jmp run_top
 
 	run_setVideo:
-		; note: 2 = default, 19 = 13h
-		xor ah, ah ; ah = 0x0
+		; note:
+		; 2 = default text
+		; 19 = 13h
+		
+		xor ah, ah ; mov ah, 0x0
 		mov al, [ebx + 2] ; mode
 		int 0x10
 	jmp run_top
@@ -306,24 +318,35 @@ printNewline:
 	int 0x10
 ret
 
-; OS Text:
+; Store text here:
 welcome: db ">CrypticOS", 0
 
-times 510 - ($ - $$) db 0
-dw 0xAA55
+%ifndef SIZE
+	times 510 - ($ - $$) db 0
+	dw 0xAA55
+%endif
+
 afterProgram:
 
 ; Second sector contains demo program
-demoA: incbin "a"
-db 0
+demoA:
+%ifndef SIZE
+	incbin "a"
+	db 0
+%endif
 
-demoB: incbin "b"
-db 0
+demoB:
+%ifndef SIZE
+	incbin "b"
+	db 0
+%endif
 
-times (SECTORS * 512) + 510 - ($ - $$) db 0
+%ifndef SIZE
+	times (SECTORS * 512) + 510 - ($ - $$) db 0
+%endif
 
 ; Declare reserved memory
 section .bss
 	memtop: resb 500
-	membottom: resb 2000
-	buffer: resb 1000
+	membottom: resb 10000
+	buffer: resb 10000

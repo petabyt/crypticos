@@ -1,3 +1,4 @@
+#define X86 0
 ; Will generate NASM x86 assembly when
 ; given CINS as input.
 ; Self hosted compiler, up to 27 labels

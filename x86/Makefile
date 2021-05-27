@@ -17,6 +17,9 @@ compile:
 	$(call compile,util/cat.casm,a)
 	$(call compile,arch/video.casm,b)
 	@#$(call compile,cins/interpret.casm,a)
+
+	@nasm -f bin main.asm -DSIZE -o main
+	@ls -l main
 	@nasm -f bin main.asm -o main
 
 compileTiny:

@@ -1,6 +1,6 @@
 default: mini
 
-demo := ../demo/count.casm
+demo := test.casm
 CC := tcc
 
 interpret:
@@ -16,15 +16,23 @@ mini:
 
 nasm:
 	@casm -a $(demo) > d
-	@casm -a compilenasm.casm > a
+	@casm -a nasm.casm > a
 	
 	@casm -r a -i "`cat d`" > b
-	@cat b | head
 	@nasm -felf64 b -o c
 	@ld c -o d
 	@chmod +x d
 	@./d || :
 	@echo ""
+
+boot:
+	@echo "#define X86 0" > temp.casm
+	@cat nasm.casm >> temp.casm
+	@casm -a temp.casm > a
+	@casm -a $(demo) > c
+	@casm -r a -i "`cat c`0" > b.asm
+	@nasm -f bin b.asm
+	@qemu-system-x86_64 b
 
 c:
 # Assemble main file
@@ -42,4 +50,4 @@ c:
 	@echo ""
 
 clean:
-	@rm -f a b c d b.c c.c
+	@rm -f a b c d b.c c.c temp.casm b.asm
