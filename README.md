@@ -1,21 +1,20 @@
 
 ![](https://raw.githubusercontent.com/CrypticOS/CrypticOS.github.io/master/logo.png)
 ### World's Smallest Operating System
-CrypticOS is a simple hobby OS that aims to feel like a  
-programming a TI calculator, but be 10x simpler.  
+CrypticOS is an operating system written in a custom bytecode,  
+which can be emulated anywhere.  
 
 ## Design
 1. Any program should be loaded on any emulator, and run perfectly.
-2. It should be usable within 512 bytes, and not have to squeeze bytes in order to implement basic functionality.  
-3. Programs would be written in CASM, assembled, and loaded via floppy or by serial cable.
-4. Everything should be as simple as possible, and be easy to hack and mess with.
+2. X86 bootable should be usable within 512 bytes.
+3. "Make it simple, and keep it simple"
 
 ## Goals
 - [x] Write OS in <512 bytes  
 - [x] Write simple programs for it
 - [x] Write assembler that compiles to it (https://github.com/pufflegamerz/casm)  
 - [x] Write operating environment in the assembler  
-- [ ] Self host the assembler  
+- [ ] Self host the assembler or make a C compiler  
 
 ## CrypticASM (CASM)
 The main language for CrypticOS internals and applications. You can find the official  

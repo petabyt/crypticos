@@ -5,6 +5,7 @@ build
 *.o
 test
 test.asm
+temp.casm
 a
 b
 c
