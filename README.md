@@ -1,8 +1,8 @@
 
 ![](https://raw.githubusercontent.com/CrypticOS/CrypticOS.github.io/master/logo.png)
 ### World's Smallest Operating System
-CrypticOS is an operating system written in a custom bytecode,  
-which can be emulated anywhere.  
+CrypticOS is an operating system mostly written in a custom  
+bytecode, which can be emulated anywhere.  
 
 ## Design
 1. Any program should be loaded on any emulator, and run perfectly.
