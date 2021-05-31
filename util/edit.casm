@@ -1,12 +1,20 @@
+var cursor.x 0
+var cursor.y 0
+
 #ifndef STANDALONE
 	inc "$kernel/main.casm"
 #end
 
-#ifdef X86
-	prt "Text Editor"
-	prt 13
-	prt 10
-#end
+run clearScreen
+
+set cursor.y 0
+run setCursor
+prt "CrypticEdit"
+prt 10
+prt 13
+
+set cursor.y 1
+set cursor.x 0
 
 set ga SET
 set gb INPUT
@@ -18,6 +26,10 @@ top:
 	equ gc 8 backspace
 	equ gc 9 indent
 	equ gc 27 escape
+
+
+	run setCursor
+	add cursor.x 1
 
 	run k.movf
 	add gb 1
@@ -34,23 +46,70 @@ top:
 jmp top
 
 backspace:
+	sub cursor.x 1
 	sub gb 1
+	run setCursor
+
+	; Delete char (print space, then backspace)
+	prt ' '
 	prt 8
-ret
+jmp top
 
 newline:
 	prt 13
 	prt 10
+	add cursor.y 1
+	set cursor.x 0
 jmp top
 
 indent:
 	prt "    "
+	add cursor.x 4
 jmp top
 
 escape:
 	set gc 0
 	run k.movf
 jmp LIB
+
+setCursor:
+	set WKSP 52
+	inl "^d"
+	got cursor.x
+	inl "^d"
+	got cursor.y
+	inl "^aa"
+	prt WKSP
+	inl "!^"
+ret
+
+clearScreen:
+	var x 0
+	var y 0
+	clearScreen_topY:
+		clearScreen_topX:
+			set WKSP 52
+			inl "^d"
+			got x
+			inl "^d"
+			got y
+			inl "^aa"
+			prt WKSP
+			inl "!^"
+			prt ' '
+
+			add x 1
+			equ x 80 clearScreen_endX
+		jmp clearScreen_topX
+		clearScreen_endX:
+		add y 1
+		set x 0
+		equ y 14 clearScreen_endY
+	jmp clearScreen_topY
+	clearScreen_endY:
+	fre x
+	fre y
+ret
 
 #ifndef STANDALONE
 jmp LIB

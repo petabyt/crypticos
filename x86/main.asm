@@ -1,29 +1,62 @@
 ; Main CrypticOS 16 bit Bootable
-; HOW TO USE:
 ; Type in any CINS code, and it will run.
-; To execute the second sector program, leave 50
-; in bottom pointer:
-; !%
 
-; Register usage:
+; To execute the second sector program A, leave 50
+; in bottom pointer: `!%`
+; You can run program B with 51 (!%+) too.
+
+; Register usage map:
 ; eax temp
 ; ebx memtop
 ; ecx membottom
 ; esi load location
 ; edi current char
 
-bits 16
-org 0x7c00
 
+; Compile Config
+
+; Allow CrypticOS CINS extension for
+; graphics, cursor movement
+%define SYSCALLS
+
+; Remove paramter from membottom to
+; prevent random recursion/crashes
+;%define RESETPARAM
+
+; No shift keypresses (ergonomical and stuff)
+; eg (1 for !, 5 for %)
+%define NOSHIFT
+
+; Include arrow and other special
+; char support (+7 bytes)
+; Keys:
+;  14 up
+;  22 down
+;  17 left
+;  19 right
+%define ARROWS
+
+; ',' char printing feedback
 ;%define INPUTFEEDBACK
 
 ; Max sectors to load in (5.1k)
 ; anything else is leftover memory
 %define SECTORS 12
 
-; Zero out the data segment register
-xor bx, bx
-mov ds, bx
+; Save 4 bytes by not zeroing out data
+; segment register. Text won't work on
+; real hardware.
+%define ZEROOUT
+
+
+bits 16
+org 0x7c00
+
+%ifdef ZEROOUT
+	; Zero out the data segment register
+	xor bx, bx
+	mov ds, bx
+%endif
 
 start:
 	mov ah, 0x2 ; Load sector call
@@ -51,7 +84,7 @@ start:
 		mov esi, buffer
 		prompt_top:
 			; Read keyboard (0)
-			xor ah, ah
+			xor ah, ah ; ah = 0x0
 			int 0x16
 
 			; Write char, already in al
@@ -103,9 +136,6 @@ jmp prompt
 ; Main emulate "function", Takes esi
 ; as code address
 run:
-	; Remove paramter from membottom to
-	; prevent random recursion/crashes
-	%define RESETPARAM
 	%ifdef RESETPARAM
 		mov word [ecx], 0
 	%endif
@@ -135,8 +165,6 @@ run:
 		cmp al, '<'
 		je run_bracket_left
 
-		; No shift controls (ergonomical and stuff)
-		%define NOSHIFT
 		%ifdef NOSHIFT
 			cmp al, '6'
 			je run_up
@@ -249,35 +277,30 @@ run:
 
 	; Input/Output
 	run_dot:
+		%ifdef SYSCALLS
 		cmp word [ebx], 50
 		je run_setVideo
 		cmp word [ebx], 51
 		je run_setPixel
 		cmp word [ebx], 52
 		je run_setCursor
+		%endif
 
 		; Else, just print the character
 		mov al, [ecx]
 		mov ah, 0x0E
 		int 0x10
 	jmp run_top
-
+	
+	%ifdef SYSCALLS
 	run_setCursor:
-		mov dh, [ebx + 2] ; row
-		mov dl, [ebx + 4] ; column
-		mov bh, 0 ; page
+		mov dh, [ebx + 4] ; row
+		mov dl, [ebx + 2] ; column
+		push bx ; push bx, higher 8 bits of bx
+		xor bh, bh ; set page number (0)
 		mov ah, 0x02 ; set cursor pos
 		int 0x10
-	jmp run_top
-
-	run_comma:
-		xor ah, ah ; 0x0
-		int 0x16
-		mov [ecx], al
-		%ifdef INPUTFEEDBACK
-			mov ah, 0x0E
-			int 0x10
-		%endif
+		pop bx
 	jmp run_top
 
 	run_setVideo:
@@ -296,6 +319,28 @@ run:
 		mov bp, [ebx + 2] ; base stack reg for offset/location
 		mov ax, [ebx + 4] ; ax for color
 		mov word [es:bp], ax
+	jmp run_top
+	%endif
+
+	run_comma:
+		%ifdef ARROWS
+			xor ah, ah ; 0x0
+			int 0x16
+			sub ah, 58
+			cmp al, 0
+			jne noarrow
+			mov al, ah
+			noarrow:
+			mov [ecx], al
+		%else
+			xor ah, ah ; 0x0
+			int 0x16
+		%endif
+
+		%ifdef INPUTFEEDBACK
+			mov ah, 0x0E
+			int 0x10
+		%endif
 	jmp run_top
 ; End of run
 

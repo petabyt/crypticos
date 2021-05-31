@@ -6,7 +6,7 @@
 dd!	<^>a	[If c0 == '9', goto label 1]
 	!%*++^a	[Up 9]
 	!+^		[Label 1]
-	!		[ ]
+	!		[Reset]
 	?
 !^$			[Goto label 0]
 |			[Label 1]
