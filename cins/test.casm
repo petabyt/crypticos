@@ -1,1 +1,1 @@
-prt "Hello World from my own bytecode, assembler, and self hosted transpiler"
+prt "    Hello, from my own assembler, bytecode, x86 transpiler.."

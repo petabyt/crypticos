@@ -2,16 +2,34 @@
 ; given CINS as input.
 ; Self hosted compiler, up to 27 labels
 
+#ifdef X86
+	; 16 bit, locate at 0x7c00
+	prt "BITS 16\n"
+	prt "ORG 0x7c00\n"
+
+	; ah=0x2, int 0x13
+	; Load in P, second sector program
+	prt "MOV AH,2\n" ; ah = 0x2
+	prt "MOV AL,10\n" ; x sectors
+	prt "XOR CH,CH\n"
+	prt "MOV CL,2\n"
+	prt "XOR DH,DH\n"
+	prt "MOV BX,P\n"
+	prt "INT 19\n"
+	prt "JMP P\n"
+	prt "TIMES 510 - ($ - $$) db 0\n"
+	prt "DW 0xAA55\n"
+#end
+
 ; Initialization
 #ifndef X86
-prt "SECTION .text\n"
-prt "GLOBAL _start\n"
-prt "_start:\n"
+	prt "SECTION .text\n"
+	prt "GLOBAL _start\n"
+	prt "_start:\n"
 #end
 
 #ifdef X86
-prt "BITS 16\n"
-prt "ORG 0x7c00\n"
+	prt "P:"
 #end
 
 prt "MOV ECX,B\n" ; We will always be printing to ECX (bottom)
@@ -178,7 +196,8 @@ label_top:
 label_end:
 
 #ifdef X86
-	prt "times 510 - ($ - $$) db 0\n"
+	; Fill rest of 5 sectors
+	prt "times 5120 - ($ - $$) db 0\n"
 	prt "dw 0xAA55\n"
 #end
 

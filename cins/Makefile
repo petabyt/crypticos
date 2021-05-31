@@ -1,6 +1,6 @@
 default: mini
 
-demo := test.casm
+demo := ../demo/count.casm
 CC := tcc
 
 interpret:
