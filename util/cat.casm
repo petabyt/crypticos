@@ -8,19 +8,24 @@
 set ga GET
 set gb INPUT
 
-top:
+cat.top:
 	run k.movf
+	got WKSP 0
+	
+	; Make sure SYS isn't called
+	inl "!^"
 	prt gr
 
-	equ gr '0' LIB
-	equ gr 0 LIB
-	
 	add gb 1
-jmp top
+	
+	equ gr 10 cat.newline
+	equ gr '0' cat.kill
+	equ gr 0 cat.kill
+jmp cat.top
 
-#ifdef STANDALONE
-	ret
-#end
+cat.newline:
+	prt 13
+jmp cat.top
 
 #ifndef STANDALONE
 jmp LIB
@@ -28,4 +33,8 @@ jmp LIB
 LIB:
 #end
 
+cat.kill:
+
+; Clean up
 got 0
+inl "!^"

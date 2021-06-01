@@ -30,8 +30,8 @@
 ; Include arrow and other special
 ; char support (+7 bytes)
 ; Keys:
-;  14 up
-;  22 down
+;  22 up
+;  14 down
 ;  17 left
 ;  19 right
 %define ARROWS

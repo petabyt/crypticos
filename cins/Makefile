@@ -1,5 +1,3 @@
-default: mini
-
 demo := ../demo/count.casm
 CC := tcc
 
@@ -8,8 +6,8 @@ interpret:
 	@casm -a $(demo) > b
 	@casm -r a -i "`cat b`"
 
-mini:
-	@casm -a mini.casm > a
+mcasm:
+	@casm -a mcasm.casm > a
 	@casm -r a -i "`cat test.mcas`" > b
 	@cat b
 	@casm -r b

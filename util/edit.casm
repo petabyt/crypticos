@@ -1,3 +1,6 @@
+#define WIDTH 80
+#define HEIGHT 25
+
 var cursor.x 0
 var cursor.y 0
 
@@ -7,14 +10,7 @@ var cursor.y 0
 
 run clearScreen
 
-set cursor.y 0
 run setCursor
-prt "CrypticEdit"
-prt 10
-prt 13
-
-set cursor.y 1
-set cursor.x 0
 
 set ga SET
 set gb INPUT
@@ -26,15 +22,19 @@ top:
 	equ gc 8 backspace
 	equ gc 9 indent
 	equ gc 27 escape
+	
+	equ gc 19 arrowRight
+	equ gc 17 arrowLeft
+	equ gc 22 arrowUp
+	equ gc 14 arrowDown
 
+	equ gc 13 newline
 
 	run setCursor
 	add cursor.x 1
 
 	run k.movf
 	add gb 1
-
-	equ gc 13 newline
 
 	#ifndef X86
 		; On linux emulator, ESC quits
@@ -45,7 +45,32 @@ top:
 	prt gc
 jmp top
 
+; Key actions:
+
+arrowRight:
+	add cursor.x 1
+	run setCursor
+jmp top
+
+arrowLeft:
+	sub cursor.x 1
+	run setCursor
+jmp top
+
+arrowUp:
+	add cursor.y 1
+	run setCursor
+jmp top
+
+arrowDown:
+	sub cursor.y 1
+	run setCursor
+jmp top
+
 backspace:
+	; Don't backspace in negative
+	equ cursor.x 0 top
+	
 	sub cursor.x 1
 	sub gb 1
 	run setCursor
@@ -56,10 +81,13 @@ backspace:
 jmp top
 
 newline:
-	prt 13
-	prt 10
+	inl "!**.+++."
 	add cursor.y 1
 	set cursor.x 0
+
+	set gc 10
+	run k.movf
+	add gb 1
 jmp top
 
 indent:
@@ -71,6 +99,8 @@ escape:
 	set gc 0
 	run k.movf
 jmp LIB
+
+; Screen functions
 
 setCursor:
 	set WKSP 52
@@ -118,3 +148,4 @@ LIB:
 #end
 
 got 0
+inl "!^"

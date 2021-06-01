@@ -15,7 +15,7 @@ help:
 
 compile:
 	$(call compile,util/edit.casm,a)
-	$(call compile,arch/video.casm,b)
+	$(call compile,cins/mcasm.casm,b)
 
 	@nasm -f bin main.asm -DSIZE -o main
 	@ls -l main

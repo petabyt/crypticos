@@ -1,13 +1,8 @@
 ; MiniCASM Assembler
 ; Syntax:
-; {p35}		write an integer
-; {lA}		declare label A (only A-Z are possible)
-; {jA}		Jump to label A
-; [foobar]	Declare a comment
-; Examples:
-; {lA} [declare label A]
-; !%***. [print 'A']
-; {jA} [goto label A]
+; {cA}		put ascii char
+; [foobar]	Comment
+; {pHello}	Print string
 
 #ifdef X86
 	prt "MiniCASM"
@@ -31,13 +26,16 @@ jmp func
 	jmp a.top
 	
 	a.command:
+		set ga GET
 		add gb 1 ; next char
 		run k.movf
 		;equ gr 'l' a.label
+		equ gr 'c' a.char
 		equ gr 'p' a.print
 	
-	a.print:
+	a.char:
 		; next char
+		set ga GET
 		add gb 1
 		run k.movf
 
@@ -52,7 +50,31 @@ jmp func
 		add gb 2
 	jmp a.top
 
-	;a.label:
+	a.print:
+		; next char
+		set ga GET
+		add gb 1
+		run k.movf
+		
+		equ gr '}' a.top
+		equ gr 0 a.top
+
+		prt '!'
+
+		; Push ga
+		got gb
+		inl "^d"
+
+		; Will overwrite ga
+		set gc gr
+		run k.cinsInt
+
+		; Pop ga
+		got gb
+		inl "av"
+
+		prt '.'
+	jmp a.print
 func:
 
 ; Store the string into the buffer
@@ -62,7 +84,7 @@ s.top:
 	got gc
 	inl ","
 
-	; Skip tabs, spaces
+	; Skip tabs, spaces from input
 	equ gc 9 s.top
 	equ gc ' ' s.top
 
@@ -85,6 +107,7 @@ a.top:
 	run k.movf
 	
 	equ gr 0 a.end ; null terminator
+	equ gr ' ' a.top
 	equ gr '[' a.comment
 	equ gr '{' a.command
 
