@@ -22,13 +22,14 @@ development kit here: https://github.com/pufflegamerz/casm (assembler + emulator
 
 ## Building
 Note: Make sure you are in the `x86` directory.  
-### 256 Byte Bootable
+### Main test binary
 ```
-nasm -f bin tiny.asm
-qemu-system-x86_64 tiny
-# Or, type `make tiny`
+sudo apt install qemu-system-x86 nasm
+cd x86
+make
 ```
 Try: `!%***.`  
+Also try `!%` to load the edit app. Press ESC to exit.  
 
 ### 512 byte Version
 The same as `tiny.asm`, but more usable and stuff.  
