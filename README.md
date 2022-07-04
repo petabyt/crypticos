@@ -21,6 +21,13 @@ The main language for CrypticOS internals and applications. You can find the off
 development kit here: https://github.com/pufflegamerz/casm (assembler + emulator)  
 
 ## Building
+### Install CASM assembler (for main test binary)
+```
+git clone https://github.com/CrypticOS/casm
+cd casm
+make
+cp casm /bin/
+```
 Note: Make sure you are in the `x86` directory.  
 ### Main test binary
 ```
@@ -31,12 +38,10 @@ make
 Try: `!%***.`  
 Also try `!%` to load the edit app. Press ESC to exit.  
 
-### 512 byte Version
-The same as `tiny.asm`, but more usable and stuff.  
-The final binary will be a few kilobytes, since it has to  
-load in demo programs.
+### 256 byte Version
+Very basic. Type `!%***.` and enter to test it out.
 ```
-make
+make tiny
 ```
 
 ## So what does it do?
