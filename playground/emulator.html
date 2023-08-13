@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+	<meta charset="utf-8">
+	<title>CrypticOS Emulator</title>
+	<style media="screen">
+	#screen {
+		width: 640px;
+		height: 400px;
+		border: 1px solid black;
+		background: black;
+		color: white;
+		font-family: monospace;
+		font-size: 20px;
+		white-space: pre;
+		overflow-y: scroll;
+	}
+	</style>
+</head>
+<body>
+<div id="screen"></div>
+<button onclick="executing.s = prompt(); execute();">Load program</button>
+</body>
+<script type="text/javascript">
+var screen = document.getElementById("screen");
+var mem;
+var executing = {
+	c: 0,
+	s: "!>!%*++++.!******++.*******.*********++.*++.!%%**++.++++.!%%*.!%*********++++.!******++.*********++.++++.!+^d!*++^$||!%*+++.!******++.<,>dd!<^>a!%**+++^a!++++^!?dd!<^>a!%**++++^a!*+^!?!%*******.*****.!%%*++.+++.+.*+++.!%%**.!+++^d!*++^$|!++^$|!%**++++.!%**+++.!*^d!*++^$|!++^$|!++^$|!**.+++.a$"
+}
+
+execute();
+
+document.body.onkeydown = function(event) {
+	mem.bottom[mem.bottomP] = event.keyCode;
+	executeStart();
+}
+
+function execute() {
+	screen.innerText = "";
+	mem = {
+		top: Array(50).fill(0),
+		topP: 0,
+		bottom: Array(100).fill(0),
+		bottomP: 0,
+		labels: []
+	};
+
+	for (var c = 0; c < executing.s.length; c++) {
+		if (executing.s[c] == "|") {
+			mem.labels.push(c);
+		}
+	}
+
+	executing.c = 0;
+
+	executeStart();
+}
+
+function executeStart() {
+	while (executing.c != executing.s.length) {
+		var char = executing.s[executing.c];
+		executing.c++;
+		switch (char) {
+		case '+':
+			mem.bottom[mem.bottomP]++;
+			break;
+		case '*':
+			mem.bottom[mem.bottomP] += 5;
+			break;
+		case '%':
+			mem.bottom[mem.bottomP] += 50;
+			break;
+		case '!':
+			mem.bottom[mem.bottomP] = 0;
+			break;
+		case '-':
+			mem.bottom[mem.bottomP]--;
+			break;
+		case '>':
+			mem.bottomP++;
+			break;
+		case '<':
+			mem.bottomP--;
+			break;
+		case 'd':
+			mem.topP++;
+			break;
+		case 'a':
+			mem.topP--;
+			break;
+		case 'v':
+			mem.bottom[mem.bottomP] = mem.top[mem.topP];
+			break;
+		case '^':
+			mem.top[mem.topP] = mem.bottom[mem.bottomP];
+			break;
+		case '.':
+			screen.innerText += String.fromCharCode(
+				mem.bottom[mem.bottomP]
+			);
+
+			break;
+		case ',':
+			return;
+		case '?':
+			if (mem.top[mem.topP + 1] == mem.top[mem.topP + 2]) {
+				executing.c = mem.labels[mem.top[mem.topP] - 1];
+			}
+
+			break;
+		case '$':
+			executing.c = mem.labels[mem.top[mem.topP] - 1];
+			break;
+		}
+	}
+}
+</script>
+</html>

@@ -1,0 +1,20 @@
+# This is the syntax file for writing CASM code.
+# Use cp casm.yaml ~/.config/micro/syntax/casm.yaml
+# (syntax folder may not exist)
+
+filetype: casm
+
+detect:
+    filename: "\\.casm$"
+
+rules:
+    - statement: "\\b(jmp|got|ret|inl|prt|equ|set|var|arr|add|sub|run|inc|put|fre)\\b"
+    
+    # Kernel functions
+    - identifier: "\\b(ga|gb|gc|gd|gr)\\b"
+    - preproc: "^[[:space:]]*#[[:space:]]*(define|(un|ifn?)def|end|el(if|se)|if|exit|error)"
+    - identifier: "[a-zA-Z_.]+:"
+    - constant.number: "\\b[0-9]+\\b"
+    - constant.string: "\'(.)*\'"
+    - constant.string: "\"(.|[^\"])*\""
+    - comment: ";.*"

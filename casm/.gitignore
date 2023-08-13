@@ -1,0 +1,11 @@
+*.o
+test.o
+compiler.o
+nasm
+nasm.asm
+compiler
+casm
+casmw
+a
+b
+c

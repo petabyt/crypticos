@@ -1,0 +1,47 @@
+html, body {
+	margin: 0px;
+	height: 100%;
+	width: 100%;
+}
+
+#code, #output {
+	width: 50%;
+	display: block;
+	background: #2d2d2d;
+	color: white;
+	height: 600px;
+	outline: none;
+	box-sizing: border-box;
+	resize: none;
+	font-size: 17px;
+	height: calc(100% - 70px);
+}
+
+#code {
+	float: left;
+	tab-size: 4;
+}
+
+#programSelector {
+	float: left;
+}
+
+#input {
+	float: right;
+}
+
+.top {
+	width: 50%;
+	box-sizing: border-box;
+	display: block;
+	user-select: none;
+	border: transparent;
+}
+
+#output {
+	float: right;
+}
+
+body {
+	background: black;
+}

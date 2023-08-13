@@ -1,0 +1,16 @@
+arr a 10
+inc "lib/main.casm"
+jmp LA
+inc "$kernel/get.casm"
+LA:
+
+set ga SET
+set gb 12
+set gc 65
+run k.get
+
+set ga GET
+set gb 12
+run k.get
+add gr '0'
+prt gr

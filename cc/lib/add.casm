@@ -1,0 +1,7 @@
+add:
+	equ gb 0 a.end
+	add ga 1
+	sub gb 1
+	jmp add
+	a.end:
+ret

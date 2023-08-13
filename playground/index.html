@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+	<head>
+		<meta charset="utf-8">
+		<title>CrypticOS Playground</title>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		<select id="programSelector" class="top" onchange="selectProgram(this.value)">
+			<option>demo.casm</option>
+			<option>hello.casm</option>
+		</select>
+		<input id="input" class="top" placeholder="Input here...">
+		<textarea id="code" spellcheck="false" onkeydown="if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0, s)+'\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}"></textarea>
+		<textarea id="output"></textarea>
+		<button onclick="compileAsm()">Compile</button>
+		<button onclick="compileRun()">Run & Compile</button>
+		<select id="speedSelector">
+			<option>fast</option>
+			<option>slow</option>
+		</select>
+	</body>
+	<script type="text/javascript" src="emulator.js"></script>
+	<script type="text/javascript" src="compile.js"></script>
+	<script>
+	var code = document.getElementById("code");
+	var output = document.getElementById("output");
+	var input = document.getElementById("input");
+
+	function compileAsm() {
+		var asm = compile(code.value.split("\n"));
+		console.log(asm);
+		output.value = "";
+		output.value += asm;
+		return asm;
+	}
+
+	function compileRun() {
+		runCode(compileAsm());
+	}
+
+	function runCode(brainflake) {
+		var mem = {
+			top: Array(100).fill(0),
+			topP: 0,
+			bottom: Array(1000).fill(0),
+			bottomP: 0
+		};
+
+		output.value += "\n-> Interpreter Result:\n";
+		execute(mem, brainflake, speedSelector.value);
+	}
+
+	var demos = {
+		"demo.casm":
+`; This is the initial tech demo of CASM.
+; It is not maintained with the main version
+; and may be slightly out of date.
+
+var a '0'
+top:
+prt a
+add a 1
+equ a '9' end
+jmp top
+end:`,
+		"hello.casm": 
+`prt "Hello, World"`
+	}
+
+	function selectProgram(e) {
+		code.value = demos[e];
+	}
+
+	selectProgram("demo.casm");
+
+	</script>
+</html>

@@ -1,0 +1,14 @@
+# Micro syntax highlighting
+filetype: crc
+
+detect:
+    filename: "\\.crc$"
+
+rules:
+    - statement: "\\b(equ|nequ|loop|var)\\b"
+    - identifier: "[a-zA-Z_.]+:"
+    - constant.number: "\\b[0-9]+\\b"
+    - constant.string: "\'(.)*\'"
+    - constant.string: "\"(.|[^\"])*\""
+    - comment: "//.*"
+    - preproc: "`.*`"
