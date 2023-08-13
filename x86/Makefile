@@ -1,11 +1,13 @@
 run: compile emulate clean
 tiny: compileTiny emulate clean
 
+CASM=../casm/casm
+
 define compile
 	@touch t
 	@echo "#define X86 0" > t
 	@cat ../$(1) >> t
-	@casm -a t > $(2)
+	@$(CASM) -a t > $(2)
 	@rm -rf t
 endef
 
@@ -15,7 +17,7 @@ help:
 
 compile:
 	$(call compile,util/edit.casm,a)
-	$(call compile,cins/mcasm.casm,b)
+	$(call compile,bootstrap/mcasm.casm,b)
 
 	@nasm -f bin main.asm -DSIZE -o main
 	@ls -l main
